@@ -1,5 +1,9 @@
 import { useGetNeighborhoodsQuery } from "../services/neighborhoodService";
+import { useState } from "react";
 import type { Neighborhood } from "../models/neigborhoodModel";
+
+import { formatDate, formatNumber } from "../utilities/formatters";
+import NeighborhoodProcessModal from "./NeighborhoodProcessModal";
 
 function NeighborhoodList() {
   const {
@@ -8,9 +12,17 @@ function NeighborhoodList() {
     isError,
   } = useGetNeighborhoodsQuery();
 
+  const [showProcessModal, setShowProcessModal] = useState(false);
+  const [selectedNeighborhood, setSelectedNeighborhood] =
+    useState<Neighborhood | null>(null);
+
   if (isLoading) return <div className="text-center mt-5">Yükleniyor...</div>;
   if (isError)
     return <div className="text-danger text-center mt-5">Veri alınamadı!</div>;
+
+  const totalAmount: number = neighborhoods
+    ? neighborhoods.data.reduce((sum, n) => sum + n.amount, 0)
+    : 0;
 
   return (
     <div className="container mt-4">
@@ -27,6 +39,8 @@ function NeighborhoodList() {
                 <th>Adı</th>
                 <th>Açıklama</th>
                 <th>Miktar</th>
+                <th>Gönderilme Tarihi</th>
+                <th>İşlem</th>
               </tr>
             </thead>
             <tbody>
@@ -39,7 +53,19 @@ function NeighborhoodList() {
                     <td>{n.productType}</td>
                     <td>{n.productName}</td>
                     <td>{n.productDescription}</td>
-                    <td>{n.amount}</td>
+                    <td>{formatNumber(n.amount)}</td>
+                    <td>{formatDate(n.dateOfArrival)}</td>
+                    <td>
+                      <button
+                        className="btn btn-success"
+                        onClick={() => {
+                          setSelectedNeighborhood(n);
+                          setShowProcessModal(true);
+                        }}
+                      >
+                        İşlemi Tamamla
+                      </button>
+                    </td>
                   </tr>
                 ))
               ) : (
@@ -50,7 +76,22 @@ function NeighborhoodList() {
                 </tr>
               )}
             </tbody>
+            <tfoot className="table-grey">
+              <tr>
+                <th colSpan={2}>Genel Toplam:</th>
+                <th colSpan={6}> {formatNumber(totalAmount)}</th>
+              </tr>
+            </tfoot>
           </table>
+          {/* Process modal */}
+          <NeighborhoodProcessModal
+            show={showProcessModal}
+            handleClose={() => {
+              setShowProcessModal(false);
+              setSelectedNeighborhood(null);
+            }}
+            neighborhood={selectedNeighborhood}
+          />
         </div>
       </div>
     </div>

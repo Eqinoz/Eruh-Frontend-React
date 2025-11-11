@@ -27,6 +27,9 @@ function LoginPage() {
         className="p-4 border rounded bg-white"
         style={{ width: 350 }}
       >
+        <span className=" playwrite-hu-headertitle  mb-4 d-block text-center">
+          Eruh Fıstık Pazarı
+        </span>
         <h4 className="text-center mb-3">Giriş Yap</h4>
         <input
           type="email"

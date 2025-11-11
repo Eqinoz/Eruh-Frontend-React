@@ -10,9 +10,10 @@ import ProductListPage from "./components/ProductList";
 import CustomerAdd from "./components/CustomerAdd";
 import CustomerList from "./components/CustomerList";
 import OrderAddPage from "./components/OrderAdd";
-import StokList from "./components/StokList";
-import StokAdd from "./components/StokAdd";
 import NeighborhoodList from "./components/NeighborhoodList";
+import RawMaterialAdd from "./components/RawMaterialAdd";
+import RawMaterialList from "./components/RawMaterialList";
+import ProcessedProductList from "./components/ProcessedProductList";
 
 function App() {
   const dispatch = useDispatch();
@@ -78,18 +79,18 @@ function App() {
             }
           />
           <Route
-            path="/stok-add"
+            path="/rawmaterial-add"
             element={
               <Layout>
-                <StokAdd />
+                <RawMaterialAdd />
               </Layout>
             }
           />
           <Route
-            path="/stok-list"
+            path="/rawmaterial-list"
             element={
               <Layout>
-                <StokList />
+                <RawMaterialList />
               </Layout>
             }
           />
@@ -98,6 +99,14 @@ function App() {
             element={
               <Layout>
                 <NeighborhoodList />
+              </Layout>
+            }
+          />
+          <Route
+            path="/processedproduct"
+            element={
+              <Layout>
+                <ProcessedProductList />
               </Layout>
             }
           />

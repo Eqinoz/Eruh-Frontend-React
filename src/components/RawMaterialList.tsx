@@ -2,8 +2,9 @@ import { useGetRawMaterialsQuery } from "../services/rawMaterialService";
 import NeighborhoodSendModal from "./NeighborhoodModal";
 import { useState } from "react";
 import type { RawMaterial } from "../models/rawMaterialModel";
+import { formatNumber } from "../utilities/formatters";
 
-function StokList() {
+function RawMaterialList() {
   const { data: rawmaterials, isLoading, isError } = useGetRawMaterialsQuery();
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<RawMaterial | null>(
@@ -13,6 +14,10 @@ function StokList() {
   if (isLoading) return <div className="text-center mt-5">Yükleniyor...</div>;
   if (isError)
     return <div className="text-danger text-center mt-5">Veri alınamadı!</div>;
+
+  const totalStock = rawmaterials
+    ? rawmaterials.data.reduce((total, item) => total + item.incomingAmount, 0)
+    : 0;
 
   return (
     <div className="container mt-4">
@@ -29,7 +34,7 @@ function StokList() {
                 <th>Siirten Gelen Stok</th>
                 <th>Açıklama</th>
 
-                <th></th>
+                <th>İşlemler</th>
               </tr>
             </thead>
             <tbody>
@@ -38,7 +43,7 @@ function StokList() {
                   <tr key={p.id}>
                     <td>{p.id}</td>
                     <td>{p.name}</td>
-                    <td>{p.incomingAmount}</td>
+                    <td>{formatNumber(p.incomingAmount)}</td>
                     <td>{p.description}</td>
 
                     <td>
@@ -51,11 +56,11 @@ function StokList() {
                       >
                         Mahalleye Gönder
                       </button>
-                      <button className="btn btn-warning me-2 py-1">
-                        F. Veya Kom. Gönder
+                      <button className="btn btn-info me-2 py-1">
+                        Fas. Veya Kom. Gönder
                       </button>
-                      <button className="btn btn-success me-2 py-1">
-                        Satışa Hazır
+                      <button className="btn btn-primary py-1">
+                        İşleme Gönder
                       </button>
                     </td>
                   </tr>
@@ -68,6 +73,12 @@ function StokList() {
                 </tr>
               )}
             </tbody>
+            <tfoot>
+              <tr>
+                <th>Toplam Stok:</th>
+                <th colSpan={3}>{formatNumber(totalStock)}</th>
+              </tr>
+            </tfoot>
           </table>
 
           {/* Mahalle Gönderme Modalı */}
@@ -82,4 +93,4 @@ function StokList() {
   );
 }
 
-export default StokList;
+export default RawMaterialList;

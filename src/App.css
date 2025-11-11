@@ -68,6 +68,15 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
+.playwrite-hu-headertitle {
+  font-family: "Playwrite HU", cursive;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: italic;
+  font-size: 2.5rem;
+  color: green;
+}
+
 @keyframes slideDown {
   from {
     opacity: 0;

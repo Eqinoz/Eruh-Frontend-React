@@ -63,18 +63,40 @@ function SideBar() {
             </div>
             {!collapsed && openMenu === "stok" && (
               <ul className="submenu list-unstyled ps-4">
-                <Link to="/stok-add">
+                <Link to="/stok-list" className="nav-link text-white py-1">
                   <li>
-                    <a href="" className="nav-link text-white py-1">
-                      <i className="bi bi-plus-circle me-2"></i> Ham Madde Ekle
-                    </a>
+                    <i className="bi bi-eye me-2"></i> Hazır Stok Görüntüle
                   </li>
                 </Link>
-                <Link to="/stok-list">
+                <hr></hr>
+                <Link
+                  to="/rawmaterial-add"
+                  className="nav-link text-white py-1"
+                >
                   <li>
-                    <a className="nav-link text-white py-1">
-                      <i className="bi bi-eye me-2"></i> Ham Maddeleri Görüntüle
-                    </a>
+                    <i className="bi bi-plus-circle me-2"></i> Ham Madde Ekle
+                  </li>
+                </Link>
+                <Link
+                  to="/rawmaterial-list"
+                  className="nav-link text-white py-1"
+                >
+                  <li>
+                    <i className="bi bi-eye me-2"></i> Ham Maddeleri Görüntüle
+                  </li>
+                </Link>
+                <hr></hr>
+                <Link to="/stok-add" className="nav-link text-white py-1">
+                  <li>
+                    <i className="bi bi-list-ul me-2"></i> İşlemde Olan Ürünler
+                  </li>
+                </Link>
+                <Link
+                  to="/processedproduct"
+                  className="nav-link text-white py-1"
+                >
+                  <li>
+                    <i className="bi bi-list-ul me-2"></i> İşlenmiş Ürünler
                   </li>
                 </Link>
               </ul>
@@ -101,11 +123,12 @@ function SideBar() {
             </div>
             {!collapsed && openMenu === "mahalle" && (
               <ul className="submenu list-unstyled ps-4">
-                <Link to="/neighborhood-list">
+                <Link
+                  to="/neighborhood-list"
+                  className="nav-link text-white py-1"
+                >
                   <li>
-                    <a href="" className="nav-link text-white py-1">
-                      <i className="bi bi-list-ul me-2"></i> Mahalledeki Ürünler
-                    </a>
+                    <i className="bi bi-list-ul me-2"></i> Mahalledeki Ürünler
                   </li>
                 </Link>
               </ul>
@@ -133,18 +156,14 @@ function SideBar() {
             </div>
             {!collapsed && openMenu === "urun" && (
               <ul className="submenu list-unstyled ps-4">
-                <Link to="/product-add">
+                <Link to="/product-add" className="nav-link text-white py-1">
                   <li>
-                    <a href="" className="nav-link text-white py-1">
-                      <i className="bi bi-plus-circle me-2"></i> Ürün Ekle
-                    </a>
+                    <i className="bi bi-plus-circle me-2"></i> Ürün Ekle
                   </li>
                 </Link>
-                <Link to="/product-list">
+                <Link to="/product-list" className="nav-link text-white py-1">
                   <li>
-                    <a className="nav-link text-white py-1">
-                      <i className="bi bi-eye me-2"></i> Ürünleri Görüntüle
-                    </a>
+                    <i className="bi bi-eye me-2"></i> Ürünleri Görüntüle
                   </li>
                 </Link>
               </ul>

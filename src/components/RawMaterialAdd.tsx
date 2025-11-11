@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useAddRawMaterialMutation } from "../services/rawMaterialService";
 import { useNavigate } from "react-router-dom"; // Kayıttan sonra yönlendirme için
 
-function StokAdd() {
+function RawMaterialAdd() {
   // Form verilerini tutmak için 'state' kullanıyoruz
   const [formData, setFormData] = useState({
     id: 0,
@@ -178,4 +178,4 @@ function StokAdd() {
   );
 }
 
-export default StokAdd;
+export default RawMaterialAdd;

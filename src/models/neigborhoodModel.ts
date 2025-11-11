@@ -1,7 +1,8 @@
 export interface Neighborhood {
-  id: number;
+  id?: number;
   productType: string;
   productName: string;
   productDescription: string;
   amount: number;
+  dateOfArrival?: string;
 }

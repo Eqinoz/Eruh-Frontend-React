@@ -3,6 +3,7 @@ import { Modal, Button, Form, Alert } from "react-bootstrap";
 import { useAddNeighborhoodMutation } from "../services/neighborhoodService";
 import { useUpdateRawMaterialMutation } from "../services/rawMaterialService";
 import type { RawMaterial } from "../models/rawMaterialModel";
+import { formatNumber } from "../utilities/formatters";
 
 interface NeighborhoodSendModalProps {
   show: boolean;
@@ -16,6 +17,7 @@ function NeighborhoodSendModal({
   product,
 }: NeighborhoodSendModalProps) {
   const [amount, setAmount] = useState<number>(0);
+  const [description, setDescription] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
   // RTK Query mutation hook'u
@@ -65,7 +67,7 @@ function NeighborhoodSendModal({
         id: 0, // backend will assign id
         productType: "Ham Madde", // Sabit değer
         productName: product.name,
-        productDescription: product.description,
+        productDescription: description,
         amount: amount,
       };
 
@@ -92,7 +94,8 @@ function NeighborhoodSendModal({
         <Form>
           <Form.Group className="mb-3">
             <Form.Label>
-              Mevcut Stok: <strong>{product?.incomingAmount}</strong> adet
+              Mevcut Stok:{" "}
+              <strong>{formatNumber(product?.incomingAmount)}</strong> kilo
             </Form.Label>
             <Form.Label className="d-block">Gönderilecek Miktar</Form.Label>
             <Form.Control
@@ -102,6 +105,13 @@ function NeighborhoodSendModal({
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
               placeholder="0"
+              autoFocus
+            />
+            <Form.Label className="d-block">Yapılacak İşlem</Form.Label>
+            <Form.Control
+              type="text"
+              onChange={(e) => setDescription(String(e.target.value))}
+              placeholder="Mahallede Yapılacak İşlem"
               autoFocus
             />
           </Form.Group>

@@ -36,10 +36,18 @@ export const neighborhoodService = createApi({
       }),
       invalidatesTags: ["Neighborhood", "RawMaterial"],
     }),
+    deleteNeighborhood: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/neighborhood?id=${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Neighborhood"],
+    }),
   }),
 });
 export const {
   useGetNeighborhoodsQuery,
   useAddNeighborhoodMutation,
   useAddToNeighborhoodMutation,
+  useDeleteNeighborhoodMutation,
 } = neighborhoodService;
