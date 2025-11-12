@@ -29,6 +29,14 @@ export const processedProductService = createApi({
       }),
       invalidatesTags: ["ProcessedProduct"],
     }),
+    updateProcessedProduct: builder.mutation<void, ProcessedProduct>({
+      query: (product) => ({
+        url: "/processedproduct",
+        method: "PUT",
+        body: product,
+      }),
+      invalidatesTags: ["ProcessedProduct"],
+    }),
   }),
 });
 

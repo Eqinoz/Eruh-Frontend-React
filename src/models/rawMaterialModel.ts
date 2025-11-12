@@ -3,4 +3,5 @@ export interface RawMaterial {
   name: string;
   description: string;
   incomingAmount: number;
+  neighborhoodInComingAmount: number;
 }

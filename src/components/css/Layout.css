@@ -1,0 +1,24 @@
+/* src/components/css/Layout.css */
+
+.layout-wrapper {
+  display: flex;
+  flex-direction: column; /* 1. Ana yönü 'DİKEY' olarak değiştirdik */
+  height: 100vh; /* Tüm ekranı kapla */
+}
+
+/* 2. Header'dan SONRA kalan tüm alanı kaplayan sarmalayıcı */
+.content-body-wrapper {
+  display: flex;
+  flex-grow: 1; /* Kalan tüm dikey alanı (100vh - Header yüksekliği) kapla */
+
+  /* Bu div'in çocukları (SideBar ve main-content)
+     doğal olarak 'stretch' olup bu yüksekliğe uzayacak.
+     Ancak SideBar'da eski bir kural olabilir, aşağıya bak.
+  */
+}
+
+.main-content {
+  flex-grow: 1; /* SideBar'dan kalan tüm yatay alanı kapla */
+  overflow-y: auto; /* 👈 SADECE İÇERİK BURADA KAYACAK */
+  background-color: #f4f7f6; /* Hafif kirli beyaz arka plan */
+}

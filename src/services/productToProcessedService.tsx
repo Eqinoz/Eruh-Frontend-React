@@ -1,0 +1,47 @@
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type { ListResponseModel } from "../models/listResponseModel";
+import type { ProductToProcessed } from "../models/productToProcessed";
+
+export const productToProcessedService = createApi({
+  reducerPath: "productToProcessedService",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "https://localhost:44381/api",
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem("token");
+      if (token) headers.set("Authorization", `Bearer ${token}`);
+      return headers;
+    },
+  }),
+  tagTypes: ["ProductToProcessed"],
+  endpoints: (builder) => ({
+    getProductToProcesseds: builder.query<
+      ListResponseModel<ProductToProcessed>,
+      void
+    >({
+      query: () => "/producttoprocessed/",
+      providesTags: ["ProductToProcessed"],
+    }),
+    addProductToProcessed: builder.mutation<void, ProductToProcessed>({
+      query: (product) => ({
+        url: "/producttoprocessed",
+        method: "POST",
+        body: product,
+      }),
+      invalidatesTags: ["ProductToProcessed"],
+    }),
+    updateProductToProcessed: builder.mutation<void, ProductToProcessed>({
+      query: (product) => ({
+        url: "/producttoprocessed",
+        method: "PUT",
+        body: product,
+      }),
+      invalidatesTags: ["ProductToProcessed"],
+    }),
+  }),
+});
+
+export const {
+  useGetProductToProcessedsQuery,
+  useAddProductToProcessedMutation,
+  useUpdateProductToProcessedMutation,
+} = productToProcessedService;

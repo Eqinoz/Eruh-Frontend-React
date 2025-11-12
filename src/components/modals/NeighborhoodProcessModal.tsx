@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
-import type { Neighborhood } from "../models/neigborhoodModel";
-import type { ProcessedProduct } from "../models/processedProductModel";
-import { useAddProcessedProductMutation } from "../services/processedProductService";
-import { useDeleteNeighborhoodMutation } from "../services/neighborhoodService";
+import type { Neighborhood } from "../../models/neigborhoodModel";
+import type { RawMaterial } from "../../models/rawMaterialModel";
+import { useUpdateRawMaterialMutation } from "../../services/rawMaterialService";
+import { useDeleteNeighborhoodMutation } from "../../services/neighborhoodService";
 
 interface Props {
   show: boolean;
@@ -17,8 +17,8 @@ function NeighborhoodProcessModal({ show, handleClose, neighborhood }: Props) {
   const [amount, setAmount] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
 
-  const [addProcessedProduct, { isLoading: isAdding }] =
-    useAddProcessedProductMutation();
+  const [updateRawMaterial, { isLoading: isUpdating }] =
+    useUpdateRawMaterialMutation();
   const [deleteNeighborhood, { isLoading: isDeleting }] =
     useDeleteNeighborhoodMutation();
 
@@ -39,30 +39,27 @@ function NeighborhoodProcessModal({ show, handleClose, neighborhood }: Props) {
       return;
     }
 
-    const payload: ProcessedProduct = {
-      id: 0,
-      productName: name,
-      description: description,
-      amount: amount,
-      inComingFrom: "Mahalle",
-    };
-
     try {
-      // 1) add to processed products
-      await addProcessedProduct(payload).unwrap();
+      // 1) Update rawMaterial: add amount to neighborhoodIncomingAmount
+      const updatedRawMaterial: RawMaterial = {
+        id: neighborhood.id,
+        name: name,
+        description: description,
+        incomingAmount: 0,
+        neighborhoodInComingAmount: amount,
+      };
 
-      // 2) delete the neighborhood entry
+      await updateRawMaterial(updatedRawMaterial).unwrap();
+
+      // 2) Delete the neighborhood entry
       await deleteNeighborhood(neighborhood.id).unwrap();
 
       handleClose();
     } catch (err) {
-      // RTK Query throws a serialized error object. Log it and show useful info to the user.
-      console.error("Processed product / delete error:", err);
+      console.error("Raw material update / delete error:", err);
       const e = err as any;
 
-      // Prefer server-provided message or serialized data
       if (e?.data) {
-        // e.data can be string or object
         const msg =
           typeof e.data === "string" ? e.data : JSON.stringify(e.data);
         setError(`Sunucu hatası: ${msg}`);
@@ -118,9 +115,9 @@ function NeighborhoodProcessModal({ show, handleClose, neighborhood }: Props) {
         <Button
           variant="primary"
           onClick={handleSubmit}
-          disabled={isAdding || isDeleting}
+          disabled={isUpdating || isDeleting}
         >
-          {isAdding || isDeleting ? "İşleniyor..." : "İşlemi Tamamla"}
+          {isUpdating || isDeleting ? "İşleniyor..." : "İşlemi Tamamla"}
         </Button>
       </Modal.Footer>
     </Modal>

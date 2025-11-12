@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
-import { useAddNeighborhoodMutation } from "../services/neighborhoodService";
-import { useUpdateRawMaterialMutation } from "../services/rawMaterialService";
-import type { RawMaterial } from "../models/rawMaterialModel";
-import { formatNumber } from "../utilities/formatters";
+import { useAddNeighborhoodMutation } from "../../services/neighborhoodService";
+import { useUpdateRawMaterialMutation } from "../../services/rawMaterialService";
+import type { RawMaterial } from "../../models/rawMaterialModel";
+import { formatNumber } from "../../utilities/formatters";
 
 interface NeighborhoodSendModalProps {
   show: boolean;

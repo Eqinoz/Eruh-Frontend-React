@@ -1,28 +1,22 @@
-import React from "react";
-import Header from "./Header";
+// src/components/Layout.tsx
+
+import { Outlet } from "react-router-dom";
 import SideBar from "./SideBar";
+import Header from "./Header"; // Header'ını import et (zaten vardı)
+import "./css/Layout.css"; // Bu CSS'i de güncelleyeceğiz
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-function Layout({ children }: LayoutProps) {
+function Layout() {
   return (
-    <div className="d-flex flex-column vh-100">
-      {/* Üst Header */}
+    // 1. Ana sarmalayıcı artık DİKEY (column)
+    <div className="layout-wrapper">
+      {/* 2. Header artık en tepede ve %100 genişlikte */}
       <Header />
 
-      {/* Header'ın altı: Sidebar + içerik */}
-      <div className="d-flex flex-grow-1" style={{ overflow: "hidden" }}>
-        {/* Sol Menü */}
+      {/* 3. Header'ın ALTINDA kalan tüm alanı kaplayan yeni div */}
+      <div className="content-body-wrapper">
         <SideBar />
-
-        {/* Sağ İçerik Alanı */}
-        <main
-          className="flex-grow-1 bg-light p-4"
-          style={{ overflowY: "auto", minHeight: "100%" }}
-        >
-          {children}
+        <main className="main-content">
+          <Outlet />
         </main>
       </div>
     </div>

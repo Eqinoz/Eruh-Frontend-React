@@ -1,9 +1,11 @@
 import { useGetNeighborhoodsQuery } from "../services/neighborhoodService";
 import { useState } from "react";
 import type { Neighborhood } from "../models/neigborhoodModel";
-
 import { formatDate, formatNumber } from "../utilities/formatters";
-import NeighborhoodProcessModal from "./NeighborhoodProcessModal";
+import NeighborhoodProcessModal from "./modals/NeighborhoodProcessModal";
+
+// 🎨 1. Stil dosyamızı import ediyoruz (diğerleriyle aynı)
+import "./css/RawMaterialList.css";
 
 function NeighborhoodList() {
   const {
@@ -25,20 +27,25 @@ function NeighborhoodList() {
     : 0;
 
   return (
-    <div className="container mt-4">
+    // 🎨 2. Layout'u 'container-fluid' olarak güncelledim
+    <div className="container-fluid px-4 mt-4">
       <div className="card shadow-sm">
-        <div className="card-header bg-primary text-white d-flex justify-content-between ">
-          <h5 className="mb-0">Mahalle Ürünleri</h5>
+        {/* 🎨 3. Kart başlığını temamıza uygun hale getirdim ve ikon ekledim */}
+        <div className="card-header card-header-fistik text-white d-flex justify-content-between ">
+          <h5 className="mb-0">
+            <i className="bi bi-shop me-2"></i>Mahalle Ürünleri
+          </h5>
         </div>
         <div className="card-body">
           <table className="table table-striped table-hover text-center align-middle">
-            <thead className="table-dark align-items-center">
+            {/* 🎨 4. Tablo başlığını temamıza uygun hale getirdim */}
+            <thead className="thead-fistik align-items-center">
               <tr>
                 <th>ID</th>
                 <th>Ürün Tipi</th>
                 <th>Adı</th>
                 <th>Açıklama</th>
-                <th>Miktar</th>
+                <th>Miktar (kg)</th>
                 <th>Gönderilme Tarihi</th>
                 <th>İşlem</th>
               </tr>
@@ -56,6 +63,7 @@ function NeighborhoodList() {
                     <td>{formatNumber(n.amount)}</td>
                     <td>{formatDate(n.dateOfArrival)}</td>
                     <td>
+                      {/* 🎨 5. Butona ikon ekledim */}
                       <button
                         className="btn btn-success"
                         onClick={() => {
@@ -63,6 +71,7 @@ function NeighborhoodList() {
                           setShowProcessModal(true);
                         }}
                       >
+                        <i className="bi bi-check-lg me-1"></i>
                         İşlemi Tamamla
                       </button>
                     </td>
@@ -70,16 +79,24 @@ function NeighborhoodList() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="text-center text-muted">
-                    Mahalle ürün bulunamadı
+                  {/* 🐞 6. BUG DÜZELTME: colSpan 5 idi, 7 yaptım */}
+                  <td colSpan={7} className="text-center text-muted">
+                    Mahalle ürünü bulunamadı
                   </td>
                 </tr>
               )}
             </tbody>
-            <tfoot className="table-grey">
-              <tr>
-                <th colSpan={2}>Genel Toplam:</th>
-                <th colSpan={6}> {formatNumber(totalAmount)}</th>
+            {/* 🐞 7. BUG DÜZELTME: tfoot'u tamamen yeniden hizaladım */}
+            <tfoot className="table-group-divider">
+              <tr className="total-row-grand">
+                {/* Toplam başlığı sağa yaslı (4 sütun kaplar) */}
+                <th colSpan={4} className="text-end">
+                  Genel Toplam Miktar:
+                </th>
+                {/* Toplam değer sola yaslı (1 sütun kaplar) */}
+                <th className="text-start">{formatNumber(totalAmount)}</th>
+                {/* Kalan 2 sütun boş */}
+                <th colSpan={2}></th>
               </tr>
             </tfoot>
           </table>

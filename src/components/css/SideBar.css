@@ -1,0 +1,63 @@
+/* src/components/css/SideBar.css */
+
+.sidebar-fistik {
+  /* Fıstık Pazarı Ana Rengi */
+  background-color: var(--fistik-dark-green, #2e8b57); /* Koyu Orman Yeşili */
+  width: 280px; /* Açıkkenki genişlik */
+  transition: width 0.3s ease-in-out;
+  overflow-y: auto;
+  /*min-height: 100vh;*/ /* Tam yüksekliği kapla */
+}
+
+.sidebar-fistik.collapsed {
+  width: 70px; /* Kapalıykenki genişlik */
+}
+
+/* Başlık Rengi */
+.fistik-title {
+  color: var(--fistik-gold, #c89f3a); /* Altın Bronz */
+  font-weight: 700;
+}
+
+/* Kapatma Butonu */
+.toggle-btn {
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Linklerin üzerine gelince */
+.sidebar-fistik .nav-link {
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-fistik .nav-link:hover {
+  background-color: var(--fistik-green, #6b8e23); /* Ana Fıstık Yeşili */
+}
+
+/* Açılır Alt Menü */
+.submenu {
+  background-color: rgba(0, 0, 0, 0.2); /* Hafif koyu bir arka plan */
+  border-radius: 6px;
+  margin-top: 5px;
+}
+
+.submenu .nav-link {
+  font-size: 0.9rem;
+}
+
+.submenu .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Daha açık bir hover */
+}
+
+/* Alt menüdeki ayraç (eski <hr> yerine) */
+.submenu-divider {
+  height: 1px;
+  background-color: var(--fistik-green, #6b8e23);
+  opacity: 0.5;
+  margin: 8px 16px; /* sağdan soldan biraz boşluk */
+}

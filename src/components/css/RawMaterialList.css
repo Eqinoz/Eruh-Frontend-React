@@ -1,0 +1,65 @@
+/* src/components/css/RawMaterialList.css */
+
+/* Fıstık Pazarı Tema Renkleri */
+:root {
+  --fistik-green: #6b8e23; /* Ana Fıstık Yeşili */
+  --fistik-dark-green: #2e8b57; /* Koyu Orman Yeşili (Başlıklar için) */
+  --fistik-gold: #c89f3a; /* Altın Bronz (Vurgu için) */
+  --fistik-cream: #f8f8dc; /* Krem Bej (Hover için) */
+  --fistik-brown: #8b4513; /* Toprak Kahvesi (Metinler için) */
+}
+
+/* 1. Kart Başlığını Temaya Uygun Hale Getir */
+.card-header-fistik {
+  background-color: var(--fistik-green);
+  border-bottom: 2px solid var(--fistik-gold); /* Altın rengi ince çizgi */
+}
+
+/* 2. Tablo Başlığını Temaya Uygun Hale Getir */
+.thead-fistik th {
+  background-color: var(--fistik-dark-green);
+  color: white;
+  vertical-align: middle; /* Başlıkları dikeyde ortala */
+}
+
+/* 3. Toplam Satırlarını Vurgula */
+.total-row th {
+  font-weight: 500;
+  color: var(--fistik-brown);
+}
+.total-row-grand th {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--fistik-dark-green); /* Genel toplamı daha vurgulu yap */
+}
+
+/* 4. Tablo satırlarına hoş bir hover efekti */
+.table-hover tbody tr:hover {
+  background-color: var(--fistik-cream) !important; /* Krem rengi */
+  cursor: default; /* İmleci normal tut (istersen 'pointer' yapabilirsin) */
+}
+
+/* 5. Butonlara küçük bir animasyon */
+.btn {
+  transition: all 0.2s ease-in-out;
+  font-size: 0.9rem; /* Butonları biraz küçülttüm */
+}
+
+/* Butonlara kendi tema renklerimizi verelim */
+.btn-warning {
+  background-color: var(--fistik-gold);
+  border-color: var(--fistik-gold);
+  color: #fff;
+}
+.btn-warning:hover {
+  background-color: #a7852e;
+  border-color: #a7852e;
+  color: #fff;
+  transform: translateY(-2px); /* Hafif yukarı kalkma efekti */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

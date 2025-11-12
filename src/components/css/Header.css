@@ -1,0 +1,47 @@
+/* src/components/css/Header.css */
+
+/* :root (değişkenler) tanımın global CSS'inde (index.css) olmalı,
+   eğer değilse, o değişkenleri buraya da kopyala.
+*/
+
+/* 1. Navbar'ın Arka Plan Rengi (Sidebar ile aynı) */
+.navbar-fistik {
+  background-color: var(--fistik-dark-green, #2e8b57);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1020; /* Bootstrap'in z-index'lerinden yüksek olsun */
+}
+
+/* 2. Proje Başlığı (Altın Rengi) */
+.fistik-logo-title {
+  color: var(--fistik-gold, #c89f3a);
+  font-weight: 700;
+  font-size: 1.4rem; /* Biraz daha belirgin olsun */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* 3. Dropdown Menüyü Özelleştirme (Bootstrap'in 'dark'ını eziyoruz) */
+.navbar-fistik .dropdown-menu {
+  background-color: var(--fistik-dark-green, #2e8b57);
+  border: 1px solid var(--fistik-green, #6b8e23);
+  margin-top: 10px !important; /* Navbar'dan biraz aşağıda başlasın */
+}
+
+.navbar-fistik .dropdown-item {
+  color: #f8f8f8; /* Yazı rengi */
+  transition: background-color 0.2s ease;
+}
+
+/* Üzerine gelince Fıstık Yeşili */
+.navbar-fistik .dropdown-item:hover {
+  background-color: var(--fistik-green, #6b8e23);
+  color: white;
+}
+
+/* Çıkış Yap Butonu'nun kırmızı rengini daha canlı yap */
+.navbar-fistik .dropdown-item.text-danger {
+  color: #ff5b5b !important;
+}
+.navbar-fistik .dropdown-item.text-danger:hover {
+  background-color: #ff5b5b;
+  color: white !important;
+}
