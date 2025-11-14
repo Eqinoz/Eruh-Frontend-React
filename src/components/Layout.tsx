@@ -1,9 +1,9 @@
-// src/components/Layout.tsx
-
 import { Outlet } from "react-router-dom";
 import SideBar from "./SideBar";
-import Header from "./Header"; // Header'ını import et (zaten vardı)
+import Header from "./Header"; //
 import "./css/Layout.css"; // Bu CSS'i de güncelleyeceğiz
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Layout() {
   return (
@@ -19,6 +19,18 @@ function Layout() {
           <Outlet />
         </main>
       </div>
+      <ToastContainer
+        position="bottom-right" // Bildirimler sağ altta çıksın
+        autoClose={4000} // 4 saniyede kapansın
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored" // "light", "dark" veya "colored"
+      />
     </div>
   );
 }

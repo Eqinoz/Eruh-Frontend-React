@@ -1,0 +1,46 @@
+/* src/components/css/Forms.css */
+
+/* :root (değişkenler) tanımın global CSS'inde (index.css) olmalı,
+   eğer değilse, o değişkenleri buraya da kopyala.
+*/
+
+/* 1. Input ve Textarea'ların genel görünümü */
+.form-control {
+  /* Hafif kırık beyaz bir arka planla beyazdan ayrışsın */
+  background-color: #fdfdfd;
+  border: 1px solid #ced4da;
+  border-radius: 6px; /* Köşeleri biraz yumuşat */
+  padding: 10px 12px; /* İç boşluğu biraz artır */
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+/* 2. Input'a tıklandığında (focus) Fıstık Yeşili vurgu */
+.form-control:focus {
+  background-color: #ffffff; /* Tıklanınca içi tekrar beyaz olsun */
+  border-color: var(--fistik-green, #6b8e23); /* Ana Fıstık Yeşili border */
+
+  /* Bootstrap'in varsayılan mavi gölgesini ezip, Fıstık Yeşili gölge yap */
+  box-shadow: 0 0 0 0.25rem rgba(107, 142, 35, 0.25);
+}
+
+/* 3. Doldurulması zorunlu (required) alanları belirginleştir */
+.form-control:required {
+  /* Sol kenara temamızın altın renginde bir çizgi çekelim */
+  border-left: 4px solid var(--fistik-gold, #c89f3a);
+}
+.form-control:required:focus {
+  border-left-width: 1px; /* Tıklanınca o çizgiyi normale döndür */
+}
+
+/* 4. Form Etiketlerini (Label) daha okunaklı yap */
+.form-label {
+  color: var(--fistik-brown, #8b4513); /* Toprak kahvesi */
+  font-weight: 500; /* Biraz daha dolgun */
+  margin-bottom: 0.3rem;
+}
+
+/* 5. 'fw-bold' sınıfı olan etiketleri daha da belirgin yap */
+.form-label.fw-bold {
+  color: var(--fistik-dark-green, #2e8b57); /* Koyu Fıstık Yeşili */
+  font-weight: 700; /* Zaten bold ama rengi garantiler */
+}

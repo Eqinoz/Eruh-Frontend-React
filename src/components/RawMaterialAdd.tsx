@@ -1,91 +1,75 @@
-import React, { useState, useEffect } from "react";
-// RTK Query servisimizden 'add' (ekleme) mutation'ını import ediyoruz.
-// İsmi 'useAddNewRawMaterialMutation' veya benzeri olabilir, kendi servis dosyanıza göre düzeltmelisiniz.
+import React, { useState } from "react";
 import { useAddRawMaterialMutation } from "../services/rawMaterialService";
-import { useNavigate } from "react-router-dom"; // Kayıttan sonra yönlendirme için
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "./css/RawMaterialList.css";
+import "./css/Modal.css";
+import "./css/Forms.css";
 
 function RawMaterialAdd() {
-  // Form verilerini tutmak için 'state' kullanıyoruz
   const [formData, setFormData] = useState({
     id: 0,
     name: "",
     description: "",
-    // 'incomingAmount' (Gelen Stok) listelemede kullanılıyordu,
-    // yeni bir ham madde eklerken 'başlangıç stoku' olarak düşünebiliriz.
-    // Başlangıç değeri olarak 0 veriyoruz.
     incomingAmount: 0,
+    neighborhoodInComingAmount: 0,
   });
 
-  // RTK Query mutation hook'u
-  // addRawMaterial: Veriyi gönderecek tetikleyici fonksiyon
-  // { isLoading, isSuccess, isError, error }: API isteğinin durumları
-  const [addRawMaterial, { data: any, isLoading, isSuccess, isError, error }] =
-    useAddRawMaterialMutation();
-
-  // React Router'dan navigate fonksiyonunu alıyoruz
+  // 🐞 2. Artık 'isSuccess', 'isError' vb. gerek yok, 'unwrap' kullanıyoruz.
+  const [addRawMaterial, { isLoading }] = useAddRawMaterialMutation();
   const navigate = useNavigate();
 
-  // Formdaki her değişiklikte 'state'i güncelleyen fonksiyon
-  const handleChange = (e: any) => {
+  // ⭐️ Tipleri 'any' yerine daha net belirttim
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      // 'incomingAmount' ise değeri sayıya çeviriyoruz, değilse metin olarak alıyoruz
       [name]: name === "incomingAmount" ? parseInt(value, 10) || 0 : value,
     }));
   };
 
-  // Form gönderildiğinde (submit) çalışacak fonksiyon
-  const handleSubmit = async (e: any) => {
-    e.preventDefault(); // Sayfanın yeniden yüklenmesini engelle
+  // ⭐️ Submit mantığını 'toastify' ile güncelledim
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-    // Basit bir doğrulama
     if (!formData.name || formData.incomingAmount < 0) {
-      alert("Lütfen 'Ham Madde Adı' ve 0'dan büyük bir 'Stok' girin.");
+      // 🐞 3. 'alert()' yerine 'toast.warn()'
+      toast.warn("Lütfen 'Ham Madde Adı' ve 0'dan büyük bir 'Stok' girin.");
       return;
     }
 
     try {
-      // RTK Query'nin 'addRawMaterial' fonksiyonunu form verisiyle çağırıyoruz
-      // .unwrap() sayesinde hata olması durumunda 'catch' bloğu çalışacak
       await addRawMaterial(formData).unwrap();
 
-      // Başarılı olursa formu temizle (state'i sıfırla)
-      setFormData({ id: 0, name: "", description: "", incomingAmount: 0 });
-
-      // (Opsiyonel) Başarı mesajı gösterebilir veya listeye yönlendirebilirsiniz
-      // navigate("/stoklistesi"); // Listenin olduğu URL'ye yönlendir
-    } catch (err) {
-      // Hata durumunda konsola yazdır
+      // 🐞 4. 'useEffect' yerine başarı anında doğrudan toast ve yönlendirme
+      toast.success(`"${formData.name}" adlı ham madde başarıyla eklendi!`);
+      navigate("/rawmaterial-list"); // 👈 Sidebar'daki doğru yola yönlendir
+    } catch (err: any) {
+      // 🐞 5. Hata mesajını 'toast.error()' ile göster
       console.error("Ham madde eklenemedi: ", err);
+      toast.error(err.data?.message || "Beklenmeyen bir hata oluştu.");
     }
   };
 
-  // Hata mesajını kullanıcı dostu hale getirme
-
-  // 'isSuccess' (başarı durumu) değiştiğinde ve true olduğunda çalışır
-  useEffect(() => {
-    if (isSuccess) {
-      // Başarılı ekleme sonrası stok listesine yönlendir
-      // 'react-router-dom' kullanmıyorsanız bu kısmı yoruma alabilirsiniz.
-      navigate("/stok-list"); // Yönlenecek sayfanın yolunu (path) yazın
-    }
-  }, [isSuccess, navigate]);
+  // 🐞 6. 'isSuccess'e bağlı 'useEffect' bloğu SİLİNDİ.
 
   return (
-    <div className="container mt-4">
+    // 🎨 7. Layout'u 'container-fluid' olarak güncelledim
+    <div className="container-fluid px-4 mt-4">
       <div className="row justify-content-center">
         <div className="col-md-8">
           <div className="card shadow-sm">
-            {/* Kart Başlığı */}
-            <div className="card-header bg-success text-white">
-              <h5 className="mb-0">Yeni Ham Madde Ekle</h5>
+            {/* 🎨 8. Kart başlığını temamıza uygun hale getirdim */}
+            <div className="card-header card-header-fistik text-white">
+              <h5 className="mb-0">
+                <i className="bi bi-plus-circle me-2"></i>Yeni Ham Madde Ekle
+              </h5>
             </div>
 
-            {/* Form Alanı */}
             <div className="card-body">
               <form onSubmit={handleSubmit}>
-                {/* 1. Alan: Ham Madde Adı */}
                 <div className="mb-3">
                   <label htmlFor="name" className="form-label fw-bold">
                     Ham Madde Adı
@@ -94,14 +78,13 @@ function RawMaterialAdd() {
                     type="text"
                     className="form-control"
                     id="name"
-                    name="name" // State'deki 'name' ile eşleşmeli
+                    name="name"
                     value={formData.name}
                     onChange={handleChange}
                     required
                   />
                 </div>
 
-                {/* 2. Alan: Açıklama */}
                 <div className="mb-3">
                   <label htmlFor="description" className="form-label">
                     Açıklama
@@ -109,66 +92,53 @@ function RawMaterialAdd() {
                   <textarea
                     className="form-control"
                     id="description"
-                    name="description" // State'deki 'description' ile eşleşmeli
+                    name="description"
                     rows={3}
                     value={formData.description}
                     onChange={handleChange}
                   ></textarea>
                 </div>
 
-                {/* 3. Alan: Başlangıç Stoku */}
                 <div className="mb-3">
                   <label
                     htmlFor="incomingAmount"
                     className="form-label fw-bold"
                   >
-                    Başlangıç Stoku
+                    Başlangıç Stoku (kg)
                   </label>
                   <input
                     type="number"
                     className="form-control"
                     id="incomingAmount"
-                    name="incomingAmount" // State'deki 'incomingAmount' ile eşleşmeli
+                    name="incomingAmount"
                     value={formData.incomingAmount}
                     onChange={handleChange}
-                    min="0" // Negatif değer girilmesini engelle
+                    min="0"
                     required
                   />
                 </div>
 
                 <hr />
 
-                {/* Buton Alanı */}
                 <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+                  {/* 🎨 9. Butonları temamıza uygun hale getirdim */}
                   <button
                     type="button"
-                    className="btn btn-secondary me-md-2"
-                    onClick={() => navigate("/stoklistesi")} // Stok listesi sayfanızın yolu
+                    className="btn btn-fistik-secondary me-md-2"
+                    onClick={() => navigate("/rawmaterial-list")} // 👈 Yolu düzelttim
                   >
                     İptal
                   </button>
                   <button
                     type="submit"
-                    className="btn btn-success"
-                    disabled={isLoading} // API isteği sürerken butonu pasif yap
+                    className="btn btn-fistik-primary"
+                    disabled={isLoading}
                   >
                     {isLoading ? "Kaydediliyor..." : "Kaydet"}
                   </button>
                 </div>
 
-                {/* Hata Mesajı Alanı */}
-                {/* Hata Mesajı Alanı */}
-                {isError && (
-                  <div className="alert alert-danger mt-3" role="alert">
-                    {error && "data" in error ? (
-                      <span>
-                        Hata: {(error.data as { message: string }).message}{" "}
-                      </span>
-                    ) : (
-                      <span>Beklenmeyen bir hata oluştu.</span>
-                    )}
-                  </div>
-                )}
+                {/* 🐞 10. 'isError' ile hata gösterme bloğu SİLİNDİ. */}
               </form>
             </div>
           </div>

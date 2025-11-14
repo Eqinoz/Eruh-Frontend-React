@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import Modal from "react-bootstrap/Modal";
+import { Button, Form, Modal } from "react-bootstrap";
 import { useAddProductToProcessedMutation } from "../../services/productToProcessedService";
 import type { RawMaterial } from "../../models/rawMaterialModel";
 import { useUpdateRawMaterialMutation } from "../../services/rawMaterialService";
 import type { ProductToProcessed } from "../../models/productToProcessed";
-import { Alert } from "react-bootstrap";
+import { toast } from "react-toastify";
+import "../css/Modal.css";
+import { formatNumber } from "../../utilities/formatters";
 
 interface RawMaterialToProcessedModalProps {
   show: boolean;
   handleClose: () => void;
-  product: any;
+  product: any; // Bu 'any' kalabilir, çünkü backend'den gelen tutarsız
 }
 
 function RawMaterialToProcessedModal({
@@ -22,7 +22,8 @@ function RawMaterialToProcessedModal({
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
-  const [error, setError] = useState<string | null>(null);
+  // 2. 'error' state'i ve 'Alert' artık GEREKLİ DEĞİL.
+  // const [error, setError] = useState<string | null>(null);
 
   const [addProductToProcessed, { isLoading: isAdding }] =
     useAddProductToProcessedMutation();
@@ -34,15 +35,15 @@ function RawMaterialToProcessedModal({
       setName(product.name || "");
       setDescription(product.description || "");
       setAmount(0);
-      setError(null);
+      // setError(null); // Gerek kalmadı
     }
   }, [show, product]);
 
   const handleSubmit = async () => {
-    setError(null);
+    // setError(null); // Gerek kalmadı
     if (!product) return;
     if (!name || amount <= 0) {
-      setError("Lütfen isim ve geçerli miktar girin.");
+      toast.error("Lütfen isim ve geçerli miktar girin.");
       return;
     }
     try {
@@ -53,24 +54,28 @@ function RawMaterialToProcessedModal({
         0;
 
       if (amount > originalIncoming) {
-        setError(`Stokta yalnızca ${originalIncoming} adet var.`);
+        toast.error(
+          `Siirt stoğunda yalnızca ${originalIncoming} adet var. Fazlasını gönderemezsiniz.`
+        );
         return;
       }
+
+      // Not: Bu modal, sadece 'Siirt Stoğundan' ('incomingAmount') düşüyor.
+      // Mahalle stoğundan ('neighborhoodInComingAmount') düşmüyor.
+      // Eğer oradan da düşmesi gerekiyorsa, 'if' kontrolü ve
+      // 'updatedAny' objesi güncellenmeli.
 
       const updatedAny: any = {
         id: product.id,
         name: name,
         description: description,
         incomingAmount: originalIncoming - amount,
-        // keep the property the codebase uses
         neighborhoodInComingAmount: originalNeighborhoodIncoming,
+        neighborhoodIncomingAmount: originalNeighborhoodIncoming, // İki türlü de yolla
       };
-      // also set alternate spelling to be safe for other parts of the app
-      updatedAny.neighborhoodIncomingAmount = originalNeighborhoodIncoming;
 
       await updateRawMaterial(updatedAny as RawMaterial).unwrap();
 
-      // 2) Add to processed products
       const newproductToProcessed: ProductToProcessed = {
         id: 0,
         productName: name,
@@ -80,73 +85,78 @@ function RawMaterialToProcessedModal({
       };
       await addProductToProcessed(newproductToProcessed).unwrap();
 
+      toast.success(`${amount} kg ürün işleme başarıyla gönderildi!`);
       handleClose();
-    } catch (err) {
+    } catch (err: any) {
       console.error("Processed product add error:", err);
-      const e = err as any;
-      setError(e.data?.message || "Bir hata oluştu.");
+      toast.error(err.data?.message || "Bir hata oluştu.");
     }
   };
 
   return (
-    <>
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Ham Maddeyi İşleme Gönder</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3">
-              <Form.Label>Ürün Adı</Form.Label>
-              <Form.Control
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                autoFocus
-              />
-            </Form.Group>
+    // 'product' objesi yoksa modal'ı render etme (güvenlik önlemi)
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton className="modal-header-fistik">
+        <Modal.Title>
+          İşleme Gönder:{" "}
+          <span className="modal-product-name">{product?.name}</span>
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <Form.Group className="mb-3">
+            <Form.Label>Ürün Adı (İşlendikten Sonraki)</Form.Label>
+            <Form.Control
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              autoFocus
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Açıklama</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>
+              Siirt Stoğundan Alınacak Miktar (Stok:{" "}
+              {formatNumber(product?.incomingAmount)})
+            </Form.Label>
+            <Form.Control
+              type="number"
+              min={0}
+              max={product?.incomingAmount}
+              value={amount}
+              onChange={(e) => setAmount(Number(e.target.value))}
+            />
+          </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Açıklama</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Miktar</Form.Label>
-              <Form.Control
-                type="number"
-                min={0}
-                value={amount}
-                onChange={(e) => setAmount(Number(e.target.value))}
-              />
-            </Form.Group>
-
-            {error && (
-              <Alert variant="danger" className="mt-3">
-                {error}
-              </Alert>
-            )}
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            İptal
-          </Button>
-          <Button
-            variant="primary"
-            onClick={handleSubmit}
-            disabled={isUpdating || isAdding} // İşlem sırasındaysa butonu kilitle
-          >
-            {isUpdating || isAdding ? "Gönderiliyor..." : "Gönder"}
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
+          {/* 'Alert' component'i buradan kaldırıldı */}
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button
+          variant="secondary"
+          className="btn-fistik-secondary"
+          onClick={handleClose}
+        >
+          İptal
+        </Button>
+        <Button
+          variant="primary"
+          className="btn-fistik-primary"
+          onClick={handleSubmit}
+          disabled={isUpdating || isAdding}
+        >
+          {isUpdating || isAdding ? "Gönderiliyor..." : "İşleme Gönder"}
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 }
 

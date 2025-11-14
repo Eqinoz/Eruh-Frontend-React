@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { Modal, Button, Form, Alert } from "react-bootstrap";
+import { Modal, Button, Form } from "react-bootstrap";
 import type { Neighborhood } from "../../models/neigborhoodModel";
 import type { RawMaterial } from "../../models/rawMaterialModel";
 import { useUpdateRawMaterialMutation } from "../../services/rawMaterialService";
 import { useDeleteNeighborhoodMutation } from "../../services/neighborhoodService";
+import { toast } from "react-toastify";
+import "../css/Modal.css";
 
 interface Props {
   show: boolean;
@@ -15,7 +17,8 @@ function NeighborhoodProcessModal({ show, handleClose, neighborhood }: Props) {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
-  const [error, setError] = useState<string | null>(null);
+  // 2. 'error' state'i ve 'Alert' artık GEREKLİ DEĞİL.
+  // const [error, setError] = useState<string | null>(null);
 
   const [updateRawMaterial, { isLoading: isUpdating }] =
     useUpdateRawMaterialMutation();
@@ -27,55 +30,52 @@ function NeighborhoodProcessModal({ show, handleClose, neighborhood }: Props) {
       setName(neighborhood.productName || "");
       setDescription(neighborhood.productDescription || "");
       setAmount(neighborhood.amount || 0);
-      setError(null);
+      // setError(null); // Gerek kalmadı
     }
   }, [show, neighborhood]);
 
   const handleSubmit = async () => {
-    setError(null);
+    // setError(null); // Gerek kalmadı
     if (!neighborhood || neighborhood.id === undefined) return;
     if (!name || amount <= 0) {
-      setError("Lütfen isim ve geçerli miktar girin.");
+      toast.error("Lütfen isim ve geçerli miktar girin.");
       return;
     }
 
+    // 🔴 DİKKAT: CİĞERİM, BURADA MANTIKSAL BİR HATA OLABİLİR!
+    // 'updateRawMaterial' hook'unu, 'neighborhood.id' ile çağırıyorsun.
+    // Eğer 'Neighborhood' tablosunun ID'si ile 'RawMaterial' tablosunun ID'si
+    // aynı değilse (ki muhtemelen değildir), bu kod YANLIŞ HAM MADDEYİ günceller.
+    //
+    // Bu miktarın, bu 'neighborhood' objesinin geldiği asıl 'RawMaterial' objesine
+    // (belki 'neighborhood.rawMaterialId' gibi bir alanla) eklenmesi gerekir.
+    // Bu kodu, senin backend mantığına güvendiğim için şimdilik ellemiyorum,
+    // sadece 'toast' ekliyorum. Ama burayı KONTROL ETMELİSİN.
+    // 🔴 --- UYARI SONU ---
+
     try {
-      // 1) Update rawMaterial: add amount to neighborhoodIncomingAmount
       const updatedRawMaterial: RawMaterial = {
-        id: neighborhood.id,
+        id: neighborhood.id, // ⚠️ BURASI MUHTEMELEN HATALI!
         name: name,
         description: description,
-        incomingAmount: 0,
-        neighborhoodInComingAmount: amount,
+        incomingAmount: 0, // ⚠️ Bu, Siirt stoğunu sıfırlar mı?
+        neighborhoodInComingAmount: amount, // ⚠️ Sadece mahalle stoğunu günceller?
       };
 
       await updateRawMaterial(updatedRawMaterial).unwrap();
-
-      // 2) Delete the neighborhood entry
       await deleteNeighborhood(neighborhood.id).unwrap();
 
+      toast.success("Mahalle işlemi başarıyla tamamlandı!");
       handleClose();
-    } catch (err) {
+    } catch (err: any) {
       console.error("Raw material update / delete error:", err);
-      const e = err as any;
-
-      if (e?.data) {
-        const msg =
-          typeof e.data === "string" ? e.data : JSON.stringify(e.data);
-        setError(`Sunucu hatası: ${msg}`);
-      } else if (e?.status) {
-        setError(`Sunucu hatası: ${e.status}`);
-      } else if (e?.message) {
-        setError(e.message as string);
-      } else {
-        setError("İşlem başarısız oldu. Tekrar deneyin.");
-      }
+      toast.error(err.data?.message || "İşlem başarısız oldu. Tekrar deneyin.");
     }
   };
 
   return (
     <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header closeButton>
+      <Modal.Header closeButton className="modal-header-fistik">
         <Modal.Title>İşlemi Tamamla</Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -87,7 +87,6 @@ function NeighborhoodProcessModal({ show, handleClose, neighborhood }: Props) {
               onChange={(e) => setName(e.target.value)}
             />
           </Form.Group>
-
           <Form.Group className="mb-3">
             <Form.Label>Açıklama</Form.Label>
             <Form.Control
@@ -95,7 +94,6 @@ function NeighborhoodProcessModal({ show, handleClose, neighborhood }: Props) {
               onChange={(e) => setDescription(e.target.value)}
             />
           </Form.Group>
-
           <Form.Group className="mb-3">
             <Form.Label>Miktar</Form.Label>
             <Form.Control
@@ -105,15 +103,20 @@ function NeighborhoodProcessModal({ show, handleClose, neighborhood }: Props) {
             />
           </Form.Group>
 
-          {error && <Alert variant="danger">{error}</Alert>}
+          {/* 'Alert' component'i buradan kaldırıldı */}
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
+        <Button
+          variant="secondary"
+          className="btn-fistik-secondary"
+          onClick={handleClose}
+        >
           İptal
         </Button>
         <Button
           variant="primary"
+          className="btn-fistik-primary"
           onClick={handleSubmit}
           disabled={isUpdating || isDeleting}
         >

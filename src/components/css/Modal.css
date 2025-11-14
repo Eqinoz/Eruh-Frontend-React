@@ -1,0 +1,47 @@
+/* src/components/css/Modals.css */
+
+/* :root (değişkenler) tanımın global CSS'inde (index.css) olmalı,
+   eğer değilse, o değişkenleri buraya da kopyala.
+*/
+
+/* 1. Modal Başlığı (Fıstık Teması) */
+.modal-header-fistik {
+  background-color: var(--fistik-dark-green, #2e8b57);
+  color: white;
+  border-bottom: 2px solid var(--fistik-gold, #c89f3a);
+}
+
+/* Başlıktaki kapatma (X) butonunu beyaz yap */
+.modal-header-fistik .btn-close {
+  filter: brightness(0) invert(1);
+}
+
+/* 2. Modal Başlığındaki Ürün Adını Vurgula (Altın Rengi) */
+.modal-header-fistik .modal-product-name {
+  color: var(--fistik-gold, #c89f3a);
+  font-weight: 700;
+}
+
+/* 3. Modal Butonları (Fıstık Teması) */
+/* Ana 'Gönder' butonu */
+.btn-fistik-primary {
+  background-color: var(--fistik-green, #6b8e23);
+  border-color: var(--fistik-green, #6b8e23);
+  color: white;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.btn-fistik-primary:hover {
+  background-color: var(--fistik-dark-green, #2e8b57);
+  border-color: var(--fistik-dark-green, #2e8b57);
+  color: white;
+}
+.btn-fistik-primary:disabled {
+  background-color: #a0a0a0;
+  border-color: #a0a0a0;
+}
+
+/* 'İptal' butonu */
+.btn-fistik-secondary {
+  font-weight: 600;
+}

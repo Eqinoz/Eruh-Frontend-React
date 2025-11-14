@@ -17,7 +17,7 @@ export const rawMaterialService = createApi({
   tagTypes: ["RawMaterial"],
   endpoints: (builder) => ({
     getRawMaterials: builder.query<ListResponseModel<RawMaterial>, void>({
-      query: () => "/rawmaterial/getall",
+      query: () => "/rawmaterial/",
       providesTags: ["RawMaterial"],
     }),
 
