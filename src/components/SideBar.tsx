@@ -120,6 +120,12 @@ function SideBar() {
                   <i className="bi bi-list-ul me-2"></i> İşlenmiş Ürünler
                 </Link>
               </li>
+              <hr className="submenu-divider" />
+              <li>
+                <Link to="/to-be-packaged" className="nav-link text-white py-1">
+                  <i className="bi bi-box2-fill me-2"></i> Paketlenme
+                </Link>
+              </li>
             </ul>
           )}
         </li>
@@ -226,7 +232,6 @@ function SideBar() {
             )}
           </a>
           {!collapsed && openMenu === "musteri" && (
-            // Bu yapı zaten doğruydu (li > Link), ellemeye gerek kalmadı.
             <ul className="submenu list-unstyled ps-4">
               <li>
                 <Link to="/customer-add" className="nav-link text-white py-1">
@@ -266,7 +271,6 @@ function SideBar() {
             )}
           </a>
           {!collapsed && openMenu === "siparis" && (
-            // Bu yapı da zaten doğruydu.
             <ul className="submenu list-unstyled ps-4">
               <li>
                 <Link to="/order-add" className="nav-link text-white py-1">

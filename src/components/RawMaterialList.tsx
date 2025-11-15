@@ -18,9 +18,6 @@ function RawMaterialList() {
   const [selectedForProcessed, setSelectedForProcessed] =
     useState<RawMaterial | null>(null);
 
-  // ⭐️ KOD TEMİZLİĞİ 1:
-  // Backend'den gelen tutarsız veriyi (neighborhoodIncomingAmount vs neighborhoodInComingAmount)
-  // temizlemek için bir yardımcı fonksiyon.
   const getNeighborhoodStock = (item: RawMaterial): number => {
     const p = item as any; // Tipi 'any' olarak alıyoruz (backend hatası yüzünden)
     return p.neighborhoodIncomingAmount ?? p.neighborhoodInComingAmount ?? 0;
@@ -70,6 +67,7 @@ function RawMaterialList() {
                   // ⭐️ KOD TEMİZLİĞİ 3:
                   // Mahalle stoğunu DÖNGÜ BAŞINDA BİR KERE hesaplıyoruz.
                   const neighborhoodStock = getNeighborhoodStock(p);
+                  const incomingAmount = p.incomingAmount;
 
                   return (
                     <tr key={p.id}>
@@ -83,7 +81,7 @@ function RawMaterialList() {
                       <td>{p.description}</td>
                       <td>
                         {/* ⭐️ Koşulda da temiz değişkeni kullanıyoruz */}
-                        {neighborhoodStock === 0 ? (
+                        {p.incomingAmount > 0 ? (
                           <button
                             className="btn btn-warning me-2 py-1"
                             onClick={() => {

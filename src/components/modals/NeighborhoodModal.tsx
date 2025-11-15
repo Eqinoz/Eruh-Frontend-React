@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useAddNeighborhoodMutation } from "../../services/neighborhoodService";
 import { useUpdateRawMaterialMutation } from "../../services/rawMaterialService";
@@ -20,8 +20,6 @@ function NeighborhoodSendModal({
 }: NeighborhoodSendModalProps) {
   const [amount, setAmount] = useState<number>(0);
   const [description, setDescription] = useState<string>("");
-  // 2. 'error' state'i ve 'Alert' artık GEREKLİ DEĞİL.
-  // const [error, setError] = useState<string | null>(null);
 
   const [updateRawMaterial, { isLoading: isUpdating }] =
     useUpdateRawMaterialMutation();
@@ -37,13 +35,11 @@ function NeighborhoodSendModal({
   }, [show]);
 
   const handleSubmit = async () => {
-    // setError(null); // Gerek kalmadı
     const sendAmount = amount;
 
     // --- Doğrulama (Validation) ---
     if (!product) return;
     if (isNaN(sendAmount) || sendAmount <= 0) {
-      // 3. 'setError' yerine 'toast.error' kullan
       toast.error("Lütfen geçerli bir miktar girin.");
       return;
     }
@@ -55,20 +51,22 @@ function NeighborhoodSendModal({
     }
 
     try {
+      console.log("Gönderilen miktar:", product.id);
       const updatedRawMaterial: RawMaterial = {
         ...product,
         incomingAmount: product.incomingAmount - amount,
       } as RawMaterial;
 
       await updateRawMaterial(updatedRawMaterial).unwrap();
-
+      console.log("Amk Idsi bu işte", product.id);
       const neighborhoodPayload = {
-        id: 0,
+        productId: product.id,
         productType: "Ham Madde",
         productName: product.name,
         productDescription: description,
         amount: amount,
       };
+      console.log("Mahalle Yükü:", neighborhoodPayload);
 
       await addNeighborhood(neighborhoodPayload).unwrap();
 

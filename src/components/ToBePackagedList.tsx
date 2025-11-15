@@ -1,14 +1,10 @@
-import { useGetProcessedProductsQuery } from "../services/processedProductService";
-import type { ProcessedProduct } from "../models/processedProductModel";
-import { formatDate, formatNumber } from "../utilities/formatters";
+import { formatNumber } from "../utilities/formatters";
 import "./css/RawMaterialList.css"; // 👈 STİLLER İÇİN BUNU EKLEDİM!
+import { useGetToPackagedItemsQuery } from "../services/toPackagedService";
+import type { ToPackagedItem } from "../models/toPackagedModal";
 
-function ProcessedProductList() {
-  const {
-    data: processed,
-    isLoading,
-    isError,
-  } = useGetProcessedProductsQuery();
+function ToBePackagedList() {
+  const { data: processed, isLoading, isError } = useGetToPackagedItemsQuery();
 
   if (isLoading) return <div className="text-center mt-5">Yükleniyor...</div>;
   if (isError)
@@ -25,7 +21,7 @@ function ProcessedProductList() {
         {/* 🎨 2. Kart başlığını temamıza uygun hale getirdim ve ikon ekledim */}
         <div className="card-header card-header-fistik text-white d-flex justify-content-between ">
           <h5 className="mb-0">
-            <i className="bi bi-box-seam me-2"></i>İşlenmiş Ürünler
+            <i className="bi bi-box-seam me-2"></i>Paketlenecek Ürünler
           </h5>
         </div>
         <div className="card-body">
@@ -34,28 +30,25 @@ function ProcessedProductList() {
             <thead className="thead-fistik align-items-center">
               <tr>
                 <th>ID</th>
+                <th>Cinsi</th>
                 <th>Adı</th>
-                <th>Açıklama</th>
                 <th>Miktar (kg)</th>
-                <th>Kaynak</th>
-                <th>Stoğa Eklendiği Tarih</th>
+                <th> Eklendiği Tarih</th>
                 <th>İşlemler</th>
               </tr>
             </thead>
             <tbody>
               {processed && processed.data && processed.data.length > 0 ? (
-                processed.data.map((p: ProcessedProduct) => (
+                processed.data.map((p: ToPackagedItem) => (
                   <tr key={p.id}>
                     <td>{p.id}</td>
+                    <td>{p.productType}</td>
                     <td>{p.productName}</td>
-                    <td>{p.description}</td>
                     <td>{formatNumber(p.amount)}</td>
-                    <td>{p.inComingFrom}</td>
-                    <td>{formatDate(p.dateAdded)}</td>
                     <td>
                       <button className="btn btn-sm btn-primary">
                         <i className="bi bi-box-seam me-1"></i>
-                        Paketlemeye Gönder
+                        Paketle
                       </button>
                     </td>
                   </tr>
@@ -89,4 +82,4 @@ function ProcessedProductList() {
   );
 }
 
-export default ProcessedProductList;
+export default ToBePackagedList;

@@ -26,7 +26,7 @@ export const neighborhoodService = createApi({
         method: "POST",
         body: neighborhood,
       }),
-      invalidatesTags: ["Neighborhood"],
+      invalidatesTags: ["Neighborhood", "RawMaterial"],
     }),
     addToNeighborhood: builder.mutation<void, RawMaterial>({
       query: (rawMaterial) => ({
@@ -38,7 +38,7 @@ export const neighborhoodService = createApi({
     }),
     deleteNeighborhood: builder.mutation<void, number>({
       query: (id) => ({
-        url: `/neighborhood?id=${id}`,
+        url: `/neighborhood/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Neighborhood"],

@@ -37,6 +37,13 @@ export const productToProcessedService = createApi({
       }),
       invalidatesTags: ["ProductToProcessed"],
     }),
+    deleteProductToProcessed: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/producttoprocessed/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["ProductToProcessed"],
+    }),
   }),
 });
 
@@ -44,4 +51,5 @@ export const {
   useGetProductToProcessedsQuery,
   useAddProductToProcessedMutation,
   useUpdateProductToProcessedMutation,
+  useDeleteProductToProcessedMutation,
 } = productToProcessedService;

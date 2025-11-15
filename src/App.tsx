@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { loadToken, type RootState } from "./store/store";
 import LoginPage from "./components/LoginPage";
-import Layout from "./components/Layout"; // 👈 SADECE 1 KERE İHTİYACIMIZ VAR
+import Layout from "./components/Layout";
 import ProductAdd from "./components/ProductAdd";
 import ProductListPage from "./components/ProductList";
 import CustomerAdd from "./components/CustomerAdd";
@@ -15,6 +15,7 @@ import RawMaterialAdd from "./components/RawMaterialAdd";
 import RawMaterialList from "./components/RawMaterialList";
 import ProcessedProductList from "./components/ProcessedProductList";
 import ProcessingList from "./components/ProcessingList";
+import ToBePackagedList from "./components/ToBePackagedList";
 
 function App() {
   const dispatch = useDispatch();
@@ -52,6 +53,7 @@ function App() {
           <Route path="neighborhood-list" element={<NeighborhoodList />} />
           <Route path="processedproduct" element={<ProcessedProductList />} />
           <Route path="productToProcessed" element={<ProcessingList />} />
+          <Route path="to-be-packaged" element={<ToBePackagedList />} />
 
           {/* Eşleşen başka bir yol yoksa anasayfaya yönlendir */}
           <Route path="*" element={<Navigate to="/" replace />} />

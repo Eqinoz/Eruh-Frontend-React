@@ -6,6 +6,7 @@ import { rawMaterialService } from "../services/rawMaterialService";
 import { neighborhoodService } from "../services/neighborhoodService";
 import { processedProductService } from "../services/processedProductService";
 import { productToProcessedService } from "../services/productToProcessedService";
+import { toPackagedService } from "../services/toPackagedService";
 
 const authSlice = createSlice({
   name: "auth",
@@ -38,6 +39,7 @@ export const store = configureStore({
     [neighborhoodService.reducerPath]: neighborhoodService.reducer,
     [processedProductService.reducerPath]: processedProductService.reducer,
     [productToProcessedService.reducerPath]: productToProcessedService.reducer,
+    [toPackagedService.reducerPath]: toPackagedService.reducer,
   },
   middleware: (getDefault) =>
     getDefault().concat(
@@ -47,7 +49,8 @@ export const store = configureStore({
       rawMaterialService.middleware,
       neighborhoodService.middleware,
       processedProductService.middleware,
-      productToProcessedService.middleware
+      productToProcessedService.middleware,
+      toPackagedService.middleware
     ),
 });
 

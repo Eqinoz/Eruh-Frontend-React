@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import type { Neighborhood } from "../../models/neigborhoodModel";
 import type { RawMaterial } from "../../models/rawMaterialModel";
-import { useUpdateRawMaterialMutation } from "../../services/rawMaterialService";
+import {
+  useLazyGetByIdRawMaterialQuery,
+  useUpdateRawMaterialMutation,
+} from "../../services/rawMaterialService";
 import { useDeleteNeighborhoodMutation } from "../../services/neighborhoodService";
 import { toast } from "react-toastify";
 import "../css/Modal.css";
@@ -17,11 +20,11 @@ function NeighborhoodProcessModal({ show, handleClose, neighborhood }: Props) {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
-  // 2. 'error' state'i ve 'Alert' artık GEREKLİ DEĞİL.
-  // const [error, setError] = useState<string | null>(null);
 
   const [updateRawMaterial, { isLoading: isUpdating }] =
     useUpdateRawMaterialMutation();
+  const [getByIdRawMaterial, { isLoading: isGetting }] =
+    useLazyGetByIdRawMaterialQuery();
   const [deleteNeighborhood, { isLoading: isDeleting }] =
     useDeleteNeighborhoodMutation();
 
@@ -30,36 +33,28 @@ function NeighborhoodProcessModal({ show, handleClose, neighborhood }: Props) {
       setName(neighborhood.productName || "");
       setDescription(neighborhood.productDescription || "");
       setAmount(neighborhood.amount || 0);
-      // setError(null); // Gerek kalmadı
     }
   }, [show, neighborhood]);
 
   const handleSubmit = async () => {
-    // setError(null); // Gerek kalmadı
     if (!neighborhood || neighborhood.id === undefined) return;
     if (!name || amount <= 0) {
       toast.error("Lütfen isim ve geçerli miktar girin.");
       return;
     }
 
-    // 🔴 DİKKAT: CİĞERİM, BURADA MANTIKSAL BİR HATA OLABİLİR!
-    // 'updateRawMaterial' hook'unu, 'neighborhood.id' ile çağırıyorsun.
-    // Eğer 'Neighborhood' tablosunun ID'si ile 'RawMaterial' tablosunun ID'si
-    // aynı değilse (ki muhtemelen değildir), bu kod YANLIŞ HAM MADDEYİ günceller.
-    //
-    // Bu miktarın, bu 'neighborhood' objesinin geldiği asıl 'RawMaterial' objesine
-    // (belki 'neighborhood.rawMaterialId' gibi bir alanla) eklenmesi gerekir.
-    // Bu kodu, senin backend mantığına güvendiğim için şimdilik ellemiyorum,
-    // sadece 'toast' ekliyorum. Ama burayı KONTROL ETMELİSİN.
-    // 🔴 --- UYARI SONU ---
-
     try {
+      const rawMaterialResponse = await getByIdRawMaterial(
+        neighborhood.productId!
+      ).unwrap();
+
       const updatedRawMaterial: RawMaterial = {
-        id: neighborhood.id, // ⚠️ BURASI MUHTEMELEN HATALI!
+        id: rawMaterialResponse.data.id,
         name: name,
         description: description,
-        incomingAmount: 0, // ⚠️ Bu, Siirt stoğunu sıfırlar mı?
-        neighborhoodInComingAmount: amount, // ⚠️ Sadece mahalle stoğunu günceller?
+        incomingAmount: rawMaterialResponse.data.incomingAmount, //
+        neighborhoodInComingAmount:
+          rawMaterialResponse.data.neighborhoodInComingAmount + amount,
       };
 
       await updateRawMaterial(updatedRawMaterial).unwrap();
@@ -102,8 +97,6 @@ function NeighborhoodProcessModal({ show, handleClose, neighborhood }: Props) {
               onChange={(e) => setAmount(Number(e.target.value))}
             />
           </Form.Group>
-
-          {/* 'Alert' component'i buradan kaldırıldı */}
         </Form>
       </Modal.Body>
       <Modal.Footer>

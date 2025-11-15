@@ -3,6 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { RawMaterial } from "../models/rawMaterialModel";
 
 import type { ListResponseModel } from "../models/listResponseModel";
+import type { SingleResponseModel } from "../models/singleResponseModel";
 
 export const rawMaterialService = createApi({
   reducerPath: "rawMaterialService",
@@ -20,6 +21,12 @@ export const rawMaterialService = createApi({
       query: () => "/rawmaterial/",
       providesTags: ["RawMaterial"],
     }),
+    getByIdRawMaterial: builder.query<SingleResponseModel<RawMaterial>, number>(
+      {
+        query: (id) => `/rawmaterial/${id}`,
+        providesTags: ["RawMaterial"],
+      }
+    ),
 
     addRawMaterial: builder.mutation<void, RawMaterial>({
       query: (rawMaterial) => ({
@@ -42,6 +49,7 @@ export const rawMaterialService = createApi({
 });
 export const {
   useGetRawMaterialsQuery,
+  useLazyGetByIdRawMaterialQuery,
   useAddRawMaterialMutation,
   useUpdateRawMaterialMutation,
 } = rawMaterialService;
