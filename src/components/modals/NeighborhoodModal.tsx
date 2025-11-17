@@ -122,12 +122,9 @@ function NeighborhoodSendModal({
               placeholder="Mahallede Yapılacak İşlem"
             />
           </Form.Group>
-
-          {/* 8. 'Alert' component'i buradan kaldırıldı */}
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        {/* 9. Butonlara yeni stil sınıflarını ekle */}
         <Button
           variant="secondary"
           className="btn-fistik-secondary"

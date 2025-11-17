@@ -1,10 +1,62 @@
 import { formatNumber } from "../utilities/formatters";
-import "./css/RawMaterialList.css"; // 👈 STİLLER İÇİN BUNU EKLEDİM!
-import { useGetToPackagedItemsQuery } from "../services/toPackagedService";
+import "./css/RawMaterialList.css";
+import {
+  useDeleteToPackagedItemMutation,
+  useGetToPackagedItemsQuery,
+} from "../services/toPackagedService";
 import type { ToPackagedItem } from "../models/toPackagedModal";
+import { Button, Form, Modal } from "react-bootstrap";
+import { useState } from "react";
+import "./css/Modal.css"; //
+import type { ProductModel } from "../models/productModel";
+import { toast } from "react-toastify";
+import { useAddProductMutation } from "../services/productService";
 
 function ToBePackagedList() {
   const { data: processed, isLoading, isError } = useGetToPackagedItemsQuery();
+  const [addProduct, { isLoading: isAdding }] = useAddProductMutation();
+  const [deleteToPackagedItem, { isLoading: isDeleting }] =
+    useDeleteToPackagedItemMutation();
+  const [showModal, setShowModal] = useState(false);
+  const [select, setSelect] = useState<ToPackagedItem | null>(null);
+  const [packagingType, setPackagingType] = useState<string>("");
+
+  const handleClose = () => {
+    setShowModal(false);
+    setSelect(null); // Modal kapandığında 'select'i sıfırla
+    setPackagingType(""); // 'packagingType'ı sıfırla
+  };
+
+  // 🐞 1. HATA DÜZELTME: 'item: any' yerine doğru tipi kullandım
+  const handleShow = (item: ToPackagedItem) => {
+    setSelect(item);
+    setPackagingType(""); // Modal açılırken input'u temizle
+    setShowModal(true);
+  };
+
+  const handleprocessComplete = async () => {
+    if (!select || !packagingType) {
+      toast.error("Lütfen paketleme tipini seçiniz!");
+      return;
+    }
+    try {
+      const newProduct: ProductModel = {
+        productId: select.productType, // Bu (DB, DLK)
+        name: select.productName,
+        amount: select.amount,
+        packagingType: packagingType,
+      };
+      await addProduct(newProduct).unwrap();
+      await deleteToPackagedItem(select.id!).unwrap();
+
+      toast.success("Paketleme işlemi başarıyla tamamlandı!");
+      handleClose();
+    } catch (error: any) {
+      toast.error(
+        error.data?.message || "Paketleme işlemi sırasında bir hata oluştu."
+      );
+    }
+  };
 
   if (isLoading) return <div className="text-center mt-5">Yükleniyor...</div>;
   if (isError)
@@ -15,10 +67,8 @@ function ToBePackagedList() {
     : 0;
 
   return (
-    // 🎨 1. Layout'u 'container-fluid' olarak güncelledim
     <div className="container-fluid px-4 mt-4">
       <div className="card shadow-sm">
-        {/* 🎨 2. Kart başlığını temamıza uygun hale getirdim ve ikon ekledim */}
         <div className="card-header card-header-fistik text-white d-flex justify-content-between ">
           <h5 className="mb-0">
             <i className="bi bi-box-seam me-2"></i>Paketlenecek Ürünler
@@ -26,14 +76,12 @@ function ToBePackagedList() {
         </div>
         <div className="card-body">
           <table className="table table-striped table-hover text-center align-middle">
-            {/* 🎨 3. Tablo başlığını temamıza uygun hale getirdim */}
             <thead className="thead-fistik align-items-center">
               <tr>
                 <th>ID</th>
-                <th>Cinsi</th>
+                <th>Cinsi (Kodu)</th>
                 <th>Adı</th>
                 <th>Miktar (kg)</th>
-                <th> Eklendiği Tarih</th>
                 <th>İşlemler</th>
               </tr>
             </thead>
@@ -46,7 +94,11 @@ function ToBePackagedList() {
                     <td>{p.productName}</td>
                     <td>{formatNumber(p.amount)}</td>
                     <td>
-                      <button className="btn btn-sm btn-primary">
+                      {/* 🐞 2. HATA DÜZELTME: onClick'e arrow function eklendi */}
+                      <button
+                        className="btn btn-sm btn-primary"
+                        onClick={() => handleShow(p)}
+                      >
                         <i className="bi bi-box-seam me-1"></i>
                         Paketle
                       </button>
@@ -55,29 +107,79 @@ function ToBePackagedList() {
                 ))
               ) : (
                 <tr>
-                  {/* 🐞 4. HATA DÜZELTME: colSpan 5 idi, 6 yaptım */}
-                  <td colSpan={6} className="text-center text-muted">
-                    İşlenmiş ürün bulunamadı
+                  {/* 🐞 3. HATA DÜZELTME: colSpan 6 idi, 5 yaptım */}
+                  <td colSpan={5} className="text-center text-muted">
+                    Paketlenecek ürün bulunamadı
                   </td>
                 </tr>
               )}
             </tbody>
-            {/* 🐞 5. HATA DÜZELTME: tfoot'u tamamen yeniden hizaladım */}
             <tfoot className="table-group-divider">
               <tr className="total-row-grand">
-                {/* Toplam başlığı sağa yaslı */}
+                {/* 🐞 4. HATA DÜZELTME: colSpan'ı 5'e göre hizaladım */}
                 <th colSpan={3} className="text-end">
                   Genel Toplam Miktar:
                 </th>
-                {/* Toplam değer sola yaslı */}
                 <th className="text-start">{formatNumber(totalAmount)}</th>
-                {/* Kalan 2 sütun boş */}
-                <th colSpan={2}></th>
+                <th colSpan={1}></th>
               </tr>
             </tfoot>
           </table>
         </div>
       </div>
+
+      {/* 🐞 5. KRİTİK HATA DÜZELTME: Modal.Body'deki HTML yapısı düzeltildi */}
+      <Modal show={showModal} onHide={handleClose} centered>
+        <Modal.Header closeButton className="modal-header-fistik">
+          <Modal.Title>Paketleme İşlemi</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            Şu ürünü paketliyorsunuz:{" "}
+            <strong className="modal-product-name">
+              {select?.productName}
+            </strong>
+          </p>
+          <p>
+            Mevcut Miktar: <strong>{formatNumber(select?.amount)} kg</strong>
+          </p>
+          <hr />
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label className="fw-bold">
+                Paketleme Şeklini Giriniz:
+              </Form.Label>
+              <Form.Control
+                type="text"
+                className="mt-2"
+                placeholder="Örn: 500g Vakumlu, 1kg Kutu, 25kg Çuval"
+                value={packagingType}
+                onChange={(e) => setPackagingType(e.target.value)}
+                autoFocus
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          {/* 🐞 6. HATA DÜZELTME: 'İptal' butonu düzeltildi ve tema eklendi */}
+          <Button
+            variant="secondary"
+            className="btn-fistik-secondary"
+            onClick={handleClose} // 👈 onClick eklendi
+            disabled={isAdding || isDeleting} // 👈 disabled eklendi
+          >
+            İptal
+          </Button>
+          <Button
+            variant="primary"
+            className="btn-fistik-primary" // 👈 Tema eklendi
+            onClick={handleprocessComplete}
+            disabled={isAdding || isDeleting} // 👈 disabled eklendi
+          >
+            {isAdding || isDeleting ? "Paketleniyor..." : "Paketle"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

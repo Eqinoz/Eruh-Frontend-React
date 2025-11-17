@@ -30,6 +30,7 @@ function LoginPage() {
         <span className="playwrite-hu-headertitle fistik-title mb-4 d-block text-center">
           Eruh Fıstık Pazarı
         </span>
+        <span className="playwrite-hu-headertitle fistik-title mb-4 d-block text-center"></span>
         <h4 className="text-center mb-4 text-muted">Yönetim Paneli Girişi</h4>
 
         {/* ⭐️ HATA DÜZELTME: Error objesinin tipini kontrol ediyoruz */}

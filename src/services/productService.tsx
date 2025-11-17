@@ -15,7 +15,7 @@ export const productService = createApi({
   tagTypes: ["Product"],
   endpoints: (builder) => ({
     getProducts: builder.query<ListResponseModel<ProductModel>, void>({
-      query: () => "/products/getall",
+      query: () => "/products",
       providesTags: ["Product"],
     }),
     addProduct: builder.mutation<void, ProductModel>({

@@ -1,5 +1,5 @@
 export interface CustomerModel {
-  id?: number;
+  id: number;
   customerName: string;
   taxNumber: string;
   relevantPerson: string;
