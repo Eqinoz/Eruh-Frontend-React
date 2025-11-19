@@ -1,4 +1,4 @@
-import { configureStore, createSlice } from "@reduxjs/toolkit";
+import { applyMiddleware, configureStore, createSlice } from "@reduxjs/toolkit";
 import { authService } from "../services/authService";
 import { productService } from "../services/productService";
 import { customerService } from "../services/customerService";
@@ -7,6 +7,7 @@ import { neighborhoodService } from "../services/neighborhoodService";
 import { processedProductService } from "../services/processedProductService";
 import { productToProcessedService } from "../services/productToProcessedService";
 import { toPackagedService } from "../services/toPackagedService";
+import { orderService } from "../services/orderService";
 
 const authSlice = createSlice({
   name: "auth",
@@ -40,6 +41,7 @@ export const store = configureStore({
     [processedProductService.reducerPath]: processedProductService.reducer,
     [productToProcessedService.reducerPath]: productToProcessedService.reducer,
     [toPackagedService.reducerPath]: toPackagedService.reducer,
+    [orderService.reducerPath]: orderService.reducer,
   },
   middleware: (getDefault) =>
     getDefault().concat(
@@ -50,7 +52,8 @@ export const store = configureStore({
       neighborhoodService.middleware,
       processedProductService.middleware,
       productToProcessedService.middleware,
-      toPackagedService.middleware
+      toPackagedService.middleware,
+      orderService.middleware
     ),
 });
 
