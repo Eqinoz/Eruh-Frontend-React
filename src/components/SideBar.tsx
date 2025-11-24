@@ -278,9 +278,9 @@ function SideBar() {
                 </Link>
               </li>
               <li>
-                <a href="#" className="nav-link text-white py-1">
+                <Link to="order-list" className="nav-link text-white py-1">
                   <i className="bi bi-list-ul me-2"></i> Sipariş Listesi
-                </a>
+                </Link>
               </li>
             </ul>
           )}

@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { ListResponseModel } from "../models/listResponseModel";
 import type { OrderModel } from "../models/orderModel";
+import type { OrderDtoModel } from "../models/orderDtoModel";
 
 const BASE_URL = "https://localhost:44381/api";
 
@@ -15,6 +16,11 @@ export const orderService = createApi({
       providesTags: ["Order"],
     }),
 
+    getDetailsOrder: builder.query<ListResponseModel<OrderDtoModel>, void>({
+      query: () => "/Orders/details",
+      providesTags: ["Order"],
+    }),
+
     addOrder: builder.mutation<any, OrderModel>({
       query: (order) => ({
         url: "/Orders",
@@ -25,4 +31,8 @@ export const orderService = createApi({
     }),
   }),
 });
-export const { useGetOrderQuery, useAddOrderMutation } = orderService;
+export const {
+  useGetOrderQuery,
+  useAddOrderMutation,
+  useGetDetailsOrderQuery,
+} = orderService;

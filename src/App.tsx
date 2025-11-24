@@ -16,6 +16,7 @@ import RawMaterialList from "./components/RawMaterialList";
 import ProcessedProductList from "./components/ProcessedProductList";
 import ProcessingList from "./components/ProcessingList";
 import ToBePackagedList from "./components/ToBePackagedList";
+import OrderDetailsList from "./components/OrderList";
 
 function App() {
   const dispatch = useDispatch();
@@ -54,6 +55,7 @@ function App() {
           <Route path="processedproduct" element={<ProcessedProductList />} />
           <Route path="productToProcessed" element={<ProcessingList />} />
           <Route path="to-be-packaged" element={<ToBePackagedList />} />
+          <Route path="order-list" element={<OrderDetailsList />}></Route>
 
           {/* Eşleşen başka bir yol yoksa anasayfaya yönlendir */}
           <Route path="*" element={<Navigate to="/" replace />} />

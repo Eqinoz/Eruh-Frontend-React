@@ -7,7 +7,6 @@ import { useGetProductsQuery } from "../services/productService";
 import { useAddOrderMutation } from "../services/orderService"; // 👈 Servisini açtım
 import { type CustomerModel } from "../models/customerModel";
 import { type ProductModel } from "../models/productModel";
-import { type OrderModel } from "../models/orderModel"; // Modelini import et
 import { formatNumber } from "../utilities/formatters";
 
 // Token'dan personel ID'si almak için (Varsa helper'ını kullan)
