@@ -10,6 +10,7 @@ import { Modal, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 import type { CustomerModel } from "../models/customerModel";
 import CustomerEditModal from "./modals/CustomerEditModal";
+import { Link } from "react-router-dom";
 
 function CustomerList() {
   const [showModal, setShowModal] = useState(false);
@@ -109,13 +110,14 @@ function CustomerList() {
 
                     {/* 🎨 11. İşlem butonları güncellendi ve eklendi */}
                     <td>
-                      <button
+                      <Link
+                        to={`/customer-detail/${customer.id}`}
                         className="btn btn-sm btn-outline-info me-2"
                         title="Müşteri Detayları / Cari"
-                        // onClick={() => navigate(`/customer-details/${customer.id}`)}
                       >
                         <i className="bi bi-eye-fill"></i>
-                      </button>
+                      </Link>
+
                       <button
                         className="btn btn-sm btn-outline-warning me-2"
                         title="Düzenle"

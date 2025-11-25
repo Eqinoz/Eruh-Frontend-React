@@ -19,6 +19,7 @@ import ToBePackagedList from "./components/ToBePackagedList";
 import OrderDetailsList from "./components/OrderDetailsList";
 import CompletedPayment from "./components/CompletedPayment";
 import PaymentList from "./components/PaymentList";
+import CustomerAccountPage from "./components/CustomerAccountPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -60,6 +61,7 @@ function App() {
           <Route path="order-list" element={<OrderDetailsList />} />
           <Route path="payment-list" element={<PaymentList />} />
           <Route path="completed-payment" element={<CompletedPayment />} />
+          <Route path="customer-detail/:id" element={<CustomerAccountPage />} />
 
           {/* Eşleşen başka bir yol yoksa anasayfaya yönlendir */}
           <Route path="*" element={<Navigate to="/" replace />} />

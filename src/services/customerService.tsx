@@ -1,6 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { CustomerModel } from "../models/customerModel";
 import type { ListResponseModel } from "../models/listResponseModel";
+import type { CustomerAccountTransaction } from "../models/customerAccountTransaction";
+import type { SingleResponseModel } from "../models/singleResponseModel";
 
 const BASE_URL = "https://localhost:44381/api";
 
@@ -13,6 +15,13 @@ export const customerService = createApi({
     // 🔹 Tüm müşterileri getir
     getCustomers: builder.query<ListResponseModel<CustomerModel>, void>({
       query: () => "/customers",
+      providesTags: ["Customer"],
+    }),
+    getCustomerAccount: builder.query<
+      SingleResponseModel<CustomerAccountTransaction>,
+      string
+    >({
+      query: (customerId) => `/customers/AccountTransaction/${customerId}`,
       providesTags: ["Customer"],
     }),
 
@@ -51,4 +60,5 @@ export const {
   useAddCustomerMutation,
   useDeleteCustomerMutation,
   useUpdateCustomerMutation,
+  useGetCustomerAccountQuery,
 } = customerService;
