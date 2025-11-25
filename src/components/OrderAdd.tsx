@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Select from "react-select";
 
 import { useGetCustomersQuery } from "../services/customerService";
 import { useGetProductsQuery } from "../services/productService";
-import { useAddOrderMutation } from "../services/orderService"; // 👈 Servisini açtım
+import { useAddOrderMutation } from "../services/orderService";
 import { type CustomerModel } from "../models/customerModel";
 import { type ProductModel } from "../models/productModel";
 import { formatNumber } from "../utilities/formatters";
-
-// Token'dan personel ID'si almak için (Varsa helper'ını kullan)
-// import { getEmployeeIdFromToken } from "../utilities/tokenHelper";
 
 import "./css/Forms.css";
 import "./css/RawMaterialList.css";
 import "./css/Modal.css";
 
 function OrderAddPage() {
-  // --- API HOOKS ---
   const { data: customersData, isLoading: isLoadingCustomers } =
     useGetCustomersQuery();
   const { data: productsData, isLoading: isLoadingProducts } =
@@ -26,29 +23,57 @@ function OrderAddPage() {
 
   const navigate = useNavigate();
 
-  // --- STATE'LER ---
-  // 💰 Döviz Kurları
+  //  React-Select için FISTIK TEMASI Ayarları
+  const fistikSelectStyles = {
+    control: (base: any, state: any) => ({
+      ...base,
+      borderColor: state.isFocused ? "#6B8E23" : "#ced4da", // Odaklanınca Fıstık Yeşili
+      boxShadow: state.isFocused
+        ? "0 0 0 0.25rem rgba(107, 142, 35, 0.25)"
+        : null,
+      "&:hover": { borderColor: "#6B8E23" },
+      borderRadius: "0.375rem",
+      padding: "2px",
+    }),
+    option: (base: any, state: any) => ({
+      ...base,
+      backgroundColor: state.isSelected
+        ? "#6B8E23"
+        : state.isFocused
+        ? "#F8F8DC"
+        : null, // Seçili Yeşil, Hover Krem
+      color: state.isSelected ? "white" : "#8B4513", // Yazı rengi
+      cursor: "pointer",
+      ":active": {
+        ...base[":active"],
+        backgroundColor: "#6B8E23",
+      },
+    }),
+    singleValue: (base: any) => ({
+      ...base,
+      color: "#2E8B57", // Seçilen değerin rengi (Koyu Yeşil)
+      fontWeight: "600",
+    }),
+  };
+
+  // State'ler
   const [rates, setRates] = useState({ USD: 0, EUR: 0 });
   const [isLoadingRates, setIsLoadingRates] = useState(true);
 
-  // 📝 Form Verileri (UI için düz tutuyoruz, gönderirken modele çevireceğiz)
   const [formData, setFormData] = useState({
     customerId: 0,
     productId: "",
     quantity: 1,
-    unitPrice: 0, // salePrice yerine modeldeki ismi kullandım
+    unitPrice: 0,
   });
 
-  // 📅 Vade Gün Sayısı
   const [dueDays, setDueDays] = useState<number>(0);
-  // 📅 Hesaplanan Vade Tarihi
   const [calculatedMaturityDate, setCalculatedMaturityDate] = useState<Date>(
     new Date()
   );
+  const [includeTax, setIncludeTax] = useState<boolean>(true);
 
   // --- USE EFFECTS ---
-
-  // 1. Canlı Döviz Çekme
   useEffect(() => {
     const fetchRates = async () => {
       try {
@@ -58,20 +83,17 @@ function OrderAddPage() {
         const data = await response.json();
         const dollarRate = data.rates.TRY;
         const euroRate = dollarRate / data.rates.EUR;
-
         setRates({ USD: dollarRate, EUR: euroRate });
         setIsLoadingRates(false);
       } catch (error) {
         console.error("Döviz çekilemedi:", error);
-        toast.warn("Döviz kurları alınamadı, varsayılanlar kullanılıyor.");
-        setRates({ USD: 34.5, EUR: 36.8 }); // Fallback
+        setRates({ USD: 34.5, EUR: 36.8 });
         setIsLoadingRates(false);
       }
     };
     fetchRates();
   }, []);
 
-  // 2. Vade Tarihi Hesaplama (Gün değişince)
   useEffect(() => {
     const today = new Date();
     const futureDate = new Date(today);
@@ -79,29 +101,60 @@ function OrderAddPage() {
     setCalculatedMaturityDate(futureDate);
   }, [dueDays]);
 
-  // --- HANDLERS ---
+  // --- VERİ HAZIRLIĞI (Select için options formatına çevirme) ---
+  const customerOptions =
+    customersData?.data.map((c: CustomerModel) => ({
+      value: c.id,
+      label: c.customerName,
+    })) || [];
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const productOptions =
+    productsData?.data.map((p: ProductModel) => ({
+      value: p.productId,
+      label: `${p.name} (Stok: ${formatNumber(p.amount)})`,
+      originalData: p, // Ürün detaylarına erişmek için saklıyoruz
+    })) || [];
+
+  // --- HANDLERS ---
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "productId" ? value : parseFloat(value) || 0,
+      [name]: parseFloat(value) || 0,
     }));
   };
 
-  const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedId = e.target.value;
-    // Ürün değişince fiyatı sıfırla veya API'den gelen fiyatı koy (Manuel istediğin için ellemiyorum)
-    setFormData((prev) => ({ ...prev, productId: selectedId }));
+  // 🎨 3. React-Select için Özel Handler'lar
+  const handleCustomerSelect = (selectedOption: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      customerId: selectedOption ? selectedOption.value : 0,
+    }));
   };
 
-  // 🚀 ASIL OLAY BURADA: Backend Modeline Dönüştürme
+  const handleProductSelect = (selectedOption: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      productId: selectedOption ? selectedOption.value : "",
+    }));
+  };
+
+  // --- HESAPLAMALAR ---
+  const subTotal = formData.unitPrice * formData.quantity;
+  const currentTaxRate = includeTax ? 1 : 0;
+  const taxAmount = subTotal * (currentTaxRate / 100);
+  const grandTotalTL = subTotal + taxAmount;
+
+  const grandTotalUSD = rates.USD > 0 ? grandTotalTL / rates.USD : 0;
+  const grandTotalEUR = rates.EUR > 0 ? grandTotalTL / rates.EUR : 0;
+
+  const todayStr = new Date().toLocaleDateString("tr-TR");
+  const dueDateStr = calculatedMaturityDate.toLocaleDateString("tr-TR");
+
+  // --- SUBMIT ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validasyon
     if (
       formData.customerId === 0 ||
       formData.productId === "" ||
@@ -112,35 +165,21 @@ function OrderAddPage() {
       return;
     }
 
-    // --- HESAPLAMALAR ---
-    const TAX_RATE = 1; // %1 KDV
-    const totalPrice = formData.unitPrice * formData.quantity; // KDV'siz Toplam
-    const taxAmount = totalPrice * (TAX_RATE / 100); // KDV Tutarı
-    const taxTotalPrice = totalPrice + taxAmount; // Genel Toplam
-
-    // --- PAYLOAD OLUŞTURMA (Senin Modelin) ---
-    // Typescript uyarısı almamak için 'any' kullandım ama normalde OrderModel interface'ini kullanmalısın
     const orderPayload: any = {
       customerId: formData.customerId,
-      employeeId: 1, // ⚠️ TODO: Burayı token'dan gelen ID ile değiştir! (getEmployeeIdFromToken())
-      orderDate: new Date(), // Şu an
+      employeeId: 1,
+      orderDate: new Date(),
       lines: [
         {
           productId: formData.productId,
           unitPrice: formData.unitPrice,
           amount: formData.quantity,
-
-          // Hesaplanan Değerler
-          taxRate: TAX_RATE,
+          taxRate: currentTaxRate,
           taxAmount: taxAmount,
-          totalPrice: totalPrice, // KDV'siz ara toplam
-          taxTotalPrice: taxTotalPrice, // KDV'li genel toplam
-
-          // Vade Bilgileri
+          totalPrice: subTotal,
+          taxTotalPrice: grandTotalTL,
           maturityDay: dueDays,
           maturityDate: calculatedMaturityDate,
-
-          // Kur Bilgileri (O anki kur sabitlenir)
           dolarRate: rates.USD,
           euroRate: rates.EUR,
         },
@@ -148,22 +187,16 @@ function OrderAddPage() {
     };
 
     try {
-      console.log("Backend'e Giden Data:", orderPayload); // Kontrol için
       await addOrder(orderPayload).unwrap();
-
-      toast.success("Sipariş ve detayları başarıyla kaydedildi!");
-
-      // Formu Sıfırla
+      toast.success("Sipariş başarıyla oluşturuldu!");
       setFormData({ customerId: 0, productId: "", quantity: 1, unitPrice: 0 });
       setDueDays(0);
+      setIncludeTax(true);
       navigate("/order-list");
     } catch (err: any) {
-      console.error(err);
       toast.error(err.data?.message || "Sipariş oluşturulamadı.");
     }
   };
-
-  // --- RENDER ---
 
   if (isLoadingCustomers || isLoadingProducts || isLoadingRates) {
     return (
@@ -171,9 +204,7 @@ function OrderAddPage() {
         className="d-flex justify-content-center align-items-center"
         style={{ height: "50vh" }}
       >
-        <div className="spinner-border text-success" role="status">
-          <span className="visually-hidden">Yükleniyor...</span>
-        </div>
+        <div className="spinner-border text-success" role="status"></div>
         <span className="ms-2 fw-bold text-success">
           Veriler Hazırlanıyor...
         </span>
@@ -181,23 +212,11 @@ function OrderAddPage() {
     );
   }
 
-  // UI Hesaplamaları (Görüntüleme için)
-  const uiSubTotal = formData.unitPrice * formData.quantity;
-  const uiKdv = uiSubTotal * 0.01;
-  const uiGrandTotal = uiSubTotal + uiKdv;
-
-  const grandTotalUSD = rates.USD > 0 ? uiGrandTotal / rates.USD : 0;
-  const grandTotalEUR = rates.EUR > 0 ? uiGrandTotal / rates.EUR : 0;
-
-  const todayStr = new Date().toLocaleDateString("tr-TR");
-  const dueDateStr = calculatedMaturityDate.toLocaleDateString("tr-TR");
-
   return (
     <div className="container-fluid px-4 mt-4">
       <div className="row justify-content-center">
         <div className="col-lg-10">
           <div className="card shadow-lg border-0">
-            {/* Header & Kurlar */}
             <div className="card-header card-header-fistik text-white d-flex justify-content-between align-items-center">
               <h5 className="mb-0">
                 <i className="bi bi-cart-plus-fill me-2"></i>Yeni Satış Ekranı
@@ -214,49 +233,42 @@ function OrderAddPage() {
 
             <div className="card-body p-4">
               <form onSubmit={handleSubmit}>
-                {/* --- ÜRÜN & MÜŞTERİ --- */}
                 <h6 className="text-muted mb-3 fw-bold border-bottom pb-2">
                   Sipariş Detayları
                 </h6>
                 <div className="row mb-4">
                   <div className="col-md-6">
                     <label className="form-label fw-bold">Müşteri Seç</label>
-                    <select
-                      name="customerId"
-                      className="form-select"
-                      value={formData.customerId}
-                      onChange={handleChange}
+                    {/* 🚀 4. React-Select Kullanımı */}
+                    <Select
+                      options={customerOptions}
+                      onChange={handleCustomerSelect}
+                      value={customerOptions.find(
+                        (c) => c.value === formData.customerId
+                      )}
+                      placeholder="Müşteri Ara veya Seç..."
+                      noOptionsMessage={() => "Müşteri bulunamadı"}
+                      styles={fistikSelectStyles} // Özel Tema
                       required
-                      autoFocus
-                    >
-                      <option value="0">-- Müşteri Seçiniz --</option>
-                      {customersData?.data.map((c: CustomerModel) => (
-                        <option key={c.id} value={c.id}>
-                          {c.customerName}
-                        </option>
-                      ))}
-                    </select>
+                    />
                   </div>
                   <div className="col-md-6">
                     <label className="form-label fw-bold">Ürün Seç</label>
-                    <select
-                      name="productId"
-                      className="form-select"
-                      value={formData.productId}
-                      onChange={handleProductChange}
+                    {/* 🚀 4. React-Select Kullanımı */}
+                    <Select
+                      options={productOptions}
+                      onChange={handleProductSelect}
+                      value={productOptions.find(
+                        (p) => p.value === formData.productId
+                      )}
+                      placeholder="Ürün Ara veya Seç..."
+                      noOptionsMessage={() => "Ürün bulunamadı"}
+                      styles={fistikSelectStyles} // Özel Tema
                       required
-                    >
-                      <option value="">-- Ürün Seçiniz --</option>
-                      {productsData?.data.map((p: ProductModel) => (
-                        <option key={p.productId} value={p.productId}>
-                          {p.name} (Stok: {formatNumber(p.amount)})
-                        </option>
-                      ))}
-                    </select>
+                    />
                   </div>
                 </div>
 
-                {/* --- FİYAT & MİKTAR & VADE --- */}
                 <div className="row mb-4">
                   <div className="col-md-3">
                     <label className="form-label fw-bold">
@@ -289,8 +301,6 @@ function OrderAddPage() {
                       required
                     />
                   </div>
-
-                  {/* VADE ALANI */}
                   <div className="col-md-2">
                     <label className="form-label fw-bold text-muted small">
                       İşlem Tarihi
@@ -328,60 +338,91 @@ function OrderAddPage() {
                   </div>
                 </div>
 
-                {/* --- ÖZET KARTLARI --- */}
+                {/* --- KARTLAR (AYNI KALDI) --- */}
                 <h6 className="text-muted mb-3 fw-bold border-bottom pb-2 mt-5">
-                  Ödeme Özeti
+                  Hesaplama Tercihi
                 </h6>
+
                 <div className="row mb-4 g-3">
-                  <div className="col-md-4">
-                    <div className="card bg-light border-success h-100">
-                      <div className="card-body text-center">
-                        <h6 className="card-title text-success">
-                          Toplam Tutar (TL)
-                        </h6>
-                        <p className="card-text fs-3 fw-bold text-dark mb-0">
-                          {formatNumber(uiGrandTotal)} ₺
-                        </p>
-                        <small className="text-muted">KDV Dahil</small>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-4">
-                    <div className="card bg-light border-primary h-100">
-                      <div className="card-body text-center">
-                        <h6 className="card-title text-primary">
-                          Dolar Karşılığı ($)
-                        </h6>
-                        <p className="card-text fs-3 fw-bold text-dark mb-0">
-                          {formatNumber(grandTotalUSD)} $
-                        </p>
-                        <small className="text-muted">
-                          Kur: {formatNumber(rates.USD)}
-                        </small>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-4">
-                    <div className="card bg-light border-warning h-100">
-                      <div className="card-body text-center">
+                  <div className="col-md-6">
+                    <div
+                      className={`card h-100 cursor-pointer transition-all ${
+                        includeTax
+                          ? "border-success bg-success bg-opacity-10 shadow"
+                          : "border-secondary bg-light opacity-50"
+                      }`}
+                      onClick={() => setIncludeTax(true)}
+                    >
+                      <div className="card-body text-center position-relative">
+                        {includeTax && (
+                          <i className="bi bi-check-circle-fill position-absolute top-0 end-0 m-2 text-success fs-4"></i>
+                        )}
                         <h6
-                          className="card-title text-warning"
-                          style={{ color: "#fd7e14" }}
+                          className={
+                            includeTax ? "text-success fw-bold" : "text-muted"
+                          }
                         >
-                          Euro Karşılığı (€)
+                          KDV DAHİL (%1)
                         </h6>
-                        <p className="card-text fs-3 fw-bold text-dark mb-0">
-                          {formatNumber(grandTotalEUR)} €
-                        </p>
-                        <small className="text-muted">
-                          Kur: {formatNumber(rates.EUR)}
-                        </small>
+                        <h3
+                          className={`mt-3 mb-0 ${
+                            includeTax ? "text-success fw-bold" : "text-muted"
+                          }`}
+                        >
+                          {formatNumber(subTotal + subTotal * 0.01)} ₺
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div
+                      className={`card h-100 cursor-pointer transition-all ${
+                        !includeTax
+                          ? "border-primary bg-primary bg-opacity-10 shadow"
+                          : "border-secondary bg-light opacity-50"
+                      }`}
+                      onClick={() => setIncludeTax(false)}
+                    >
+                      <div className="card-body text-center position-relative">
+                        {!includeTax && (
+                          <i className="bi bi-check-circle-fill position-absolute top-0 end-0 m-2 text-primary fs-4"></i>
+                        )}
+                        <h6
+                          className={
+                            !includeTax ? "text-primary fw-bold" : "text-muted"
+                          }
+                        >
+                          KDV HARİÇ (MUAF)
+                        </h6>
+                        <h3
+                          className={`mt-3 mb-0 ${
+                            !includeTax ? "text-primary fw-bold" : "text-muted"
+                          }`}
+                        >
+                          {formatNumber(subTotal)} ₺
+                        </h3>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* --- BUTONLAR --- */}
+                <div className="alert alert-light border text-center">
+                  <span className="text-muted me-2">SEÇİLEN GENEL TOPLAM:</span>
+                  <span className="fw-bold fs-5 me-4">
+                    {formatNumber(grandTotalTL)} ₺
+                  </span>
+                  <span className="text-muted">|</span>
+                  <span className="text-primary ms-4 fw-bold">
+                    {formatNumber(grandTotalUSD)} $
+                  </span>
+                  <span
+                    className="text-warning ms-4 fw-bold"
+                    style={{ color: "#fd7e14" }}
+                  >
+                    {formatNumber(grandTotalEUR)} €
+                  </span>
+                </div>
+
                 <div className="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                   <button
                     type="button"

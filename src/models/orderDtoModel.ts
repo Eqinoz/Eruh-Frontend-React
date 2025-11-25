@@ -3,6 +3,7 @@ export interface OrderDtoModel {
   customerName: string;
   employee: string;
   orderDate: string;
+  shippedDate: string;
   lines: {
     productName: string;
     unitPrice: number;
@@ -16,4 +17,5 @@ export interface OrderDtoModel {
     euroRate: number;
     taxTotalPrice: number;
   };
+  isPayment: boolean;
 }

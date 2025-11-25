@@ -285,6 +285,48 @@ function SideBar() {
             </ul>
           )}
         </li>
+        {/* --- Ödeme --- */}
+        <li className="nav-item">
+          <a
+            href="#"
+            className="nav-link text-white d-flex align-items-center justify-content-between"
+            onClick={(e) => {
+              e.preventDefault();
+              toggleMenu("odeme");
+            }}
+            role="button"
+          >
+            <div className="d-flex align-items-center">
+              <i className="bi bi-wallet me-2"></i>
+              {!collapsed && <span>Ödemeler</span>}
+            </div>
+            {!collapsed && (
+              <i
+                className={`bi bi-chevron-${
+                  openMenu === "ödeme" ? "up" : "down"
+                }`}
+              ></i>
+            )}
+          </a>
+          {!collapsed && openMenu === "odeme" && (
+            <ul className="submenu list-unstyled ps-4">
+              <li>
+                <Link to="/payment-list" className="nav-link text-white py-1">
+                  <i className="bi bi-list-ul me-2"></i> Ödemeler
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/completed-payment"
+                  className="nav-link text-white py-1"
+                >
+                  <i className="bi bi-check2-circle me-2"></i> Tamamlanmış
+                  Ödemeler
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li>
       </ul>
     </div>
   );

@@ -29,10 +29,28 @@ export const orderService = createApi({
       }),
       invalidatesTags: ["Order"],
     }),
+    completeOrder: builder.mutation<void, { id: number; shippedDate: string }>({
+      query: ({ id, shippedDate }) => ({
+        url: `/Orders/Complete?id=${id}`,
+        method: "POST",
+        body: { id, shippedDate },
+      }),
+      invalidatesTags: ["Order"],
+    }),
+    completePayment: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/Orders/PaymentCompletion?id=${id}`,
+        method: "POST",
+        body: id,
+      }),
+      invalidatesTags: ["Order"],
+    }),
   }),
 });
 export const {
   useGetOrderQuery,
   useAddOrderMutation,
   useGetDetailsOrderQuery,
+  useCompleteOrderMutation,
+  useCompletePaymentMutation,
 } = orderService;
