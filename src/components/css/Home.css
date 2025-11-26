@@ -1,0 +1,202 @@
+/* src/components/css/Home.css */
+
+:root {
+  --home-primary: #2e8b57; /* SeaGreen - Ana renk */
+  --home-secondary: #3cb371; /* MediumSeaGreen - İkincil */
+  --home-accent: #ffd700; /* Gold - Vurgu */
+  --home-bg: #f4f7f6; /* Açık gri/yeşilimsi arka plan */
+  --home-card-bg: #ffffff;
+  --home-text-dark: #2c3e50;
+  --home-text-muted: #7f8c8d;
+}
+
+.home-container {
+  background-color: var(--home-bg);
+  min-height: 100vh;
+  padding-bottom: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- Header Section --- */
+.home-header {
+  background: linear-gradient(135deg, var(--home-primary) 0%, var(--home-secondary) 100%);
+  color: white;
+  padding: 2rem 1.5rem;
+  border-radius: 0 0 20px 20px;
+  box-shadow: 0 4px 15px rgba(46, 139, 87, 0.2);
+  margin-bottom: 2rem;
+}
+
+.home-title {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.home-subtitle {
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+.home-date {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  backdrop-filter: blur(5px);
+  font-weight: 500;
+}
+
+/* --- KPI Cards --- */
+.kpi-card {
+  background: var(--home-card-bg);
+  border: none;
+  border-radius: 15px;
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.kpi-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--home-primary);
+}
+
+.kpi-card.warning::before { background: #f39c12; }
+.kpi-card.primary::before { background: #3498db; }
+.kpi-card.success::before { background: #27ae60; }
+
+.kpi-icon-wrapper {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.kpi-icon-wrapper.warning { background: rgba(243, 156, 18, 0.1); color: #f39c12; }
+.kpi-icon-wrapper.primary { background: rgba(52, 152, 219, 0.1); color: #3498db; }
+.kpi-icon-wrapper.success { background: rgba(39, 174, 96, 0.1); color: #27ae60; }
+
+.kpi-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--home-text-dark);
+  line-height: 1.2;
+}
+
+.kpi-label {
+  color: var(--home-text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --- Content Cards (Tables & Lists) --- */
+.content-card {
+  background: var(--home-card-bg);
+  border-radius: 15px;
+  border: none;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  height: 100%;
+}
+
+.content-card-header {
+  padding: 1.25rem 1.5rem;
+  background: white;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.content-card-title {
+  font-weight: 700;
+  color: var(--home-text-dark);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.table-custom th {
+  background-color: #f8f9fa;
+  color: var(--home-text-muted);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  border-bottom: 2px solid #e9ecef;
+  padding: 1rem;
+}
+
+.table-custom td {
+  padding: 1rem;
+  vertical-align: middle;
+  color: var(--home-text-dark);
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.table-custom tr:last-child td {
+  border-bottom: none;
+}
+
+.table-custom tr:hover td {
+  background-color: #fafafa;
+}
+
+/* --- List Items --- */
+.list-item-custom {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f1f1f1;
+  transition: background-color 0.2s;
+}
+
+.list-item-custom:hover {
+  background-color: #fafafa;
+}
+
+.list-item-custom:last-child {
+  border-bottom: none;
+}
+
+/* --- Progress Bar Custom --- */
+.progress-custom {
+  height: 8px;
+  border-radius: 4px;
+  background-color: #e9ecef;
+  overflow: hidden;
+}
+
+.progress-bar-custom {
+  border-radius: 4px;
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }

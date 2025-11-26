@@ -4,7 +4,7 @@ import type { Neighborhood } from "../../models/neigborhoodModel";
 import type { RawMaterial } from "../../models/rawMaterialModel";
 import {
   useLazyGetByIdRawMaterialQuery,
-  useUpdateRawMaterialMutation,
+  useUpdateNewRawMaterialMutation,
 } from "../../services/rawMaterialService";
 import { useDeleteNeighborhoodMutation } from "../../services/neighborhoodService";
 import { toast } from "react-toastify";
@@ -22,7 +22,7 @@ function NeighborhoodProcessModal({ show, handleClose, neighborhood }: Props) {
   const [amount, setAmount] = useState<number>(0);
 
   const [updateRawMaterial, { isLoading: isUpdating }] =
-    useUpdateRawMaterialMutation();
+    useUpdateNewRawMaterialMutation();
   const [getByIdRawMaterial, { isLoading: isGetting }] =
     useLazyGetByIdRawMaterialQuery();
   const [deleteNeighborhood, { isLoading: isDeleting }] =

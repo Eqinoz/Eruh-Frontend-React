@@ -30,14 +30,13 @@ function NeighborhoodSendModal({
     if (show) {
       setAmount(0);
       setDescription(""); // Açıklamayı da sıfırla
-      // setError(null); // Gerek kalmadı
     }
   }, [show]);
 
   const handleSubmit = async () => {
     const sendAmount = amount;
 
-    // --- Doğrulama (Validation) ---
+
     if (!product) return;
     if (isNaN(sendAmount) || sendAmount <= 0) {
       toast.error("Lütfen geçerli bir miktar girin.");

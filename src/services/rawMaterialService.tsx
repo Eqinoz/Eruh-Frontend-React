@@ -45,6 +45,21 @@ export const rawMaterialService = createApi({
       }),
       invalidatesTags: ["RawMaterial"],
     }),
+    updateNewRawMaterial: builder.mutation<void, RawMaterial>({
+      query: (rawMaterial) => ({
+        url: `/rawmaterial/NewRMUpdate`,
+        method: "PUT",
+        body: rawMaterial,
+      }),
+      invalidatesTags: ["RawMaterial"],
+    }),
+    deleteRawMaterial: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/rawmaterial/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["RawMaterial"],
+    }),
   }),
 });
 export const {
@@ -52,4 +67,6 @@ export const {
   useLazyGetByIdRawMaterialQuery,
   useAddRawMaterialMutation,
   useUpdateRawMaterialMutation,
+  useUpdateNewRawMaterialMutation,
+  useDeleteRawMaterialMutation,
 } = rawMaterialService;

@@ -22,6 +22,9 @@ function RawMaterialToProcessedModal({
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
+  const [stockSource, setStockSource] = useState<"siirt" | "neighborhood">(
+    "siirt"
+  );
   // 2. 'error' state'i ve 'Alert' artık GEREKLİ DEĞİL.
   // const [error, setError] = useState<string | null>(null);
 
@@ -35,6 +38,7 @@ function RawMaterialToProcessedModal({
       setName(product.name || "");
       setDescription(product.description || "");
       setAmount(0);
+      setStockSource("siirt");
       // setError(null); // Gerek kalmadı
     }
   }, [show, product]);
@@ -53,25 +57,34 @@ function RawMaterialToProcessedModal({
         (product as any).neighborhoodInComingAmount ??
         0;
 
-      if (amount > originalIncoming) {
+      const currentStock =
+        stockSource === "siirt" ? originalIncoming : originalNeighborhoodIncoming;
+
+      if (amount > currentStock) {
         toast.error(
-          `Siirt stoğunda yalnızca ${originalIncoming} adet var. Fazlasını gönderemezsiniz.`
+          `${
+            stockSource === "siirt" ? "Siirt" : "Mahalle"
+          } stoğunda yalnızca ${currentStock} adet var. Fazlasını gönderemezsiniz.`
         );
         return;
       }
-
-      // Not: Bu modal, sadece 'Siirt Stoğundan' ('incomingAmount') düşüyor.
-      // Mahalle stoğundan ('neighborhoodInComingAmount') düşmüyor.
-      // Eğer oradan da düşmesi gerekiyorsa, 'if' kontrolü ve
-      // 'updatedAny' objesi güncellenmeli.
 
       const updatedAny: any = {
         id: product.id,
         name: name,
         description: description,
-        incomingAmount: originalIncoming - amount,
-        neighborhoodInComingAmount: originalNeighborhoodIncoming,
-        neighborhoodIncomingAmount: originalNeighborhoodIncoming, // İki türlü de yolla
+        incomingAmount:
+          stockSource === "siirt"
+            ? originalIncoming - amount
+            : originalIncoming,
+        neighborhoodInComingAmount:
+          stockSource === "neighborhood"
+            ? originalNeighborhoodIncoming - amount
+            : originalNeighborhoodIncoming,
+        neighborhoodIncomingAmount:
+          stockSource === "neighborhood"
+            ? originalNeighborhoodIncoming - amount
+            : originalNeighborhoodIncoming,
       };
 
       await updateRawMaterial(updatedAny as RawMaterial).unwrap();
@@ -123,14 +136,55 @@ function RawMaterialToProcessedModal({
             />
           </Form.Group>
           <Form.Group className="mb-3">
+            <Form.Label>Stok Kaynağı</Form.Label>
+            <div className="d-flex gap-3">
+              <Form.Check
+                type="radio"
+                id="source-siirt"
+                label={`Siirt Stoğu (${formatNumber(
+                  product?.incomingAmount ?? 0
+                )})`}
+                name="stockSource"
+                checked={stockSource === "siirt"}
+                onChange={() => setStockSource("siirt")}
+              />
+              <Form.Check
+                type="radio"
+                id="source-neighborhood"
+                label={`Mahalle Stoğu (${formatNumber(
+                  (product as any)?.neighborhoodIncomingAmount ??
+                    (product as any)?.neighborhoodInComingAmount ??
+                    0
+                )})`}
+                name="stockSource"
+                checked={stockSource === "neighborhood"}
+                onChange={() => setStockSource("neighborhood")}
+              />
+            </div>
+          </Form.Group>
+
+          <Form.Group className="mb-3">
             <Form.Label>
-              Siirt Stoğundan Alınacak Miktar (Stok:{" "}
-              {formatNumber(product?.incomingAmount)})
+              İşlemeye Gönderilecek Miktar (Seçili Stok:{" "}
+              {formatNumber(
+                stockSource === "siirt"
+                  ? product?.incomingAmount ?? 0
+                  : (product as any)?.neighborhoodIncomingAmount ??
+                      (product as any)?.neighborhoodInComingAmount ??
+                      0
+              )}
+              )
             </Form.Label>
             <Form.Control
               type="number"
               min={0}
-              max={product?.incomingAmount}
+              max={
+                stockSource === "siirt"
+                  ? product?.incomingAmount ?? 0
+                  : (product as any)?.neighborhoodIncomingAmount ??
+                    (product as any)?.neighborhoodInComingAmount ??
+                    0
+              }
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
             />

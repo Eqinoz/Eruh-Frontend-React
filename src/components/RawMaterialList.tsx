@@ -1,15 +1,21 @@
 // RawMaterialList.tsx
 
-import { useGetRawMaterialsQuery } from "../services/rawMaterialService";
+import {
+  useGetRawMaterialsQuery,
+  useDeleteRawMaterialMutation,
+} from "../services/rawMaterialService";
 import NeighborhoodSendModal from "./modals/NeighborhoodModal";
 import RawMaterialToProcessedModal from "./modals/RawMaterialToProcessedModal";
 import { useState } from "react";
 import type { RawMaterial } from "../models/rawMaterialModel";
 import { formatNumber } from "../utilities/formatters";
 import "./css/RawMaterialList.css"; // 👈 Yeni CSS'i import ediyoruz
+import { toast } from "react-toastify";
 
 function RawMaterialList() {
   const { data: rawmaterials, isLoading, isError } = useGetRawMaterialsQuery();
+  const [deleteRawMaterial, { isLoading: isDeleting }] =
+    useDeleteRawMaterialMutation();
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<RawMaterial | null>(
     null
@@ -21,6 +27,18 @@ function RawMaterialList() {
   const getNeighborhoodStock = (item: RawMaterial): number => {
     const p = item as any; // Tipi 'any' olarak alıyoruz (backend hatası yüzünden)
     return p.neighborhoodIncomingAmount ?? p.neighborhoodInComingAmount ?? 0;
+  };
+
+  const handleDelete = async (id: number) => {
+    if (window.confirm("Bu ham maddeyi silmek istediğinize emin misiniz?")) {
+      try {
+        await deleteRawMaterial(id).unwrap();
+        toast.success("Ham madde başarıyla silindi.");
+      } catch (err) {
+        console.error("Delete error:", err);
+        toast.error("Silme işlemi başarısız oldu.");
+      }
+    }
   };
 
   if (isLoading) return <div className="text-center mt-5">Yükleniyor...</div>;
@@ -67,7 +85,6 @@ function RawMaterialList() {
                   // ⭐️ KOD TEMİZLİĞİ 3:
                   // Mahalle stoğunu DÖNGÜ BAŞINDA BİR KERE hesaplıyoruz.
                   const neighborhoodStock = getNeighborhoodStock(p);
-                  const incomingAmount = p.incomingAmount;
 
                   return (
                     <tr key={p.id}>
@@ -75,12 +92,10 @@ function RawMaterialList() {
                       <td>{p.name}</td>
                       <td>{formatNumber(p.incomingAmount)}</td>
                       <td>
-                        {/* ⭐️ Artık sadece temiz değişkeni kullanıyoruz */}
                         {formatNumber(neighborhoodStock)}
                       </td>
                       <td>{p.description}</td>
                       <td>
-                        {/* ⭐️ Koşulda da temiz değişkeni kullanıyoruz */}
                         {p.incomingAmount > 0 ? (
                           <button
                             className="btn btn-warning me-2 py-1"
@@ -108,6 +123,14 @@ function RawMaterialList() {
                         >
                           <i className="bi bi-gear-fill me-1"></i>
                           İşleme Gönder
+                        </button>
+                        <button
+                          className="btn btn-danger py-1 ms-2"
+                          onClick={() => handleDelete(p.id)}
+                          disabled={isDeleting}
+                        >
+                          <i className="bi bi-trash me-1"></i>
+                          Sil
                         </button>
                       </td>
                     </tr>

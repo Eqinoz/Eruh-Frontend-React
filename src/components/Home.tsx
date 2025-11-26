@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { Badge, Card, ProgressBar } from "react-bootstrap";
+import { Badge } from "react-bootstrap";
 import { useGetDetailsOrderQuery } from "../services/orderService";
 import { useGetProductsQuery } from "../services/productService";
 import { formatDate, formatNumber } from "../utilities/formatters";
 import type { OrderDtoModel } from "../models/orderDtoModel";
 import type { ProductModel } from "../models/productModel";
-import "./css/RawMaterialList.css"; // Tema stilleri
+import "./css/Home.css"; // Yeni modern stiller
 
 function Home() {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ function Home() {
 
   if (ordersLoading || productsLoading) {
     return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
+      <div className="d-flex justify-content-center align-items-center vh-100 home-container">
         <div className="spinner-border text-success" role="status"></div>
       </div>
     );
@@ -61,244 +61,266 @@ function Home() {
   );
 
   return (
-    <div className="container-fluid px-4 mt-4">
-      {/* --- BAŞLIK VE TARİH --- */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="fw-bold text-success">
-            <i className="bi bi-speedometer2 me-2"></i>Yönetim Paneli
-          </h2>
-          <p className="text-muted mb-0">
-            İşler yolunda mı reis? İşte özet durum.
-          </p>
-        </div>
-        <div className="text-end">
-          <h5 className="m-0">
-            {new Date().toLocaleDateString("tr-TR", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </h5>
-        </div>
-      </div>
-
-      {/* --- KPI KARTLARI (ÜST BİLGİ) --- */}
-      <div className="row g-3 mb-4">
-        {/* Kart 1: Bekleyen Sipariş */}
-        <div className="col-md-4">
-          <div className="card shadow-sm border-start border-4 border-warning h-100">
-            <div className="card-body d-flex justify-content-between align-items-center">
-              <div>
-                <h6 className="text-muted text-uppercase fw-bold mb-1">
-                  Hazırlanacak Sipariş
-                </h6>
-                <h2 className="mb-0 fw-bold text-dark">
-                  {pendingOrders.length}
-                </h2>
-              </div>
-              <div className="bg-warning bg-opacity-25 p-3 rounded-circle text-warning">
-                <i className="bi bi-box-seam fs-3"></i>
-              </div>
+    <div className="home-container">
+      {/* --- HEADER --- */}
+      <div className="home-header animate-fade-in">
+        <div className="container-fluid px-4">
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              <h2 className="home-title mb-1">
+                <i className="bi bi-grid-fill me-2"></i>Yönetim Paneli
+              </h2>
+              <p className="home-subtitle mb-0">
+                Hoş geldin! İşler yolunda, keyifler yerinde.
+              </p>
             </div>
-          </div>
-        </div>
-
-        {/* Kart 2: Toplam Stok */}
-        <div className="col-md-4">
-          <div className="card shadow-sm border-start border-4 border-primary h-100">
-            <div className="card-body d-flex justify-content-between align-items-center">
-              <div>
-                <h6 className="text-muted text-uppercase fw-bold mb-1">
-                  Toplam Ürün Çeşidi
-                </h6>
-                <h2 className="mb-0 fw-bold text-dark">{allProducts.length}</h2>
-              </div>
-              <div className="bg-primary bg-opacity-25 p-3 rounded-circle text-primary">
-                <i className="bi bi-tags-fill fs-3"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Kart 3: Toplam Alacak */}
-        <div className="col-md-4">
-          <div className="card shadow-sm border-start border-4 border-success h-100">
-            <div className="card-body d-flex justify-content-between align-items-center">
-              <div>
-                <h6 className="text-muted text-uppercase fw-bold mb-1">
-                  Toplam Bekleyen Tahsilat
-                </h6>
-                <h3 className="mb-0 fw-bold text-success">
-                  {formatNumber(totalReceivable)} ₺
-                </h3>
-              </div>
-              <div className="bg-success bg-opacity-25 p-3 rounded-circle text-success">
-                <i className="bi bi-wallet2 fs-3"></i>
+            <div className="text-end d-none d-md-block">
+              <div className="home-date">
+                <i className="bi bi-calendar-event me-2"></i>
+                {new Date().toLocaleDateString("tr-TR", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="row g-4">
-        {/* --- SOL KOLON: GÜNÜ YAKLAŞAN ÖDEMELER --- */}
-        <div className="col-lg-8">
-          <div className="card shadow-lg border-0 h-100">
-            <div className="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
-              <h5 className="m-0 fw-bold text-danger">
-                <i className="bi bi-alarm me-2"></i>Günü Yaklaşan / Geçen
-                Ödemeler
-              </h5>
-              <button
-                className="btn btn-sm btn-outline-secondary"
-                onClick={() => navigate("/payment-list")}
-              >
-                Tümünü Gör
-              </button>
+      <div className="container-fluid px-4">
+        {/* --- KPI KARTLARI --- */}
+        <div className="row g-4 mb-5">
+          {/* Kart 1: Bekleyen Sipariş */}
+          <div className="col-md-4 animate-fade-in delay-1">
+            <div className="kpi-card warning">
+              <div className="d-flex justify-content-between align-items-start h-100">
+                <div className="d-flex flex-column justify-content-between h-100">
+                  <div>
+                    <div className="kpi-icon-wrapper warning">
+                      <i className="bi bi-box-seam"></i>
+                    </div>
+                    <div className="kpi-value">{pendingOrders.length}</div>
+                    <div className="kpi-label">Hazırlanacak Sipariş</div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="card-body p-0">
-              <table className="table table-hover align-middle mb-0">
-                <thead className="bg-light text-muted small">
-                  <tr>
-                    <th>Müşteri</th>
-                    <th>Vade Tarihi</th>
-                    <th className="text-center">Kalan Gün</th>
-                    <th className="text-end">Tutar</th>
-                    <th className="text-center">İşlem</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {criticalPayments.length === 0 ? (
+          </div>
+
+          {/* Kart 2: Toplam Stok */}
+          <div className="col-md-4 animate-fade-in delay-2">
+            <div className="kpi-card primary">
+              <div className="d-flex justify-content-between align-items-start h-100">
+                <div className="d-flex flex-column justify-content-between h-100">
+                  <div>
+                    <div className="kpi-icon-wrapper primary">
+                      <i className="bi bi-tags-fill"></i>
+                    </div>
+                    <div className="kpi-value">{allProducts.length}</div>
+                    <div className="kpi-label">Toplam Ürün Çeşidi</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Kart 3: Toplam Alacak */}
+          <div className="col-md-4 animate-fade-in delay-3">
+            <div className="kpi-card success">
+              <div className="d-flex justify-content-between align-items-start h-100">
+                <div className="d-flex flex-column justify-content-between h-100">
+                  <div>
+                    <div className="kpi-icon-wrapper success">
+                      <i className="bi bi-wallet2"></i>
+                    </div>
+                    <div className="kpi-value">
+                      {formatNumber(totalReceivable)} ₺
+                    </div>
+                    <div className="kpi-label">Toplam Bekleyen Tahsilat</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="row g-4">
+          {/* --- SOL KOLON: GÜNÜ YAKLAŞAN ÖDEMELER --- */}
+          <div className="col-lg-8 animate-fade-in delay-2">
+            <div className="content-card h-100">
+              <div className="content-card-header">
+                <h5 className="content-card-title text-danger">
+                  <i className="bi bi-alarm"></i>
+                  Günü Yaklaşan Ödemeler
+                </h5>
+                <button
+                  className="btn btn-sm btn-outline-secondary rounded-pill px-3"
+                  onClick={() => navigate("/payment-list")}
+                >
+                  Tümünü Gör
+                </button>
+              </div>
+              <div className="table-responsive">
+                <table className="table table-custom mb-0">
+                  <thead>
                     <tr>
-                      <td colSpan={5} className="text-center py-4 text-muted">
-                        Acil tahsilat yok, keyfine bak! 😎
-                      </td>
+                      <th>Müşteri</th>
+                      <th>Vade Tarihi</th>
+                      <th className="text-center">Durum</th>
+                      <th className="text-end">Tutar</th>
+                      <th className="text-center">İşlem</th>
                     </tr>
-                  ) : (
-                    criticalPayments.map((order) => (
-                      <tr
-                        key={order.id}
-                        className={
-                          order.diffDays < 0 ? "bg-danger bg-opacity-10" : ""
-                        }
-                      >
-                        <td className="fw-bold">{order.customerName}</td>
-                        <td>{formatDate(order.lines.maturityDate)}</td>
-                        <td className="text-center">
-                          {order.diffDays < 0 ? (
-                            <Badge bg="danger">
-                              {-order.diffDays} Gün Geçti!
-                            </Badge>
-                          ) : order.diffDays <= 3 ? (
-                            <Badge bg="warning" text="dark">
-                              {order.diffDays} Gün Kaldı
-                            </Badge>
-                          ) : (
-                            <Badge bg="info">{order.diffDays} Gün</Badge>
-                          )}
-                        </td>
-                        <td className="text-end fw-bold">
-                          {formatNumber(order.lines.taxTotalPrice)} ₺
-                        </td>
-                        <td className="text-center">
-                          <button
-                            className="btn btn-sm btn-light border"
-                            onClick={() => navigate("/payment-list")}
-                          >
-                            <i className="bi bi-chevron-right"></i>
-                          </button>
+                  </thead>
+                  <tbody>
+                    {criticalPayments.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="text-center py-5 text-muted">
+                          <i className="bi bi-emoji-sunglasses fs-1 d-block mb-2"></i>
+                          Acil tahsilat yok, keyfine bak!
                         </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+                    ) : (
+                      criticalPayments.map((order) => (
+                        <tr key={order.id}>
+                          <td className="fw-semibold">{order.customerName}</td>
+                          <td>{formatDate(order.lines.maturityDate)}</td>
+                          <td className="text-center">
+                            {order.diffDays < 0 ? (
+                              <Badge bg="danger" className="px-3 py-2 rounded-pill">
+                                {-order.diffDays} Gün Geçti
+                              </Badge>
+                            ) : order.diffDays <= 3 ? (
+                              <Badge
+                                bg="warning"
+                                text="dark"
+                                className="px-3 py-2 rounded-pill"
+                              >
+                                {order.diffDays} Gün Kaldı
+                              </Badge>
+                            ) : (
+                              <Badge bg="info" className="px-3 py-2 rounded-pill">
+                                {order.diffDays} Gün
+                              </Badge>
+                            )}
+                          </td>
+                          <td className="text-end fw-bold text-dark">
+                            {formatNumber(order.lines.taxTotalPrice)} ₺
+                          </td>
+                          <td className="text-center">
+                            <button
+                              className="btn btn-sm btn-light rounded-circle border"
+                              onClick={() => navigate("/payment-list")}
+                              title="Detay"
+                            >
+                              <i className="bi bi-chevron-right"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* --- SAĞ KOLON: STOK VE BEKLEYENLER --- */}
-        <div className="col-lg-4">
-          {/* 1. Bekleyen Siparişler Özeti */}
-          <div className="card shadow-sm border-0 mb-4">
-            <div className="card-header bg-warning text-dark fw-bold">
-              <i className="bi bi-clock-history me-2"></i>Hazırlanacak
-              Siparişler
-            </div>
-            <ul className="list-group list-group-flush">
-              {pendingOrders.slice(0, 4).map((order) => (
-                <li
-                  key={order.id}
-                  className="list-group-item d-flex justify-content-between align-items-center"
-                >
-                  <div>
-                    <span className="fw-bold d-block">
-                      {order.customerName}
-                    </span>
-                    <small className="text-muted">
-                      {formatDate(order.orderDate)}
-                    </small>
-                  </div>
-                  <Badge bg="secondary" pill>
-                    #{order.id}
-                  </Badge>
-                </li>
-              ))}
-              {pendingOrders.length === 0 && (
-                <li className="list-group-item text-center text-muted py-3">
-                  Bekleyen sipariş yok.
-                </li>
-              )}
-              {pendingOrders.length > 4 && (
-                <li className="list-group-item text-center">
-                  <small>
-                    <a
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        navigate("/order-list");
-                      }}
-                      className="text-decoration-none"
-                    >
-                      Tümünü Gör ({pendingOrders.length})
-                    </a>
-                  </small>
-                </li>
-              )}
-            </ul>
-          </div>
-
-          {/* 2. Stok Durumu Özeti */}
-          <div className="card shadow-sm border-0">
-            <div className="card-header bg-primary text-white fw-bold">
-              <i className="bi bi-box2-heart me-2"></i>Satışa Hazır Ürünler
-            </div>
-            <div className="card-body">
-              {topProducts.map((product) => (
-                <div key={product.productId} className="mb-3">
-                  <div className="d-flex justify-content-between mb-1">
-                    <span className="fw-semibold small">{product.name}</span>
-                    <span className="small fw-bold">
-                      {formatNumber(product.amount)} Kg
-                    </span>
-                  </div>
-                  {/* Stok doluluk barı (Süs amaçlı, max 10.000 varsaydım) */}
-                  <ProgressBar
-                    now={(product.amount / 10000) * 100}
-                    variant={product.amount < 500 ? "danger" : "success"}
-                    style={{ height: "6px" }}
-                  />
+          {/* --- SAĞ KOLON: STOK VE BEKLEYENLER --- */}
+          <div className="col-lg-4 animate-fade-in delay-3">
+            <div className="d-flex flex-column gap-4">
+              {/* 1. Bekleyen Siparişler Özeti */}
+              <div className="content-card">
+                <div className="content-card-header">
+                  <h5 className="content-card-title text-warning">
+                    <i className="bi bi-clock-history"></i>
+                    Hazırlanacaklar
+                  </h5>
                 </div>
-              ))}
-              <div className="text-center mt-3">
-                <button
-                  className="btn btn-sm btn-outline-primary w-100"
-                  onClick={() => navigate("/product-list")}
-                >
-                  Stok Listesine Git
-                </button>
+                <div className="list-group list-group-flush">
+                  {pendingOrders.slice(0, 4).map((order) => (
+                    <div
+                      key={order.id}
+                      className="list-item-custom d-flex justify-content-between align-items-center"
+                    >
+                      <div>
+                        <span className="fw-bold d-block text-dark">
+                          {order.customerName}
+                        </span>
+                        <small className="text-muted">
+                          {formatDate(order.orderDate)}
+                        </small>
+                      </div>
+                      <Badge bg="light" text="dark" className="border">
+                        #{order.id}
+                      </Badge>
+                    </div>
+                  ))}
+                  {pendingOrders.length === 0 && (
+                    <div className="p-4 text-center text-muted">
+                      Bekleyen sipariş yok.
+                    </div>
+                  )}
+                  {pendingOrders.length > 4 && (
+                    <div className="p-3 text-center border-top">
+                      <a
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate("/order-list");
+                        }}
+                        className="text-decoration-none fw-semibold small"
+                      >
+                        Tümünü Gör ({pendingOrders.length})
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* 2. Stok Durumu Özeti */}
+              <div className="content-card">
+                <div className="content-card-header">
+                  <h5 className="content-card-title text-primary">
+                    <i className="bi bi-box2-heart"></i>
+                    Satışa Hazır Ürünler
+                  </h5>
+                </div>
+                <div className="p-3">
+                  {topProducts.map((product) => (
+                    <div key={product.productId} className="mb-3">
+                      <div className="d-flex justify-content-between mb-1">
+                        <span className="fw-semibold small text-dark">
+                          {product.name}
+                        </span>
+                        <span className="small fw-bold text-muted">
+                          {formatNumber(product.amount)} Kg
+                        </span>
+                      </div>
+                      <div className="progress-custom">
+                        <div
+                          className={`progress-bar-custom h-100 ${
+                            product.amount < 500 ? "bg-danger" : "bg-success"
+                          }`}
+                          style={{
+                            width: `${Math.min(
+                              (product.amount / 10000) * 100,
+                              100
+                            )}%`,
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="mt-4">
+                    <button
+                      className="btn btn-sm btn-outline-primary w-100 rounded-pill"
+                      onClick={() => navigate("/product-list")}
+                    >
+                      Stok Listesine Git
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
