@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { Badge } from "react-bootstrap";
 import { useGetDetailsOrderQuery } from "../services/orderService";
-import { useGetProductsQuery } from "../services/productService";
+import { useGetProductsQuery, useGetInventoryStatusQuery } from "../services/productService";
 import { formatDate, formatNumber } from "../utilities/formatters";
 import type { OrderDtoModel } from "../models/orderDtoModel";
 import type { ProductModel } from "../models/productModel";
-import "./css/Home.css"; // Yeni modern stiller
+import "./css/Home.css";
 
 function Home() {
   const navigate = useNavigate();
@@ -15,8 +15,10 @@ function Home() {
     useGetDetailsOrderQuery();
   const { data: productsResponse, isLoading: productsLoading } =
     useGetProductsQuery();
+  const { data: inventoryResponse, isLoading: inventoryLoading } =
+    useGetInventoryStatusQuery();
 
-  if (ordersLoading || productsLoading) {
+  if (ordersLoading || productsLoading || inventoryLoading) {
     return (
       <div className="d-flex justify-content-center align-items-center vh-100 home-container">
         <div className="spinner-border text-success" role="status"></div>
@@ -26,6 +28,7 @@ function Home() {
 
   const allOrders: OrderDtoModel[] = ordersResponse?.data || [];
   const allProducts: ProductModel[] = productsResponse?.data || [];
+  const inventoryStatus = inventoryResponse?.data;
 
   // --- ANALİZ VE FİLTRELEME ---
 
@@ -46,8 +49,8 @@ function Home() {
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       return { ...order, diffDays };
     })
-    .sort((a, b) => a.diffDays - b.diffDays) // Gün sayısına göre sırala
-    .slice(0, 5); // Sadece ilk 5 tanesini göster
+    .sort((a, b) => a.diffDays - b.diffDays)
+    .slice(0, 5);
 
   // 3. Stok Özeti (İlk 5 ürün)
   const topProducts = [...allProducts]
@@ -62,39 +65,31 @@ function Home() {
 
   return (
     <div className="home-container">
-      {/* --- HEADER --- */}
-      <div className="home-header animate-fade-in">
-        <div className="container-fluid px-4">
-          <div className="d-flex justify-content-between align-items-center">
-            <div>
-              <h2 className="home-title mb-1">
-                <i className="bi bi-grid-fill me-2"></i>Yönetim Paneli
-              </h2>
-              <p className="home-subtitle mb-0">
-                Hoş geldin! İşler yolunda, keyifler yerinde.
-              </p>
-            </div>
-            <div className="text-end d-none d-md-block">
-              <div className="home-date">
-                <i className="bi bi-calendar-event me-2"></i>
-                {new Date().toLocaleDateString("tr-TR", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="container-fluid px-4">
         {/* --- KPI KARTLARI --- */}
         <div className="row g-4 mb-5">
-          {/* Kart 1: Bekleyen Sipariş */}
-          <div className="col-md-4 animate-fade-in delay-1">
-            <div className="kpi-card warning">
+          {/* Kart 1: Toplam Stok */}
+          <div className="col-lg-3 col-md-6 animate-fade-in delay-1">
+            <div className="kpi-card primary" onClick={() => navigate("/stock-list")} style={{ cursor: "pointer" }}>
+              <div className="d-flex justify-content-between align-items-start h-100">
+                <div className="d-flex flex-column justify-content-between h-100">
+                  <div>
+                    <div className="kpi-icon-wrapper primary">
+                      <i className="bi bi-box-fill"></i>
+                    </div>
+                    <div className="kpi-value">
+                      {inventoryStatus ? formatNumber(inventoryStatus.grandTotalStock) : "0"} kg
+                    </div>
+                    <div className="kpi-label">Toplam Stok</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Kart 2: Bekleyen Sipariş */}
+          <div className="col-lg-3 col-md-6 animate-fade-in delay-2">
+            <div className="kpi-card warning" onClick={() => navigate("/order-list")} style={{ cursor: "pointer" }}>
               <div className="d-flex justify-content-between align-items-start h-100">
                 <div className="d-flex flex-column justify-content-between h-100">
                   <div>
@@ -109,26 +104,28 @@ function Home() {
             </div>
           </div>
 
-          {/* Kart 2: Toplam Stok */}
-          <div className="col-md-4 animate-fade-in delay-2">
-            <div className="kpi-card primary">
+          {/* Kart 3: Hazır Ürünler */}
+          <div className="col-lg-3 col-md-6 animate-fade-in delay-3">
+            <div className="kpi-card info" onClick={() => navigate("/product-list")} style={{ cursor: "pointer" }}>
               <div className="d-flex justify-content-between align-items-start h-100">
                 <div className="d-flex flex-column justify-content-between h-100">
                   <div>
-                    <div className="kpi-icon-wrapper primary">
-                      <i className="bi bi-tags-fill"></i>
+                    <div className="kpi-icon-wrapper info">
+                      <i className="bi bi-bag-check-fill"></i>
                     </div>
-                    <div className="kpi-value">{allProducts.length}</div>
-                    <div className="kpi-label">Toplam Ürün Çeşidi</div>
+                    <div className="kpi-value">
+                      {inventoryStatus ? formatNumber(inventoryStatus.totalProductStock) : "0"} kg
+                    </div>
+                    <div className="kpi-label">Satışa Hazır Ürün</div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Kart 3: Toplam Alacak */}
-          <div className="col-md-4 animate-fade-in delay-3">
-            <div className="kpi-card success">
+          {/* Kart 4: Toplam Alacak */}
+          <div className="col-lg-3 col-md-6 animate-fade-in delay-4">
+            <div className="kpi-card success" onClick={() => navigate("/payment-list")} style={{ cursor: "pointer" }}>
               <div className="d-flex justify-content-between align-items-start h-100">
                 <div className="d-flex flex-column justify-content-between h-100">
                   <div>
@@ -138,7 +135,7 @@ function Home() {
                     <div className="kpi-value">
                       {formatNumber(totalReceivable)} ₺
                     </div>
-                    <div className="kpi-label">Toplam Bekleyen Tahsilat</div>
+                    <div className="kpi-label">Bekleyen Tahsilat</div>
                   </div>
                 </div>
               </div>

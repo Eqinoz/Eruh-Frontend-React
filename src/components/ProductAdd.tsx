@@ -12,6 +12,7 @@ import "./css/Modal.css";
 function ProductAddPage() {
   // 🐞 4. Eksik olan 'description' alanını state'e ekledim
   const initialState: ProductModel = {
+    id: 0,
     productId: "",
     name: "",
     amount: 0,

@@ -279,7 +279,6 @@ function OrderAddPage() {
                         type="number"
                         className="form-control"
                         name="unitPrice"
-                        value={formData.unitPrice}
                         onChange={handleChange}
                         placeholder="0.00"
                         min="0.01"

@@ -1,4 +1,4 @@
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Form } from "react-bootstrap";
 import { useGetProductToProcessedsQuery } from "../services/productToProcessedService";
 import { formatDate, formatNumber } from "../utilities/formatters";
 import "./css/RawMaterialList.css"; // Ana stil
@@ -22,14 +22,17 @@ export default function ProcessingList() {
   const [selectedItem, setSelectedItem] = useState<ProductToProcessed | null>(
     null
   );
+  const [newProductName, setNewProductName] = useState("");
 
   const handleCloseConfirmModal = () => {
     setShowConfirmModal(false);
     setSelectedItem(null);
+    setNewProductName("");
   };
 
   const handleShowConfirmModal = (item: ProductToProcessed) => {
     setSelectedItem(item);
+    setNewProductName(item.productName); // Mevcut ürün adını input'a yükle
     setShowConfirmModal(true);
   };
 
@@ -42,7 +45,7 @@ export default function ProcessingList() {
       // "ProcessedProduct" modeli "inComingFrom" alanı bekliyordu
       const newProcessedProduct = {
         id: 0, // ID'yi backend verecek
-        productName: selectedItem.productName,
+        productName: newProductName.trim() || selectedItem.productName, // Yeni isim veya eski isim
         description: selectedItem.description,
         amount: selectedItem.amount,
         inComingFrom: "İşlemden Tamamlandı", // Kaynak bilgisi
@@ -55,7 +58,7 @@ export default function ProcessingList() {
 
       // Adım 3: Başarı bildirimi ve modalı kapat
       toast.success(
-        `"${selectedItem.productName}" başarıyla işlendi ve stoğa eklendi!`
+        `"${newProductName.trim() || selectedItem.productName}" başarıyla işlendi ve stoğa eklendi!`
       );
       handleCloseConfirmModal();
     } catch (err: any) {
@@ -145,11 +148,19 @@ export default function ProcessingList() {
           <Modal.Title>İşlemi Onayla</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Emin misiniz?{" "}
-          <strong className="modal-product-name">
-            {selectedItem?.productName}
-          </strong>{" "}
-          adlı ürün, işlemden çıkarılıp "İşlenmiş Ürünler" stoğuna eklenecek.
+          <p>
+            Bu ürün işlemden çıkarılıp "İşlenmiş Ürünler" stoğuna eklenecek.
+          </p>
+          <Form.Group className="mb-3">
+            <Form.Label>Ürün İsmi</Form.Label>
+            <Form.Control
+              type="text"
+              value={newProductName}
+              onChange={(e) => setNewProductName(e.target.value)}
+              placeholder="Ürün ismini girin"
+              autoFocus
+            />
+          </Form.Group>
         </Modal.Body>
         <Modal.Footer>
           <Button

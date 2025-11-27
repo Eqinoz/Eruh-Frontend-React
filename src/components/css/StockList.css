@@ -1,0 +1,131 @@
+/* src/components/css/StockList.css */
+
+/* Fıstık Pazarı Tema Renkleri (Aynı renk paleti) */
+:root {
+  --fistik-green: #6b8e23;
+  --fistik-dark-green: #2e8b57;
+  --fistik-gold: #c89f3a;
+  --fistik-cream: #f8f8dc;
+  --fistik-brown: #8b4513;
+}
+
+/* Genel Toplam Kartı Başlığı */
+.stock-grand-total-header {
+  background: linear-gradient(135deg, var(--fistik-dark-green) 0%, var(--fistik-green) 100%);
+  border-bottom: 3px solid var(--fistik-gold);
+}
+
+/* Kategori Kartları - Her biri için özel renkler */
+.stock-category-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+}
+
+.stock-category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Ham Madde - Kahverengi */
+.category-raw-material {
+  background-color: var(--fistik-brown);
+  border-bottom: 3px solid #654321;
+}
+
+/* İşlemde Olanlar - Turuncu */
+.category-processing {
+  background-color: #d97706;
+  border-bottom: 3px solid #b45309;
+}
+
+/* İşlenmiş Ürünler - Mavi */
+.category-processed {
+  background-color: #2563eb;
+  border-bottom: 3px solid #1e40af;
+}
+
+/* Mahalle Ürünleri - Yeşil */
+.category-neighborhood {
+  background-color: var(--fistik-green);
+  border-bottom: 3px solid var(--fistik-dark-green);
+}
+
+/* Paketlenecekler - Mor */
+.category-packaging {
+  background-color: #7c3aed;
+  border-bottom: 3px solid #5b21b6;
+}
+
+/* Hazır Ürünler - Turkuaz */
+.category-ready {
+  background-color: #0d9488;
+  border-bottom: 3px solid #0f766e;
+}
+
+/* Kategori Sayı Badge'leri */
+.category-badge {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  color: #1f2937 !important;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+}
+
+/* Stok Miktarı Metinleri */
+.stock-amount-raw { color: var(--fistik-brown); }
+.stock-amount-processing { color: #d97706; }
+.stock-amount-processed { color: #2563eb; }
+.stock-amount-neighborhood { color: var(--fistik-green); }
+.stock-amount-packaging { color: #7c3aed; }
+.stock-amount-ready { color: #0d9488; }
+
+/* Progress Bar Renkleri */
+.progress-bar-raw { background-color: var(--fistik-brown) !important; }
+.progress-bar-processing { background-color: #d97706 !important; }
+.progress-bar-processed { background-color: #2563eb !important; }
+.progress-bar-neighborhood { background-color: var(--fistik-green) !important; }
+.progress-bar-packaging { background-color: #7c3aed !important; }
+.progress-bar-ready { background-color: #0d9488 !important; }
+
+/* İkon Renkleri */
+.icon-raw { color: var(--fistik-brown); }
+.icon-processing { color: #d97706; }
+.icon-processed { color: #2563eb; }
+.icon-neighborhood { color: var(--fistik-green); }
+.icon-packaging { color: #7c3aed; }
+.icon-ready { color: #0d9488; }
+
+/* Tablo Hover Efekti */
+.table-hover tbody tr:hover {
+  background-color: var(--fistik-cream) !important;
+  cursor: default;
+}
+
+/* Tıklanabilir Satırlar */
+.clickable-row {
+  cursor: pointer !important;
+  transition: all 0.2s ease;
+}
+
+.clickable-row:hover {
+  background-color: var(--fistik-cream) !important;
+  transform: scale(1.01);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Toplam Satırı */
+.total-row-grand th {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--fistik-dark-green);
+  background-color: #f3f4f6;
+}
+
+/* Genel Toplam Stok Sayısı */
+.grand-total-amount {
+  background: linear-gradient(135deg, var(--fistik-dark-green), var(--fistik-green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+}

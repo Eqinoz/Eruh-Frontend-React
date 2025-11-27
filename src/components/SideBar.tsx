@@ -77,7 +77,7 @@ function SideBar() {
             <ul className="submenu list-unstyled ps-4">
               {/* 🐞 Hata Düzeltme: Geçersiz 'Link > li' yapısını 'li > Link' olarak düzelttim */}
               <li>
-                <Link to="/stok-list" className="nav-link text-white py-1">
+                <Link to="/stock-list" className="nav-link text-white py-1">
                   <i className="bi bi-eye me-2"></i> Hazır Stok Görüntüle
                 </Link>
               </li>
@@ -162,6 +162,60 @@ function SideBar() {
                   className="nav-link text-white py-1"
                 >
                   <i className="bi bi-list-ul me-2"></i> Mahalledeki Ürünler
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li> 
+
+        {/* --- Fasoncu Ve Komisyoncu --- */}
+        <li className="nav-item">
+          <a
+            href="#"
+            className="nav-link text-white d-flex align-items-center justify-content-between"
+            onClick={(e) => {
+              e.preventDefault();
+              toggleMenu("contractor");
+            }}
+            role="button"
+          >
+            <div className="d-flex align-items-center">
+              <i className="bi bi-briefcase-fill me-2"></i>
+              {!collapsed && <span>Fasoncu Ve Komisyoncu</span>}
+            </div>
+            {!collapsed && (
+              <i
+                className={`bi bi-chevron-${
+                  openMenu === "contractor" ? "up" : "down"
+                }`}
+              ></i>
+            )}
+          </a>
+          {!collapsed && openMenu === "contractor" && (
+            <ul className="submenu list-unstyled ps-4">
+              <li>
+                <Link
+                  to="/contractor-add"
+                  className="nav-link text-white py-1"
+                >
+                  <i className="bi bi-plus-circle me-2"></i> Fasoncu Ve Komisyoncu Ekle
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/contractor-list"
+                  className="nav-link text-white py-1"
+                >
+                  <i className="bi bi-list-ul me-2"></i> Fasoncu Ve Komisyoncu Listesi
+                </Link>
+              </li>
+              <hr className="submenu-divider" />
+              <li>
+                <Link
+                  to="/contractor-product-list"
+                  className="nav-link text-white py-1"
+                >
+                  <i className="bi bi-list-ul me-2"></i> Fasoncu Ve Komisyoncudaki Ürünler
                 </Link>
               </li>
             </ul>

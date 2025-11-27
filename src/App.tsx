@@ -20,6 +20,9 @@ import OrderDetailsList from "./components/OrderDetailsList";
 import CompletedPayment from "./components/CompletedPayment";
 import PaymentList from "./components/PaymentList";
 import CustomerAccountPage from "./components/CustomerAccountPage";
+import StockList from "./components/StockList";
+import ContractorAdd from "./components/ContractorAdd";
+import ContractorList from "./components/ContractorList";
 
 function App() {
   const dispatch = useDispatch();
@@ -62,6 +65,9 @@ function App() {
           <Route path="payment-list" element={<PaymentList />} />
           <Route path="completed-payment" element={<CompletedPayment />} />
           <Route path="customer-detail/:id" element={<CustomerAccountPage />} />
+          <Route path="stock-list" element={<StockList />} />
+          <Route path="contractor-list" element={<ContractorList />} />
+          <Route path="contractor-add" element={<ContractorAdd />} />
 
           {/* Eşleşen başka bir yol yoksa anasayfaya yönlendir */}
           <Route path="*" element={<Navigate to="/" replace />} />

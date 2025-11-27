@@ -17,15 +17,7 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* --- Header Section --- */
-.home-header {
-  background: linear-gradient(135deg, var(--home-primary) 0%, var(--home-secondary) 100%);
-  color: white;
-  padding: 2rem 1.5rem;
-  border-radius: 0 0 20px 20px;
-  box-shadow: 0 4px 15px rgba(46, 139, 87, 0.2);
-  margin-bottom: 2rem;
-}
+
 
 .home-title {
   font-weight: 700;
@@ -76,6 +68,7 @@
 .kpi-card.warning::before { background: #f39c12; }
 .kpi-card.primary::before { background: #3498db; }
 .kpi-card.success::before { background: #27ae60; }
+.kpi-card.info::before { background: #17a2b8; }
 
 .kpi-icon-wrapper {
   width: 50px;
@@ -91,6 +84,7 @@
 .kpi-icon-wrapper.warning { background: rgba(243, 156, 18, 0.1); color: #f39c12; }
 .kpi-icon-wrapper.primary { background: rgba(52, 152, 219, 0.1); color: #3498db; }
 .kpi-icon-wrapper.success { background: rgba(39, 174, 96, 0.1); color: #27ae60; }
+.kpi-icon-wrapper.info { background: rgba(23, 162, 184, 0.1); color: #17a2b8; }
 
 .kpi-value {
   font-size: 2rem;
@@ -200,3 +194,4 @@
 .delay-1 { animation-delay: 0.1s; }
 .delay-2 { animation-delay: 0.2s; }
 .delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }

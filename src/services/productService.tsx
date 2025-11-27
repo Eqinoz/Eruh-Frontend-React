@@ -1,6 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { ProductModel } from "../models/productModel";
 import type { ListResponseModel } from "../models/listResponseModel";
+import type { InventoryStatusModel } from "../models/inventoryStatusModel";
+import type { SingleResponseModel } from "../models/singleResponseModel";
 
 export const productService = createApi({
   reducerPath: "productService",
@@ -26,7 +28,11 @@ export const productService = createApi({
       }),
       invalidatesTags: ["Product"],
     }),
+    getInventoryStatus: builder.query<SingleResponseModel<InventoryStatusModel>, void>({
+      query: () => "/products/InventoryStatus",
+      providesTags: ["Product"],
+    }),
   }),
 });
 
-export const { useGetProductsQuery, useAddProductMutation } = productService;
+export const { useGetProductsQuery, useAddProductMutation, useGetInventoryStatusQuery } = productService;

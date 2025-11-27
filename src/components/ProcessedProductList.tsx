@@ -12,23 +12,55 @@ import type { ToPackagedItem } from "../models/toPackagedModal";
 import { toast } from "react-toastify";
 import "./css/Modal.css"; // Modal stillerini de import ettim
 
-// 🎨 1. Kısaltma fonksiyonunu component'in dışına (veya bir utils dosyasına) ekle
+// 🎨 1. Kod çözme fonksiyonu - Kısaltmayı tam açıklamaya çevirir
 /**
- * Verilen ürün adını alır ve baş harflerine göre kısaltır.
- * Örn: "Duble Beyaz" -> "DB"
- * Örn: "Duble Lüks Kırmızı" -> "DLK" (X'i atar)
+ * Verilen kodu (örn: "DLXB") alır ve tam açıklamasına çevirir.
+ * Örn: "DLXB" -> "Double Lüks Beyaz"
+ * Örn: "DK" -> "Double Kırmızı"
+ * Mapping: D=Double, LX=Lüks, B=Beyaz, K=Kırmızı, İ=İtal
  */
-function generateProductType(name: string): string {
-  if (!name) return "";
-  // Kelimelere ayır, 'X' gibi bağlaçları/istenmeyenleri filtrele (opsiyonel)
-  const words = name
-    .split(" ")
-    .filter((word) => word.length > 1 || word.toLowerCase() === "x");
-  // Baş harfleri al, birleştir ve büyük harf yap
-  return words
-    .map((word) => word[0])
-    .join("")
-    .toUpperCase();
+function generateProductType(code: string): string {
+  if (!code) return "";
+  
+  const upperCode = code.toUpperCase();
+  const result: string[] = [];
+  let i = 0;
+  
+  while (i < upperCode.length) {
+    // İki karakterli kombinasyonları kontrol et (LX)
+    if (i < upperCode.length - 1) {
+      const twoChar = upperCode.substring(i, i + 2);
+      if (twoChar === "LX") {
+        result.push("Lüks");
+        i += 2;
+        continue;
+      }
+    }
+    
+    // Tek karakterli eşleşmeleri kontrol et
+    const char = upperCode[i];
+    switch (char) {
+      case "D":
+        result.push("Double");
+        break;
+      case "B":
+        result.push("Beyaz");
+        break;
+      case "K":
+        result.push("Kırmızı");
+        break;
+      case "İ":
+      case "I":
+        result.push("İtal");
+        break;
+      default:
+        // Bilinmeyen karakter varsa olduğu gibi ekle
+        result.push(char);
+    }
+    i++;
+  }
+  
+  return result.join(" ");
 }
 
 function ProcessedProductList() {
@@ -69,15 +101,15 @@ function ProcessedProductList() {
   const handleModalInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    // Eğer değişen input "productName" (Ürün Adı) ise...
-    if (name === "productName") {
-      const newProductType = generateProductType(value); // Kısaltmayı hesapla
+    // Eğer değişen input "productType" (Ürün Türü) ise...
+    if (name === "productType") {
+      const newProductName = generateProductType(value); // Kısaltmayı hesapla
       setSelectedItem((prev) => ({
         ...prev!,
-        productName: value, // Ürün adını güncelle
-        productType: newProductType, // Ürün türünü de OTOMATİK güncelle
+        productName: newProductName, // Ürün adını güncelle
+        productType: value, // Ürün türünü de OTOMATİK güncelle
       }));
-    }
+    } 
     // Eğer değişen input "amount" (Miktar) ise...
     else if (name === "amount") {
       setSelectedItem((prev) => ({
@@ -211,6 +243,15 @@ function ProcessedProductList() {
           Bu ürünü ("{selectedItem?.productName}") paketlemeye göndermek için
           lütfen bilgileri onaylayın veya düzenleyin.
           {/* 🎨 5. INPUT'LAR GÜNCELLENDİ */}
+              <input
+            type="text"
+            className="form-control mt-3"
+            placeholder="Ürün Türünü Giriniz (Örn: DB, DLK)"
+            name="productType" // 👈 name eklendi
+            value={selectedItem?.productType || ""} // 👈 value eklendi
+            onChange={handleModalInputChange} // 👈 onChange güncellendi
+          />
+          
           <input
             type="text"
             className="form-control mt-3"
@@ -219,14 +260,7 @@ function ProcessedProductList() {
             value={selectedItem?.productName || ""} // 👈 value eklendi
             onChange={handleModalInputChange} // 👈 onChange güncellendi
           />
-          <input
-            type="text"
-            className="form-control mt-3"
-            placeholder="Ürün Türünü Giriniz (Örn: DB, DLK)"
-            name="productType" // 👈 name eklendi
-            value={selectedItem?.productType || ""} // 👈 value eklendi
-            onChange={handleModalInputChange} // 👈 onChange güncellendi
-          />
+          
           <input
             type="number"
             className="form-control mt-3"

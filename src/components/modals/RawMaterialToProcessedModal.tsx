@@ -25,8 +25,7 @@ function RawMaterialToProcessedModal({
   const [stockSource, setStockSource] = useState<"siirt" | "neighborhood">(
     "siirt"
   );
-  // 2. 'error' state'i ve 'Alert' artık GEREKLİ DEĞİL.
-  // const [error, setError] = useState<string | null>(null);
+
 
   const [addProductToProcessed, { isLoading: isAdding }] =
     useAddProductToProcessedMutation();
@@ -39,12 +38,10 @@ function RawMaterialToProcessedModal({
       setDescription(product.description || "");
       setAmount(0);
       setStockSource("siirt");
-      // setError(null); // Gerek kalmadı
     }
   }, [show, product]);
 
   const handleSubmit = async () => {
-    // setError(null); // Gerek kalmadı
     if (!product) return;
     if (!name || amount <= 0) {
       toast.error("Lütfen isim ve geçerli miktar girin.");
@@ -71,7 +68,7 @@ function RawMaterialToProcessedModal({
 
       const updatedAny: any = {
         id: product.id,
-        name: name,
+        name: product.name,
         description: description,
         incomingAmount:
           stockSource === "siirt"
@@ -117,15 +114,6 @@ function RawMaterialToProcessedModal({
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group className="mb-3">
-            <Form.Label>Ürün Adı (İşlendikten Sonraki)</Form.Label>
-            <Form.Control
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              autoFocus
-            />
-          </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Açıklama</Form.Label>
             <Form.Control
