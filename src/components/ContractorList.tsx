@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 
@@ -24,6 +25,7 @@ export interface ContractorModel {
 }
 
 function ContractorList() {
+  const navigate = useNavigate();
   // API Hook'ları
   const { data: contractorsResponse, isLoading, isError } = useGetContractorsQuery();
   const [deleteContractor, { isLoading: isDeleting }] = useDeleteContractorMutation();
@@ -116,7 +118,7 @@ function ContractorList() {
                         <button
                             className="btn btn-sm btn-outline-info"
                             title="Detaylar / Cari"
-                            // onClick={() => navigate(`/contractor-account/${contractor.id}`)} // İleride eklersin
+                            onClick={() => navigate(`/contractor-detail/${contractor.id}`)}
                         >
                             <i className="bi bi-eye-fill"></i>
                         </button>

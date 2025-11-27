@@ -9,6 +9,7 @@ import { productToProcessedService } from "../services/productToProcessedService
 import { toPackagedService } from "../services/toPackagedService";
 import { orderService } from "../services/orderService";
 import { contractorService } from "../services/contractorService";
+import { contractorProductService } from "../services/contractorProductService";
 
 const authSlice = createSlice({
   name: "auth",
@@ -44,6 +45,7 @@ export const store = configureStore({
     [toPackagedService.reducerPath]: toPackagedService.reducer,
     [orderService.reducerPath]: orderService.reducer,
     [contractorService.reducerPath]: contractorService.reducer,
+    [contractorProductService.reducerPath]: contractorProductService.reducer,
   },
   middleware: (getDefault) =>
     getDefault().concat(
@@ -57,6 +59,7 @@ export const store = configureStore({
       toPackagedService.middleware,
       orderService.middleware,
       contractorService.middleware,
+      contractorProductService.middleware,
     ),
 });
 

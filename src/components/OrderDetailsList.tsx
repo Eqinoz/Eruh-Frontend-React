@@ -8,6 +8,8 @@ import type { OrderDtoModel } from "../models/orderDtoModel";
 import { formatDate, formatNumber } from "../utilities/formatters";
 import { toast } from "react-toastify";
 import "./css/RawMaterialList.css";
+import { useUpdateProductMutation } from "../services/productService";
+import type { ProductModel } from "../models/productModel";
 
 function OrderDetailsList() {
   const {
@@ -16,11 +18,14 @@ function OrderDetailsList() {
     isError,
   } = useGetDetailsOrderQuery();
   const [completeOrder, { isLoading: isUpdating }] = useCompleteOrderMutation();
+  const [productUpdate, { isLoading: isProductUpdating }] = useUpdateProductMutation();
   const [expandedRowIndex, setExpandedRowIndex] = useState<number | null>(null);
 
   const toggleRow = (index: number) => {
     setExpandedRowIndex(expandedRowIndex === index ? null : index);
   };
+
+
 
   const handleCompleteOrder = async (e: React.MouseEvent, orderId: number) => {
     e.stopPropagation();
@@ -32,13 +37,16 @@ function OrderDetailsList() {
       return;
 
     try {
+
+
+
       const now = new Date().toISOString();
       await completeOrder({ id: orderId, shippedDate: now }).unwrap();
       toast.success(
         `Sipariş #${orderId} sevkiyatı tamamlandı! Ödemeler sayfasına aktarıldı.`
       );
     } catch (err: any) {
-      toast.error("İşlem başarısız oldu.");
+      toast.error(err.data.message);
     }
   };
 

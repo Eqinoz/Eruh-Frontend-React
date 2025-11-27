@@ -23,6 +23,8 @@ import CustomerAccountPage from "./components/CustomerAccountPage";
 import StockList from "./components/StockList";
 import ContractorAdd from "./components/ContractorAdd";
 import ContractorList from "./components/ContractorList";
+import ContractorDetailsPage from "./components/ContractorDetailsPage";
+import ContractorProductList from "./components/ContractorProductList";
 
 function App() {
   const dispatch = useDispatch();
@@ -68,6 +70,8 @@ function App() {
           <Route path="stock-list" element={<StockList />} />
           <Route path="contractor-list" element={<ContractorList />} />
           <Route path="contractor-add" element={<ContractorAdd />} />
+          <Route path="contractor-detail/:id" element={<ContractorDetailsPage />} />
+          <Route path="contractor-products" element={<ContractorProductList />} />
 
           {/* Eşleşen başka bir yol yoksa anasayfaya yönlendir */}
           <Route path="*" element={<Navigate to="/" replace />} />

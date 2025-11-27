@@ -32,7 +32,15 @@ export const productService = createApi({
       query: () => "/products/InventoryStatus",
       providesTags: ["Product"],
     }),
+    updateProduct: builder.mutation<void, ProductModel>({
+      query: (product) => ({
+        url: `/products/${product.id}`,
+        method: "PUT",
+        body: product,
+      }),
+      invalidatesTags: ["Product"],
+    }),
   }),
 });
 
-export const { useGetProductsQuery, useAddProductMutation, useGetInventoryStatusQuery } = productService;
+export const { useGetProductsQuery, useAddProductMutation, useGetInventoryStatusQuery, useUpdateProductMutation } = productService;

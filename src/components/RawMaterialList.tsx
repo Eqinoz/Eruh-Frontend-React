@@ -110,10 +110,7 @@ function RawMaterialList() {
                           </button>
                         ) : null}
 
-                        <button className="btn btn-info me-2 py-1">
-                          <i className="bi bi-send me-1"></i>
-                          Fas./Kom. Gönder
-                        </button>
+                        
                         <button
                           className="btn btn-primary py-1"
                           onClick={() => {

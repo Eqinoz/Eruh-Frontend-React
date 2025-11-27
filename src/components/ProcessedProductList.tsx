@@ -11,6 +11,7 @@ import { useState } from "react";
 import type { ToPackagedItem } from "../models/toPackagedModal";
 import { toast } from "react-toastify";
 import "./css/Modal.css"; // Modal stillerini de import ettim
+import SendToContractorModal from "./modals/SendToContractorModal";
 
 // 🎨 1. Kod çözme fonksiyonu - Kısaltmayı tam açıklamaya çevirir
 /**
@@ -75,6 +76,8 @@ function ProcessedProductList() {
     useAddToPackagedItemMutation();
 
   // 🎨 2. 'selectedItem' state'inin tipini daha net belirledim
+  const [showSendModal, setShowSendModal]= useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<ProcessedProduct | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<
     (Partial<ToPackagedItem> & { originalId: number }) | null
@@ -202,12 +205,17 @@ function ProcessedProductList() {
                     <td>{formatDate(p.dateAdded)}</td>
                     <td>
                       <button
-                        className="btn btn-sm btn-primary"
+                        className="btn btn-sm btn-primary me-2 py-1"
                         onClick={() => handleShowConfirmModal(p)}
                       >
                         <i className="bi bi-box-seam me-1"></i>
                         Paketlemeye Gönder
                       </button>
+                      <button className="btn btn-info me-2 py-1"
+                      onClick={() => { setSelectedProduct(p); setShowSendModal(true); }}>
+                          <i className="bi bi-send me-1"></i>
+                          Fasoncuya Gönder
+                        </button>
                     </td>
                   </tr>
                 ))
@@ -227,7 +235,6 @@ function ProcessedProductList() {
                   Genel Toplam Miktar:
                 </th>
                 <th className="text-start">{formatNumber(totalAmount)}</th>
-                <th colSpan={3}></th> {/* 🐞 Colspan'ı 3 yaptım */}
               </tr>
             </tfoot>
           </table>
@@ -289,6 +296,12 @@ function ProcessedProductList() {
           </Button>
         </Modal.Footer>
       </Modal>
+      <SendToContractorModal 
+    show={showSendModal} 
+    handleClose={() => setShowSendModal(false)} 
+    product={selectedProduct} 
+    sourceType="Fasoncu" // Veya "Komisyoncu"
+/>
     </div>
   );
 }

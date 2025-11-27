@@ -212,7 +212,7 @@ function SideBar() {
               <hr className="submenu-divider" />
               <li>
                 <Link
-                  to="/contractor-product-list"
+                  to="/contractor-products"
                   className="nav-link text-white py-1"
                 >
                   <i className="bi bi-list-ul me-2"></i> Fasoncu Ve Komisyoncudaki Ürünler

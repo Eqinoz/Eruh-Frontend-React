@@ -1,9 +1,15 @@
+import { useState } from "react";
 import { useGetProductsQuery } from "../services/productService";
 import { formatNumber } from "../utilities/formatters";
 import "./css/RawMaterialList.css"; // Diğerleriyle aynı stili kullanacak
 
+import SendToContractorModal from "./modals/SendToContractorModal";
+import type { ProductModel } from "../models/productModel";
 function ProductListPage() {
   const { data: products, isLoading, isError } = useGetProductsQuery();
+
+  const [showSendModal, setShowSendModal]= useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<ProductModel | null>(null);
 
   if (isLoading) {
     return <div className="text-center mt-5">Yükleniyor...</div>;
@@ -35,17 +41,25 @@ function ProductListPage() {
                 <th>Adı</th>
                 <th>Miktar (kg)</th>
                 <th>Paketleme Şekli</th>
+                <th>İşlemler</th>
               </tr>
             </thead>
             <tbody>
               {products && products.data.length > 0 ? (
                 products.data.map((p, index) => (
                   <tr key={p.productId}>
-                    <td>{p.id}</td>
+                    <td>{p.id}</td> 
                     <td>{p.productId}</td>
                     <td>{p.name}</td>
                     <td>{formatNumber(p.amount)}</td>
                     <td>{p.packagingType}</td>
+                    <td>
+                      <button className="btn btn-info me-2 py-1"
+                      onClick={() => { setSelectedProduct(p); setShowSendModal(true); }}>
+                          <i className="bi bi-send me-1"></i>
+                          Komisyoncuya Gönder
+                        </button>
+                    </td>
                   </tr>
                 ))
               ) : (
@@ -68,7 +82,14 @@ function ProductListPage() {
           </table>
         </div>
       </div>
+      <SendToContractorModal 
+    show={showSendModal} 
+    handleClose={() => setShowSendModal(false)} 
+    product={selectedProduct} 
+    sourceType="Komisyoncu" // Veya "Komisyoncu"
+/>
     </div>
   );
+  
 }
 export default ProductListPage;
