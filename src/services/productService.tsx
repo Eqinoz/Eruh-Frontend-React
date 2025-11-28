@@ -34,7 +34,7 @@ export const productService = createApi({
     }),
     updateProduct: builder.mutation<void, ProductModel>({
       query: (product) => ({
-        url: `/products/${product.id}`,
+        url: `/products`,
         method: "PUT",
         body: product,
       }),

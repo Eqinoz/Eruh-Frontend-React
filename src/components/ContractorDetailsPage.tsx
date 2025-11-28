@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useGetContractorDetailQuery } from "../services/contractorProductService";
+import { useGetContractorProductDetailByIdQuery } from "../services/contractorProductService";
 import { useGetContractorsQuery } from "../services/contractorService";
 import { formatDate, formatNumber } from "../utilities/formatters";
 import "./css/RawMaterialList.css";
@@ -9,10 +9,10 @@ function ContractorDetailsPage() {
   const navigate = useNavigate();
   const contractorId = Number(id);
 
-  const { data: allProductsResponse, isLoading: isProductsLoading } = useGetContractorDetailQuery();
+  const { data: contractorProductsResponse, isLoading: isContractorProductLoading } = useGetContractorProductDetailByIdQuery(contractorId);
   const { data: contractorsResponse, isLoading: isContractorLoading } = useGetContractorsQuery();
 
-  if (isProductsLoading || isContractorLoading) {
+  if (isContractorProductLoading || isContractorLoading) {
     return (
       <div className="d-flex justify-content-center align-items-center vh-100">
         <div className="spinner-border text-success" role="status"></div>
@@ -21,9 +21,7 @@ function ContractorDetailsPage() {
   }
 
   // 1. Filtreleme: Bu müstahsile ait ürünleri bul
-  const contractorProducts = allProductsResponse?.data.filter(
-      (p: any) => p.contractorId === contractorId || p.ContractorId === contractorId 
-  ) || [];
+  const contractorProducts = contractorProductsResponse?.data || [];
 
   // 2. Müstahsil Bilgisini Bul (Modeldeki doğru ismi kullanıyoruz: contractorName)
   // Eğer liste henüz yüklenmediyse veya bulunamazsa güvenli bir obje oluşturuyoruz.

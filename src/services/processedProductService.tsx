@@ -50,5 +50,6 @@ export const processedProductService = createApi({
 export const {
   useGetProcessedProductsQuery,
   useAddProcessedProductMutation,
+  useUpdateProcessedProductMutation,
   useDeleteProcessedProductMutation,
 } = processedProductService;

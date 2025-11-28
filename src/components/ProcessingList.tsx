@@ -1,65 +1,65 @@
 import { Modal, Button, Form } from "react-bootstrap";
 import { useGetProductToProcessedsQuery } from "../services/productToProcessedService";
 import { formatDate, formatNumber } from "../utilities/formatters";
-import "./css/RawMaterialList.css"; // Ana stil
-import "./css/Modal.css"; // Modal stilleri
+import "./css/RawMaterialList.css";
+import "./css/Modal.css";
 import { toast } from "react-toastify";
-import { useDeleteProductToProcessedMutation } from "../services/productToProcessedService"; // 👈 Silme hook'u
-import { useAddProcessedProductMutation } from "../services/processedProductService"; // 👈 Ekleme hook'u
-import { useState } from "react"; // 👈 State hook'u eklendi
-import type { ProductToProcessed } from "../models/productToProcessed"; // 👈 Tipi import ettim
+import { useDeleteProductToProcessedMutation } from "../services/productToProcessedService";
+import { useAddProcessedProductMutation } from "../services/processedProductService";
+import { useState } from "react";
+import type { ProductToProcessed } from "../models/productToProcessed";
 
 export default function ProcessingList() {
   const { data, isLoading, isError } = useGetProductToProcessedsQuery();
 
-  const [deleteProductToProcessed, { isLoading: isDeleting }] =
-    useDeleteProductToProcessedMutation();
-  const [addProcessedProduct, { isLoading: isAdding }] =
-    useAddProcessedProductMutation();
+  const [deleteProductToProcessed, { isLoading: isDeleting }] = useDeleteProductToProcessedMutation();
+  const [addProcessedProduct, { isLoading: isAdding }] = useAddProcessedProductMutation();
 
-  // 🎨 4. Onay Modalı için state'ler
+  // 🎨 State'ler: Ürün Adı ve Yeni Miktar
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<ProductToProcessed | null>(
-    null
-  );
+  const [selectedItem, setSelectedItem] = useState<ProductToProcessed | null>(null);
   const [newProductName, setNewProductName] = useState("");
+  const [newProductAmount, setNewProductAmount] = useState<number>(0); // 👈 Yeni miktar state'i
 
   const handleCloseConfirmModal = () => {
     setShowConfirmModal(false);
     setSelectedItem(null);
     setNewProductName("");
+    setNewProductAmount(0);
   };
 
   const handleShowConfirmModal = (item: ProductToProcessed) => {
     setSelectedItem(item);
-    setNewProductName(item.productName); // Mevcut ürün adını input'a yükle
+    setNewProductName(item.productName); // Varsayılan isim
+    setNewProductAmount(item.amount);    // Varsayılan miktar (Giriş miktarı)
     setShowConfirmModal(true);
   };
 
-  // 🎨 5. Asıl "İşlemi Tamamla" mantığı
   const handleProcessComplete = async () => {
     if (!selectedItem) return;
 
+    // 🛡️ Basit Doğrulama
+    if (newProductAmount <= 0) {
+        toast.warn("Lütfen geçerli bir miktar girin.");
+        return;
+    }
+
     try {
-      // Adım 1: Ürünü "İşlenmiş Ürünler" listesine ekle
-      // "ProcessedProduct" modeli "inComingFrom" alanı bekliyordu
+      // Adım 1: "İşlenmiş Ürünler"e ekle (YENİ MİKTARLA)
       const newProcessedProduct = {
-        id: 0, // ID'yi backend verecek
-        productName: newProductName.trim() || selectedItem.productName, // Yeni isim veya eski isim
+        id: 0,
+        productName: newProductName.trim() || selectedItem.productName,
         description: selectedItem.description,
-        amount: selectedItem.amount,
-        inComingFrom: "İşlemden Tamamlandı", // Kaynak bilgisi
+        amount: newProductAmount, // 👈 Kullanıcının girdiği son miktar
+        inComingFrom: "İşlemden Tamamlandı",
         dateAdded: new Date().toISOString(),
       };
       await addProcessedProduct(newProcessedProduct).unwrap();
 
-      // Adım 2: Ürünü "İşlemde Olanlar" listesinden (bu listeden) sil
+      // Adım 2: Eski kaydı sil
       await deleteProductToProcessed(selectedItem.id).unwrap();
 
-      // Adım 3: Başarı bildirimi ve modalı kapat
-      toast.success(
-        `"${newProductName.trim() || selectedItem.productName}" başarıyla işlendi ve stoğa eklendi!`
-      );
+      toast.success(`"${newProductName}" (${newProductAmount} kg) başarıyla stoğa eklendi!`);
       handleCloseConfirmModal();
     } catch (err: any) {
       console.error("İşlem tamamlanamadı:", err);
@@ -67,41 +67,28 @@ export default function ProcessingList() {
     }
   };
 
-  // --- Yüklenme ve Hata Durumları (Aynı) ---
-  if (isLoading) {
-    return <div className="text-center mt-5">Yükleniyor...</div>;
-  }
-  if (isError) {
-    return (
-      <div className="alert alert-danger text-center my-3">
-        İşleme alınan ürünler yüklenirken hata oluştu.
-      </div>
-    );
-  }
+  if (isLoading) return <div className="text-center mt-5">Yükleniyor...</div>;
+  if (isError) return <div className="alert alert-danger text-center my-3">Hata oluştu.</div>;
 
   const items = data?.data ?? [];
-  const totalAmount: number = items.reduce((sum, p) => sum + p.amount, 0);
+  const totalAmount = items.reduce((sum, p) => sum + p.amount, 0);
 
   return (
     <div className="container-fluid px-4 mt-4">
       <div className="card shadow-sm">
         <div className="card-header card-header-fistik text-white d-flex justify-content-between ">
-          <h5 className="mb-0">
-            <i className="bi bi-list-ul me-2"></i>İşleme Alınan Ürünler
-          </h5>
+          <h5 className="mb-0"><i className="bi bi-list-ul me-2"></i>İşleme Alınan Ürünler</h5>
         </div>
         <div className="card-body">
           {items.length === 0 ? (
-            <div className="alert alert-info text-center">
-              Şu anda işleme alınmış ürün bulunmuyor.
-            </div>
+            <div className="alert alert-info text-center">Şu anda işleme alınmış ürün bulunmuyor.</div>
           ) : (
             <table className="table table-striped table-hover text-center align-middle">
               <thead className="thead-fistik align-items-center">
                 <tr>
                   <th>Ürün</th>
                   <th>Açıklama</th>
-                  <th>Miktar (kg)</th>
+                  <th>Giriş Miktarı (kg)</th>
                   <th>Tarih</th>
                   <th>İşlemler</th>
                 </tr>
@@ -110,19 +97,12 @@ export default function ProcessingList() {
                 {items.map((it) => (
                   <tr key={it.id}>
                     <td>{it.productName}</td>
-                    <td className="text-truncate" style={{ maxWidth: 360 }}>
-                      {it.description || "(Açıklama yok)"}
-                    </td>
+                    <td className="text-truncate" style={{ maxWidth: 360 }}>{it.description || "-"}</td>
                     <td>{formatNumber(it.amount)}</td>
                     <td>{formatDate(it.dateAdded)}</td>
                     <td>
-                      {/* 🎨 6. Butonun onClick'ini modalı açacak şekilde güncelledim */}
-                      <button
-                        className="btn btn-sm btn-success" // Rengi 'success' (yeşil) yaptım
-                        onClick={() => handleShowConfirmModal(it)}
-                      >
-                        <i className="bi bi-check-lg me-1"></i>
-                        İşlemi Tamamla
+                      <button className="btn btn-sm btn-success" onClick={() => handleShowConfirmModal(it)}>
+                        <i className="bi bi-check-lg me-1"></i>İşlemi Tamamla
                       </button>
                     </td>
                   </tr>
@@ -130,9 +110,7 @@ export default function ProcessingList() {
               </tbody>
               <tfoot className="table-group-divider">
                 <tr className="total-row-grand">
-                  <th colSpan={2} className="text-end">
-                    Toplam Miktar:
-                  </th>
+                  <th colSpan={2} className="text-end">Toplam Giriş Miktarı:</th>
                   <th className="text-start">{formatNumber(totalAmount)}</th>
                   <th colSpan={2}></th>
                 </tr>
@@ -142,42 +120,50 @@ export default function ProcessingList() {
         </div>
       </div>
 
-      {/* 🎨 7. ONAY MODALI */}
+      {/* 🎨 GÜNCELLENMİŞ MODAL */}
       <Modal show={showConfirmModal} onHide={handleCloseConfirmModal} centered>
         <Modal.Header closeButton className="modal-header-fistik">
-          <Modal.Title>İşlemi Onayla</Modal.Title>
+          <Modal.Title>İşlemi Tamamla & Stok Girişi</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>
-            Bu ürün işlemden çıkarılıp "İşlenmiş Ürünler" stoğuna eklenecek.
-          </p>
-          <Form.Group className="mb-3">
-            <Form.Label>Ürün İsmi</Form.Label>
-            <Form.Control
-              type="text"
-              value={newProductName}
-              onChange={(e) => setNewProductName(e.target.value)}
-              placeholder="Ürün ismini girin"
-              autoFocus
-            />
-          </Form.Group>
+          <div className="alert alert-light border-success mb-3">
+             <small className="text-muted d-block">İşleme Giren Ürün:</small>
+             <strong>{selectedItem?.productName}</strong> ({formatNumber(selectedItem?.amount)} kg)
+          </div>
+          
+          <Form>
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-bold">Çıkan Ürün İsmi</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={newProductName}
+                  onChange={(e) => setNewProductName(e.target.value)}
+                  placeholder="Ürün ismini girin"
+                  autoFocus
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-bold">Çıkan Net Miktar (kg)</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={newProductAmount}
+                  onChange={(e) => setNewProductAmount(Number(e.target.value))}
+                  placeholder="0"
+                  min="0"
+                />
+                <Form.Text className="text-muted">
+                   * Fire düşüldükten sonraki net miktar.
+                </Form.Text>
+              </Form.Group>
+          </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            variant="secondary"
-            className="btn-fistik-secondary"
-            onClick={handleCloseConfirmModal}
-            disabled={isDeleting || isAdding}
-          >
-            Hayır, İptal
+          <Button variant="secondary" className="btn-fistik-secondary" onClick={handleCloseConfirmModal} disabled={isDeleting || isAdding}>
+            İptal
           </Button>
-          <Button
-            variant="primary"
-            className="btn-fistik-primary"
-            onClick={handleProcessComplete}
-            disabled={isDeleting || isAdding}
-          >
-            {isDeleting || isAdding ? "İşleniyor..." : "Evet, Tamamla"}
+          <Button variant="primary" className="btn-fistik-primary" onClick={handleProcessComplete} disabled={isDeleting || isAdding}>
+            {isDeleting || isAdding ? "Kaydediliyor..." : "Kaydet ve Tamamla"}
           </Button>
         </Modal.Footer>
       </Modal>

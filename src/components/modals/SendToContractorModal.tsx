@@ -3,13 +3,18 @@ import { Modal, Button, Form } from "react-bootstrap";
 import Select from "react-select";
 import { toast } from "react-toastify";
 
+// --- SERVİSLER ---
 import { useAddContractorProductMutation } from "../../services/contractorProductService";
 import { useGetContractorsQuery } from "../../services/contractorService";
+// 👇 STOKTAN DÜŞMEK İÇİN GEREKLİ SERVİSLER EKLENDİ
+import { useUpdateProcessedProductMutation } from "../../services/processedProductService";
+import { useUpdateProductMutation } from "../../services/productService";
+
 import type { ContractorProductModel } from "../../models/contractorProductModel";
 import { formatNumber } from "../../utilities/formatters";
 
 import "../css/Forms.css";
-import "../css/Modal.css"; // Dosya adı Modals.css ise
+import "../css/Modal.css";
 
 interface SendModalProps {
   show: boolean;
@@ -22,8 +27,16 @@ function SendToContractorModal({ show, handleClose, product, sourceType }: SendM
   const [amount, setAmount] = useState<number>(0);
   const [contractorId, setContractorId] = useState<number>(0);
 
+  // --- API HOOK'LARI ---
   const { data: contractorsData, isLoading: isLoadingContractors } = useGetContractorsQuery();
-  const [addContractorProduct, { isLoading }] = useAddContractorProductMutation();
+  const [addContractorProduct, { isLoading: isAdding }] = useAddContractorProductMutation();
+  
+  // 👇 STOK GÜNCELLEME HOOK'LARI
+  const [updateProcessedProduct, { isLoading: isUpdatingProcessed }] = useUpdateProcessedProductMutation();
+  const [updateProduct, { isLoading: isUpdatingProduct }] = useUpdateProductMutation();
+
+  // Tüm yükleme durumlarını birleştir (Butonu kilitlemek için)
+  const isLoading = isAdding || isUpdatingProcessed || isUpdatingProduct;
 
   useEffect(() => {
     if (show) {
@@ -32,17 +45,17 @@ function SendToContractorModal({ show, handleClose, product, sourceType }: SendM
     }
   }, [show]);
 
+  // Options Memoization
   const contractorOptions = useMemo(() => {
     if (!contractorsData?.data) return [];
     
     return contractorsData.data.map((c: any) => ({
       value: c.id,
-      // 👇 Burayı da garantiye aldım, hepsi varsa sırayla dener
       label: c.companyName || c.contractorName || c.name || "İsimsiz Firma"
     }));
   }, [contractorsData]);
 
-  // 🔥 İŞTE SİHİRLİ DOKUNUŞ BURADA 🔥
+  // Select Stilleri
   const fistikSelectStyles = {
     control: (base: any, state: any) => ({
       ...base,
@@ -55,10 +68,9 @@ function SendToContractorModal({ show, handleClose, product, sourceType }: SendM
       backgroundColor: state.isSelected ? '#6B8E23' : state.isFocused ? '#F8F8DC' : null,
       color: state.isSelected ? 'white' : '#8B4513',
     }),
-    // 👇 BU AYAR ÇOK ÖNEMLİ: Menüyü Modal'ın üzerine çıkartır!
     menuPortal: (base: any) => ({ 
         ...base, 
-        zIndex: 9999 // Bootstrap Modal genelde 1055 civarıdır, biz 9999 ile eziyoruz!
+        zIndex: 9999 
     })
   };
 
@@ -68,8 +80,7 @@ function SendToContractorModal({ show, handleClose, product, sourceType }: SendM
       return;
     }
 
-    // Stok kontrolü (Farklı isimlendirmelere karşı önlem)
-    const currentStock = product.amount || product.incomingAmount || product.unitsInStock || 0;
+    const currentStock = product.amount || 0;
 
     if (amount > currentStock) {
       toast.error(`Stok yetersiz! Mevcut: ${formatNumber(currentStock)}`);
@@ -77,26 +88,42 @@ function SendToContractorModal({ show, handleClose, product, sourceType }: SendM
     }
 
     try {
+      // 1. MALI MÜSTAHSİLE GÖNDER (KAYIT AT)
       const payload: ContractorProductModel = {
         id: 0,
         contractorId: contractorId,
-        productId: product.id || product.productId || 0, // ID kontrolü
+        productId: product.id!,
         amount: amount,
         shippedDate: new Date().toISOString(),
       };
 
       await addContractorProduct(payload).unwrap();
+
+      // 2. STOKTAN DÜŞ (KAYNAĞA GÖRE)
+      const newStockAmount = currentStock - amount;
+
+      if (sourceType === "Fasoncu") {
+        // İşlenmiş Ürün Stoğunu Güncelle
+        // product objesini kopyala, amount'u güncelle
+        const updatedProcessedProduct = { ...product, amount: newStockAmount };
+        await updateProcessedProduct(updatedProcessedProduct).unwrap();
+
+      } else if (sourceType === "Komisyoncu") {
+        // Satışa Hazır Ürün Stoğunu Güncelle
+        // product objesini kopyala, amount'u güncelle
+        const updatedProduct = { ...product, amount: newStockAmount };
+        await updateProduct(updatedProduct).unwrap();
+      }
       
-      toast.success(`"${product.productName || product.name}" başarıyla gönderildi!`);
+      toast.success(`"${product.productName || product.name}" başarıyla gönderildi ve stoktan düşüldü!`);
       handleClose();
     } catch (err: any) {
       console.error(err);
-      toast.error(err.data?.message || "Gönderme işlemi başarısız oldu.");
+      toast.error(err.data?.message || "İşlem sırasında bir hata oluştu.");
     }
   };
 
   return (
-    // 💡 overflow sorununu çözmek için Modal'a stil ekleyebiliriz ama gerek kalmamalı
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton className="modal-header-fistik">
         <Modal.Title>
@@ -104,26 +131,22 @@ function SendToContractorModal({ show, handleClose, product, sourceType }: SendM
           {sourceType}'ya Ürün Gönder
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body style={{ overflow: 'visible' }}> {/* 💡 Ekstra güvenlik: Taşmaya izin ver */}
+      <Modal.Body style={{ overflow: 'visible' }}>
         <div className="alert alert-light border-success mb-3">
             <strong>Gönderilen Ürün:</strong> {product?.productName || product?.name} <br/>
-            <strong>Mevcut Stok:</strong> {formatNumber(product?.amount || product?.incomingAmount)}
+            <strong>Mevcut Stok:</strong> {formatNumber(product?.amount)}
         </div>
 
         <Form>
           <Form.Group className="mb-3">
             <Form.Label className="fw-bold">{sourceType} Seçiniz</Form.Label>
-            
             <Select
                 options={contractorOptions}
                 onChange={(opt: any) => setContractorId(opt?.value)}
                 placeholder={isLoadingContractors ? "Listeleniyor..." : `${sourceType} Ara...`}
                 styles={fistikSelectStyles}
-                
-                // 👇 BU İKİSİ BİRLİKTE OLMAZSA ÇALIŞMAZ
                 menuPortalTarget={document.body} 
                 menuPosition={'fixed'} 
-                
                 noOptionsMessage={() => "Kayıt bulunamadı"}
                 isLoading={isLoadingContractors}
                 isClearable
@@ -147,7 +170,7 @@ function SendToContractorModal({ show, handleClose, product, sourceType }: SendM
           İptal
         </Button>
         <Button variant="primary" className="btn-fistik-primary" onClick={handleSubmit} disabled={isLoading}>
-          {isLoading ? "Gönderiliyor..." : "Onayla ve Gönder"}
+          {isLoading ? "İşleniyor..." : "Onayla ve Gönder"}
         </Button>
       </Modal.Footer>
     </Modal>
