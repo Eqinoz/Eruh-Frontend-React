@@ -173,7 +173,7 @@ function RawMaterialToProcessedModal({
                     (product as any)?.neighborhoodInComingAmount ??
                     0
               }
-              value={amount}
+              placeholder="0.00"
               onChange={(e) => setAmount(Number(e.target.value))}
             />
           </Form.Group>

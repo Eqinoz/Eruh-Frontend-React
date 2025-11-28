@@ -106,9 +106,9 @@ function NeighborhoodSendModal({
               type="number"
               min="0"
               max={product?.incomingAmount}
-              value={amount}
+
               onChange={(e) => setAmount(Number(e.target.value))}
-              placeholder="0"
+              placeholder="00.00"
               autoFocus
             />
             <Form.Label className="d-block mt-2">

@@ -105,10 +105,10 @@ function ProductAddPage() {
                     className="form-control"
                     id="amount"
                     name="amount"
-                    value={product.amount}
+                    placeholder="0"
                     onChange={handleChange}
                     required
-                    step="0.01"
+                    step="1"
                     min="0" // Negatif girişi engelle
                   />
                 </div>

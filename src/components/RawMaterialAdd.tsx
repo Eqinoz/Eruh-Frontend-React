@@ -111,7 +111,7 @@ function RawMaterialAdd() {
                     className="form-control"
                     id="incomingAmount"
                     name="incomingAmount"
-                    value={formData.incomingAmount}
+                    placeholder="0.00"
                     onChange={handleChange}
                     min="0"
                     required
