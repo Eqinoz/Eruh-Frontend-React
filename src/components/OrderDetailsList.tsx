@@ -5,11 +5,12 @@ import {
   useCompleteOrderMutation,
 } from "../services/orderService";
 import type { OrderDtoModel } from "../models/orderDtoModel";
-import { formatDate, formatNumber } from "../utilities/formatters";
+import { formatCurrency, formatDate, formatNumber } from "../utilities/formatters";
 import { toast } from "react-toastify";
 import "./css/RawMaterialList.css";
-import { useUpdateProductMutation } from "../services/productService";
-import type { ProductModel } from "../models/productModel";
+import ExcelButton from "../common/ExcelButton";
+
+
 
 function OrderDetailsList() {
   const {
@@ -18,7 +19,6 @@ function OrderDetailsList() {
     isError,
   } = useGetDetailsOrderQuery();
   const [completeOrder, { isLoading: isUpdating }] = useCompleteOrderMutation();
-  const [productUpdate, { isLoading: isProductUpdating }] = useUpdateProductMutation();
   const [expandedRowIndex, setExpandedRowIndex] = useState<number | null>(null);
 
   const toggleRow = (index: number) => {
@@ -54,6 +54,21 @@ function OrderDetailsList() {
   if (isError)
     return <div className="text-danger text-center mt-5">Veri alınamadı!</div>;
 
+  //Excel İşlemleri
+  const columns = [
+    { header: "Sipariş No", key: "id" },
+    { header: "Müşteri", key: "customerName" },
+    { header: "Sipariş Tarihi", key: "orderDate" },
+    { header: "Tutar", key: "taxTotalPrice" },
+  ];
+
+  const excelData = ordersResponse?.data.map((item) => ({
+    id: item.id,
+    customerName: item.customerName,
+    orderDate: formatDate(item.orderDate),
+    taxTotalPrice: formatCurrency(item.lines.taxTotalPrice),
+  })) ?? [];
+
   const allOrders: OrderDtoModel[] = ordersResponse?.data || [];
   // 🧠 Sadece Bekleyenleri (Hazırlananları) Filtrele
   const pendingOrders = allOrders.filter((o) => o.shippedDate === null);
@@ -68,6 +83,12 @@ function OrderDetailsList() {
           <Badge bg="light" text="dark" className="fs-6">
             {pendingOrders.length} Sipariş
           </Badge>
+          <ExcelButton 
+            data={excelData} 
+            columns={columns} 
+            fileName="Bekleyen-Siparişler"
+            disabled={isLoading} 
+          />
         </div>
 
         <div className="card-body p-0">

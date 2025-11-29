@@ -5,11 +5,29 @@ import "./css/RawMaterialList.css"; // Diğerleriyle aynı stili kullanacak
 
 import SendToContractorModal from "./modals/SendToContractorModal";
 import type { ProductModel } from "../models/productModel";
+import ExcelButton from "../common/ExcelButton";
 function ProductListPage() {
   const { data: products, isLoading, isError } = useGetProductsQuery();
 
   const [showSendModal, setShowSendModal]= useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductModel | null>(null);
+
+  //Excel İŞLEMLERİ
+  const columns = [
+    { header: "No.", key: "id" },
+    { header: "Ürün ID", key: "productId" },
+    { header: "Ürün Adı", key: "productName" },
+    { header: "Miktar", key: "amount" },
+    { header: "Paketleme Şekli", key: "packagingType" },
+  ];
+
+  const excelData = products?.data.map((item) => ({
+    id: item.id,
+    productId: item.productId,
+    productName: item.name,
+    amount: formatNumber(item.amount),
+    packagingType: item.packagingType,
+  })) ?? [];
 
   if (isLoading) {
     return <div className="text-center mt-5">Yükleniyor...</div>;
@@ -31,6 +49,13 @@ function ProductListPage() {
             <i className="bi bi-bag-check-fill me-2"></i>Satışa Hazır Ürün
             Listesi
           </h5>
+          <ExcelButton 
+            data={excelData} 
+            columns={columns} 
+            fileName="Satışa-Hazır-Ürünler"
+            title="Satışa Hazır Ürünler"
+            disabled={isLoading} 
+          />
         </div>
         <div className="card-body">
           <table className="table table-striped table-hover text-center align-middle">

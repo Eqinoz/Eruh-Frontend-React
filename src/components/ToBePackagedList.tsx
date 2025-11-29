@@ -11,6 +11,7 @@ import "./css/Modal.css"; //
 import type { ProductModel } from "../models/productModel";
 import { toast } from "react-toastify";
 import { useAddProductMutation } from "../services/productService";
+import ExcelButton from "../common/ExcelButton";
 
 function ToBePackagedList() {
   const { data: processed, isLoading, isError } = useGetToPackagedItemsQuery();
@@ -34,6 +35,20 @@ function ToBePackagedList() {
     setShowModal(true);
   };
 
+  //Excel İşlemleri
+
+  const columns = [
+    { header: "Cinsi", key: "productType" },
+    { header: "Ürün Adı", key: "productName" },
+    { header: "Miktarı", key: "amount" },
+  ];
+
+  const excelData = processed?.data.map((item) => ({
+    productType: item.productType,
+    productName: item.productName,
+    amount: formatNumber(item.amount),
+  })) ?? [];
+
   const handleprocessComplete = async () => {
     if (!select || !packagingType) {
       toast.error("Lütfen paketleme tipini seçiniz!");
@@ -41,6 +56,7 @@ function ToBePackagedList() {
     }
     try {
       const newProduct: ProductModel = {
+        id: select.id!,
         productId: select.productType, // Bu (DB, DLK)
         name: select.productName,
         amount: select.amount,
@@ -73,6 +89,12 @@ function ToBePackagedList() {
           <h5 className="mb-0">
             <i className="bi bi-box-seam me-2"></i>Paketlenecek Ürünler
           </h5>
+          <ExcelButton 
+            data={excelData} 
+            columns={columns} 
+            fileName="Paketlenecek-Ürünler"
+            disabled={isLoading} 
+          />
         </div>
         <div className="card-body">
           <table className="table table-striped table-hover text-center align-middle">

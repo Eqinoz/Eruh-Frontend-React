@@ -1,31 +1,53 @@
-// RawMaterialList.tsx
-
-import {
-  useGetRawMaterialsQuery,
-  useDeleteRawMaterialMutation,
-} from "../services/rawMaterialService";
-import NeighborhoodSendModal from "./modals/NeighborhoodModal";
-import RawMaterialToProcessedModal from "./modals/RawMaterialToProcessedModal";
 import { useState } from "react";
+import { useGetRawMaterialsQuery, useDeleteRawMaterialMutation } from "../services/rawMaterialService";
 import type { RawMaterial } from "../models/rawMaterialModel";
 import { formatNumber } from "../utilities/formatters";
-import "./css/RawMaterialList.css"; // 👈 Yeni CSS'i import ediyoruz
 import { toast } from "react-toastify";
+import { exportToExcel, type ExcelColumn } from "../utilities/excelHelper";
+
+// 🎨 MODALLARI IMPORT ET
+import NeighborhoodSendModal from "./modals/NeighborhoodModal";
+import RawMaterialToProcessedModal from "./modals/RawMaterialToProcessedModal";
+import SendToContractorModal from "./modals/SendToContractorModal"; // 👈 YENİ EKLENDİ
+
+import "./css/RawMaterialList.css"; 
+import ExcelButton from "../common/ExcelButton";
 
 function RawMaterialList() {
   const { data: rawmaterials, isLoading, isError } = useGetRawMaterialsQuery();
-  const [deleteRawMaterial, { isLoading: isDeleting }] =
-    useDeleteRawMaterialMutation();
-  const [showModal, setShowModal] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<RawMaterial | null>(
-    null
-  );
-  const [showProcessedModal, setShowProcessedModal] = useState(false);
-  const [selectedForProcessed, setSelectedForProcessed] =
-    useState<RawMaterial | null>(null);
+  const [deleteRawMaterial, { isLoading: isDeleting }] = useDeleteRawMaterialMutation();
 
+  // --- MODAL STATE'LERİ ---
+  const [showNeighborhoodModal, setShowNeighborhoodModal] = useState(false);
+  const [showProcessedModal, setShowProcessedModal] = useState(false);
+  const [showContractorModal, setShowContractorModal] = useState(false); // 👈 YENİ
+
+  const [selectedProduct, setSelectedProduct] = useState<RawMaterial | null>(null);
+
+  // --- EXCEL İŞLEMİ ---
+
+    
+    const columns:ExcelColumn[] = [
+      {header: "ID", key: 'id', width:15},
+      {header: "Adı", key: 'name', width:20},
+      {header: "Siirt'ten Gelen Stok", key: 'incomingAmount', width:30},
+      {header: "Mahalleden Gelen Stok", key: 'neighborhoodInComingAmount', width:30},
+      {header: "Açıklama", key: 'description', width:20},
+    ];
+
+    const excelData = rawmaterials?.data.map((item)=> ({
+      id: item.id,
+      name: item.name,
+      incomingAmount: formatNumber(item.incomingAmount),
+      neighborhoodInComingAmount: formatNumber(item.neighborhoodInComingAmount),
+      description: item.description,
+    }));
+
+
+
+  // --- YARDIMCI FONKSİYONLAR ---
   const getNeighborhoodStock = (item: RawMaterial): number => {
-    const p = item as any; // Tipi 'any' olarak alıyoruz (backend hatası yüzünden)
+    const p = item as any;
     return p.neighborhoodIncomingAmount ?? p.neighborhoodInComingAmount ?? 0;
   };
 
@@ -41,40 +63,52 @@ function RawMaterialList() {
     }
   };
 
-  if (isLoading) return <div className="text-center mt-5">Yükleniyor...</div>;
-  if (isError)
-    return <div className="text-danger text-center mt-5">Veri alınamadı!</div>;
+  // --- MODAL AÇMA FONKSİYONLARI ---
+  const handleOpenNeighborhoodModal = (p: RawMaterial) => {
+      setSelectedProduct(p);
+      setShowNeighborhoodModal(true);
+  };
 
-  // ⭐️ KOD TEMİZLİĞİ 2:
-  // Toplamları hesaplarken de artık temiz fonksiyonumuzu kullanıyoruz.
-  const totalStock = rawmaterials
-    ? rawmaterials.data.reduce((total, item) => total + item.incomingAmount, 0)
-    : 0;
-  const totalNeighborhoodStock = rawmaterials
-    ? rawmaterials.data.reduce(
-        (total, item) => total + getNeighborhoodStock(item),
-        0
-      )
-    : 0;
+  const handleOpenProcessedModal = (p: RawMaterial) => {
+      setSelectedProduct(p);
+      setShowProcessedModal(true);
+  };
+
+  // 👈 YENİ FONKSİYON: Fasoncuya Gönder Modalı
+  const handleOpenContractorModal = (p: RawMaterial) => {
+      setSelectedProduct(p);
+      setShowContractorModal(true);
+  };
+
+
+  if (isLoading) return <div className="text-center mt-5">Yükleniyor...</div>;
+  if (isError) return <div className="text-danger text-center mt-5">Veri alınamadı!</div>;
+
+  const totalStock = rawmaterials ? rawmaterials.data.reduce((total, item) => total + item.incomingAmount, 0) : 0;
+  const totalNeighborhoodStock = rawmaterials ? rawmaterials.data.reduce((total, item) => total + getNeighborhoodStock(item), 0) : 0;
 
   return (
     <div className="container-fluid px-4 mt-4">
       <div className="card shadow-sm">
-        {/* 🎨 GÜZELLİK 1: Kendi 'Fıstık Pazarı' header'ımız */}
         <div className="card-header card-header-fistik text-white d-flex justify-content-between ">
           <h5 className="mb-0">
             <i className="bi bi-shop me-2"></i>Ham Madde Listesi
           </h5>
+          <ExcelButton
+            data={rawmaterials?.data || []}
+            columns={columns}
+            fileName="HamMaddeListesi"
+            title="Ham Madde Listesi"
+          />
         </div>
         <div className="card-body">
           <table className="table table-striped table-hover text-center align-middle">
-            {/* 🎨 GÜZELLİK 2: Kendi 'Fıstık Pazarı' tablo başlığımız */}
             <thead className="thead-fistik align-items-center">
               <tr>
                 <th>ID</th>
                 <th>Adı</th>
-                <th>Siirt'ten Gelen Stok</th>
-                <th>Mahalleden Gelen Stok</th>
+                <th>Siirt Stok</th>
+                <th>Mahalle Stok</th>
                 <th>Açıklama</th>
                 <th>İşlemler</th>
               </tr>
@@ -82,106 +116,84 @@ function RawMaterialList() {
             <tbody>
               {rawmaterials && rawmaterials.data.length > 0 ? (
                 rawmaterials.data.map((p) => {
-                  // ⭐️ KOD TEMİZLİĞİ 3:
-                  // Mahalle stoğunu DÖNGÜ BAŞINDA BİR KERE hesaplıyoruz.
                   const neighborhoodStock = getNeighborhoodStock(p);
-
                   return (
                     <tr key={p.id}>
                       <td>{p.id}</td>
                       <td>{p.name}</td>
                       <td>{formatNumber(p.incomingAmount)}</td>
-                      <td>
-                        {formatNumber(neighborhoodStock)}
-                      </td>
+                      <td>{formatNumber(neighborhoodStock)}</td>
                       <td>{p.description}</td>
                       <td>
-                        {p.incomingAmount > 0 ? (
-                          <button
-                            className="btn btn-warning me-2 py-1"
-                            onClick={() => {
-                              setSelectedProduct(p);
-                              setShowModal(true);
-                            }}
-                          >
-                            {/* 🎨 GÜZELLİK 3: İKONLAR! */}
-                            <i className="bi bi-truck me-1"></i>
-                            Mahalle İşlemi
-                          </button>
-                        ) : null}
+                        <div className="btn-group" role="group">
+                            {/* 1. MAHALLEYE GÖNDER */}
+                            {p.incomingAmount > 0 && (
+                                <button className="btn btn-sm btn-warning" onClick={() => handleOpenNeighborhoodModal(p)} title="Mahalleye Gönder">
+                                    <i className="bi bi-truck"></i>
+                                </button>
+                            )}
 
-                        
-                        <button
-                          className="btn btn-primary py-1"
-                          onClick={() => {
-                            setSelectedForProcessed(p);
-                            setShowProcessedModal(true);
-                          }}
-                        >
-                          <i className="bi bi-gear-fill me-1"></i>
-                          İşleme Gönder
-                        </button>
-                        <button
-                          className="btn btn-danger py-1 ms-2"
-                          onClick={() => handleDelete(p.id)}
-                          disabled={isDeleting}
-                        >
-                          <i className="bi bi-trash me-1"></i>
-                          Sil
-                        </button>
+                            {/* 2. İŞLEMEYE GÖNDER */}
+                            <button className="btn btn-sm btn-primary" onClick={() => handleOpenProcessedModal(p)} title="İşlemeye Gönder">
+                                <i className="bi bi-gear-fill"></i>
+                            </button>
+
+                            {/* 3. FASONCUYA GÖNDER (YENİ) */}
+                            <button className="btn btn-sm btn-info text-white" onClick={() => handleOpenContractorModal(p)} title="Fasoncuya Gönder">
+                                <i className="bi bi-box-arrow-right"></i>
+                            </button>
+
+                            {/* 4. SİL */}
+                            <button className="btn btn-sm btn-danger" onClick={() => handleDelete(p.id)} disabled={isDeleting} title="Sil">
+                                <i className="bi bi-trash"></i>
+                            </button>
+                        </div>
                       </td>
                     </tr>
                   );
                 })
               ) : (
-                <tr>
-                  <td colSpan={6} className="text-center text-muted">
-                    Ürün bulunamadı
-                  </td>
-                </tr>
+                <tr><td colSpan={6} className="text-center text-muted">Ürün bulunamadı</td></tr>
               )}
             </tbody>
-            {/* 🎨 GÜZELLİK 4: Daha temiz ve hizalı bir 'tfoot' */}
             <tfoot className="table-group-divider">
               <tr className="total-row">
-                <th colSpan={4} className="text-end">
-                  Siirt'ten Gelen Toplam Stok:
-                </th>
+                <th colSpan={4} className="text-end">Siirt Toplam:</th>
                 <th className="text-start">{formatNumber(totalStock)}</th>
                 <td></td>
               </tr>
               <tr className="total-row">
-                <th colSpan={4} className="text-end">
-                  Mahalleden Gelen Toplam Stok:
-                </th>
-                <th className="text-start">
-                  {formatNumber(totalNeighborhoodStock)}
-                </th>
+                <th colSpan={4} className="text-end">Mahalle Toplam:</th>
+                <th className="text-start">{formatNumber(totalNeighborhoodStock)}</th>
                 <td></td>
               </tr>
               <tr className="total-row-grand">
-                <th colSpan={4} className="text-end">
-                  Genel Toplam Stok:
-                </th>
-                <th className="text-start">
-                  {formatNumber(totalStock + totalNeighborhoodStock)}
-                </th>
+                <th colSpan={4} className="text-end">Genel Toplam:</th>
+                <th className="text-start">{formatNumber(totalStock + totalNeighborhoodStock)}</th>
                 <td></td>
               </tr>
             </tfoot>
           </table>
 
-          {/* Mahalle Gönderme Modalı */}
+          {/* --- MODALLAR --- */}
           <NeighborhoodSendModal
-            show={showModal}
-            handleClose={() => setShowModal(false)}
+            show={showNeighborhoodModal}
+            handleClose={() => setShowNeighborhoodModal(false)}
             product={selectedProduct}
           />
           <RawMaterialToProcessedModal
             show={showProcessedModal}
             handleClose={() => setShowProcessedModal(false)}
-            product={selectedForProcessed}
+            product={selectedProduct}
           />
+          {/* 👇 YENİ MODAL EKLENDİ */}
+          <SendToContractorModal 
+            show={showContractorModal}
+            handleClose={() => setShowContractorModal(false)}
+            product={selectedProduct}
+            sourceType="Fasoncu" // Ham madde genelde fasoncuya gider
+          />
+
         </div>
       </div>
     </div>

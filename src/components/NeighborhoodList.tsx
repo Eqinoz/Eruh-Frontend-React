@@ -6,6 +6,7 @@ import NeighborhoodProcessModal from "./modals/NeighborhoodProcessModal";
 
 // 🎨 1. Stil dosyamızı import ediyoruz (diğerleriyle aynı)
 import "./css/RawMaterialList.css";
+import ExcelButton from "../common/ExcelButton";
 
 function NeighborhoodList() {
   const {
@@ -17,6 +18,24 @@ function NeighborhoodList() {
   const [showProcessModal, setShowProcessModal] = useState(false);
   const [selectedNeighborhood, setSelectedNeighborhood] =
     useState<Neighborhood | null>(null);
+
+  //Excel İşlemleri
+
+  const columns = [
+    { header: "Ürün Tipi", key: "productType" },
+    { header: "Adı", key: "productName" },
+    { header: "Açıklama", key: "productDescription" },
+    { header: "Miktar", key: "amount" },
+    { header: "Gönderilme Tarihi", key: "dateOfArrival" },
+  ];
+
+  const excelData = neighborhoods?.data.map((item) => ({
+    productType: item.productType,
+    productName: item.productName,
+    productDescription: item.productDescription,
+    amount: formatNumber(item.amount),
+    dateOfArrival: formatDate(item.dateOfArrival),
+  })) ?? [];
 
   if (isLoading) return <div className="text-center mt-5">Yükleniyor...</div>;
   if (isError)
@@ -35,6 +54,13 @@ function NeighborhoodList() {
           <h5 className="mb-0">
             <i className="bi bi-shop me-2"></i>Mahalle Ürünleri
           </h5>
+          <ExcelButton 
+            data={excelData} 
+            columns={columns} 
+            fileName="Mahalle-Ürünleri"
+            title="Mahalledeki Ürünler"
+            disabled={isLoading} 
+          />
         </div>
         <div className="card-body">
           <table className="table table-striped table-hover text-center align-middle">

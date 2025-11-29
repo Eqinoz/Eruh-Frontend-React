@@ -5,9 +5,10 @@ import {
   useGetDetailsOrderQuery,
 } from "../services/orderService";
 import type { OrderDtoModel } from "../models/orderDtoModel";
-import { formatDate, formatNumber } from "../utilities/formatters";
+import { formatCurrency, formatDate, formatNumber } from "../utilities/formatters";
 import { toast } from "react-toastify";
 import "./css/RawMaterialList.css";
+import ExcelButton from "../common/ExcelButton";
 
 function PaymentListPage() {
   const {
@@ -45,6 +46,25 @@ function PaymentListPage() {
     (o) => o.shippedDate !== null && o.isPayment === false
   );
 
+  //Excel İşlemleri
+  const columns = [
+    { header: "Sipariş No", key: "id" },
+    { header: "Müşteri", key: "customerName" },
+    { header: "Teslim Tarihi", key: "shippedDate" },
+    { header: "Vade", key: "maturityDay" },
+    { header: "Vade Tarihi", key: "maturityDate" },
+    { header: "Tutar", key: "taxTotalPrice" },
+  ];
+
+  const excelData = ordersResponse?.data.map((item) => ({
+    id: item.id,
+    customerName: item.customerName,
+    shippedDate: formatDate(item.shippedDate),
+    maturityDay: item.lines.maturityDay,
+    maturityDate: formatDate(item.lines.maturityDate),
+    taxTotalPrice: formatCurrency(item.lines.taxTotalPrice),
+  })) ?? [];
+
   return (
     <div className="container-fluid px-4 mt-4">
       <div className="card shadow-lg border-0">
@@ -55,6 +75,13 @@ function PaymentListPage() {
           <Badge bg="dark" className="fs-6">
             {waitingForPayment.length} Adet
           </Badge>
+          <ExcelButton 
+            data={excelData} 
+            columns={columns} 
+            fileName="Ödeme-Bekleyenler"
+            title="Ödeme Bekleyen İşlemler"
+            disabled={isLoading} 
+          />
         </div>
 
         <div className="card-body p-0">

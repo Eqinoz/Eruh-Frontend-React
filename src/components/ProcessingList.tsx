@@ -8,6 +8,7 @@ import { useDeleteProductToProcessedMutation } from "../services/productToProces
 import { useAddProcessedProductMutation } from "../services/processedProductService";
 import { useState } from "react";
 import type { ProductToProcessed } from "../models/productToProcessed";
+import ExcelButton from "../common/ExcelButton";
 
 export default function ProcessingList() {
   const { data, isLoading, isError } = useGetProductToProcessedsQuery();
@@ -34,6 +35,22 @@ export default function ProcessingList() {
     setNewProductAmount(item.amount);    // Varsayılan miktar (Giriş miktarı)
     setShowConfirmModal(true);
   };
+
+  //Excel İşlemleri
+
+  const columns = [
+    { header: "Ürün", key: "productName" },
+    { header: "Açıklama", key: "description" },
+    { header: "Giriş Miktarı", key: "amount" },
+    { header: "Tarih", key: "dateAdded" },
+  ];
+
+  const excelData = data?.data.map((item) => ({
+    productName: item.productName,
+    description: item.description,
+    amount: formatNumber(item.amount),
+    dateAdded: formatDate(item.dateAdded),
+  })) ?? [];
 
   const handleProcessComplete = async () => {
     if (!selectedItem) return;
@@ -78,6 +95,13 @@ export default function ProcessingList() {
       <div className="card shadow-sm">
         <div className="card-header card-header-fistik text-white d-flex justify-content-between ">
           <h5 className="mb-0"><i className="bi bi-list-ul me-2"></i>İşleme Alınan Ürünler</h5>
+          <ExcelButton 
+            data={excelData} 
+            columns={columns} 
+            fileName="İşleme Alınan Ürünler"
+            title="İşleme Alınan Ürünler"
+            disabled={isLoading} 
+          />
         </div>
         <div className="card-body">
           {items.length === 0 ? (

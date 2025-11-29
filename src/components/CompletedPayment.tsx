@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useGetDetailsOrderQuery } from "../services/orderService";
 import type { OrderDtoModel } from "../models/orderDtoModel";
-import { formatDate, formatNumber } from "../utilities/formatters";
+import { formatCurrency, formatDate, formatNumber } from "../utilities/formatters";
 import "./css/RawMaterialList.css";
+import ExcelButton from "../common/ExcelButton";
 
 function CompletedPaymentList() {
   const {
@@ -31,6 +32,23 @@ function CompletedPaymentList() {
     0
   );
 
+  //Excel İşlemleri
+  const columns = [
+    { header: "Sipariş No", key: "id" },
+    { header: "Müşteri", key: "customerName" },
+    { header: "Sipariş Tarihi", key: "orderDate" },
+    { header: "Ürün", key: "productName" },
+    { header: "Tutar", key: "taxTotalPrice" },
+  ];
+
+  const excelData = completedPayments.map((item) => ({
+    id: item.id,
+    customerName: item.customerName,
+    orderDate: formatDate(item.orderDate),
+    productName: item.lines.productName,
+    taxTotalPrice: formatCurrency(item.lines.taxTotalPrice),
+  })) ?? [];
+
   return (
     <div className="container-fluid px-4 mt-4">
       <div className="card shadow-lg border-0">
@@ -43,6 +61,12 @@ function CompletedPaymentList() {
             <i className="bi bi-cash-stack me-2"></i>
             Toplam Tahsilat: {formatNumber(totalCash)} ₺
           </div>
+          <ExcelButton 
+            data={excelData} 
+            columns={columns} 
+            fileName="Kasa-Durumu"
+            disabled={isLoading} 
+          />
         </div>
 
         <div className="card-body p-0">

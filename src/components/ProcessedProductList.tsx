@@ -12,6 +12,7 @@ import type { ToPackagedItem } from "../models/toPackagedModal";
 import { toast } from "react-toastify";
 import "./css/Modal.css"; // Modal stillerini de import ettim
 import SendToContractorModal from "./modals/SendToContractorModal";
+import ExcelButton from "../common/ExcelButton";
 
 // 🎨 1. Kod çözme fonksiyonu - Kısaltmayı tam açıklamaya çevirir
 /**
@@ -100,6 +101,22 @@ function ProcessedProductList() {
     setShowConfirmModal(true);
   };
 
+  //Excel İşlemleri
+
+  const columns = [
+    { header: "Ürün", key: "productName" },
+    { header: "Açıklama", key: "description" },
+    { header: "Giriş Miktarı", key: "amount" },
+    { header: "Tarih", key: "dateAdded" },
+  ];
+
+  const excelData = processed?.data.map((item) => ({
+    productName: item.productName,
+    description: item.description,
+    amount: formatNumber(item.amount),
+    dateAdded: formatDate(item.dateAdded),
+  })) ?? [];
+
   // 🎨 4. Modal'daki tüm input değişikliklerini yönetecek TEK fonksiyon
   const handleModalInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -179,6 +196,13 @@ function ProcessedProductList() {
           <h5 className="mb-0">
             <i className="bi bi-box-seam me-2"></i>İşlenmiş Ürünler
           </h5>
+          <ExcelButton 
+            data={excelData} 
+            columns={columns} 
+            fileName="İşlenmiş Ürünler"
+            title="İşlenmiş Ürünler"
+            disabled={isLoading} 
+          />
         </div>
         <div className="card-body">
           <table className="table table-striped table-hover text-center align-middle">
