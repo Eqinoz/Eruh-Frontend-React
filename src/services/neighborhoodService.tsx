@@ -4,8 +4,8 @@ import type { Neighborhood } from "../models/neigborhoodModel";
 import type { RawMaterial } from "../models/rawMaterialModel";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
-//const BASE_URL = "https://localhost:44381/api";
-const BASE_URL = "https://eruh.runasp.net/api";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+//const BASE_URL = "https://eruh.runasp.net/api";
 
 export const neighborhoodService = createApi({
   reducerPath: "neighborhoodService",

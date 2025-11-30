@@ -2,8 +2,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { LoginModel } from "../models/loginModul";
 import type { TokenResponse } from "../models/tokenModel";
 
-//const BASE_URL = "https://localhost:44381/api/";
-const BASE_URL = "https://eruh.runasp.net/api/";
+const BASE_URL = "https://localhost:44381/api/";
+//const BASE_URL = "https://eruh.runasp.net/api/";
 
 export const authService = createApi({
   reducerPath: "authApi",
