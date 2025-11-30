@@ -73,7 +73,7 @@ function ProductListPage() {
               {products && products.data.length > 0 ? (
                 products.data.map((p, index) => (
                   <tr key={p.productId}>
-                    <td>{p.id}</td> 
+                    <td>{index + 1}</td> 
                     <td>{p.productId}</td>
                     <td>{p.name}</td>
                     <td>{formatNumber(p.amount)}</td>

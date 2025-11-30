@@ -3,7 +3,6 @@ import { useGetRawMaterialsQuery, useDeleteRawMaterialMutation } from "../servic
 import type { RawMaterial } from "../models/rawMaterialModel";
 import { formatNumber } from "../utilities/formatters";
 import { toast } from "react-toastify";
-import { exportToExcel, type ExcelColumn } from "../utilities/excelHelper";
 
 // 🎨 MODALLARI IMPORT ET
 import NeighborhoodSendModal from "./modals/NeighborhoodModal";
@@ -27,7 +26,7 @@ function RawMaterialList() {
   // --- EXCEL İŞLEMİ ---
 
     
-    const columns:ExcelColumn[] = [
+    const columns = [
       {header: "ID", key: 'id', width:15},
       {header: "Adı", key: 'name', width:20},
       {header: "Siirt'ten Gelen Stok", key: 'incomingAmount', width:30},
@@ -41,7 +40,7 @@ function RawMaterialList() {
       incomingAmount: formatNumber(item.incomingAmount),
       neighborhoodInComingAmount: formatNumber(item.neighborhoodInComingAmount),
       description: item.description,
-    }));
+    }))??[];
 
 
 
@@ -95,10 +94,11 @@ function RawMaterialList() {
             <i className="bi bi-shop me-2"></i>Ham Madde Listesi
           </h5>
           <ExcelButton
-            data={rawmaterials?.data || []}
+            data={excelData}
             columns={columns}
             fileName="HamMaddeListesi"
             title="Ham Madde Listesi"
+            disabled={isLoading}
           />
         </div>
         <div className="card-body">

@@ -65,6 +65,7 @@ function CompletedPaymentList() {
             data={excelData} 
             columns={columns} 
             fileName="Kasa-Durumu"
+            title="Excel'e Aktar"
             disabled={isLoading} 
           />
         </div>

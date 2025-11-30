@@ -23,7 +23,7 @@ function NeighborhoodProcessModal({ show, handleClose, neighborhood }: Props) {
 
   const [updateRawMaterial, { isLoading: isUpdating }] =
     useUpdateNewRawMaterialMutation();
-  const [getByIdRawMaterial, { isLoading: isGetting }] =
+  const [getByIdRawMaterial] =
     useLazyGetByIdRawMaterialQuery();
   const [deleteNeighborhood, { isLoading: isDeleting }] =
     useDeleteNeighborhoodMutation();
