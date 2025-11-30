@@ -3,7 +3,8 @@ import type { ListResponseModel } from "../models/listResponseModel";
 import type { ContractorProductModel } from "../models/contractorProductModel";
 import type { ContractorProductDtoModel } from "../models/contractorProductDtoModel";
 
-const BASE_URL = "https://localhost:44381/api";
+//const BASE_URL = "https://localhost:44381/api";
+const BASE_URL = "https://eruh.runasp.net/api";
 
 export const contractorProductService=createApi({
     baseQuery: fetchBaseQuery({

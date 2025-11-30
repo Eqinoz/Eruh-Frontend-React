@@ -381,6 +381,44 @@ function SideBar() {
             </ul>
           )}
         </li>
+
+        {/* --- Haraket --- */}
+        <li className="nav-item">
+          <a
+            href="#"
+            className="nav-link text-white d-flex align-items-center justify-content-between"
+            onClick={(e) => {
+              e.preventDefault();
+              toggleMenu("hareket");
+            }}
+            role="button"
+          >
+            <div className="d-flex align-items-center">
+              <i className="bi bi-arrow-left-right me-2"></i>
+              {!collapsed && <span>Haraket</span>}
+            </div>
+            {!collapsed && (
+              <i
+                className={`bi bi-chevron-${
+                  openMenu === "hareket" ? "up" : "down"
+                }`}
+              ></i>
+            )}
+          </a>
+          {!collapsed && openMenu === "hareket" && (
+            <ul className="submenu list-unstyled ps-4">
+              {/* 🐞 Hata Düzeltme: 'Link > li' yapısını 'li > Link' olarak düzelttim */}
+              <li>
+                <Link
+                  to="/stock-movement-list"
+                  className="nav-link text-white py-1"
+                >
+                  <i className="bi bi-list-ul me-2"></i> Stok Hareketleri
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li> 
       </ul>
     </div>
   );

@@ -87,6 +87,7 @@ function OrderDetailsList() {
             data={excelData} 
             columns={columns} 
             fileName="Bekleyen-Siparişler"
+            title="Bekleyen Siparişler"
             disabled={isLoading} 
           />
         </div>

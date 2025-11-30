@@ -2,10 +2,13 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { ListResponseModel } from "../models/listResponseModel";
 import type { ProductToProcessed } from "../models/productToProcessed";
 
+//const BASE_URL = "https://localhost:44381/api";
+const BASE_URL = "https://eruh.runasp.net/api";
+
 export const productToProcessedService = createApi({
   reducerPath: "productToProcessedService",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://localhost:44381/api",
+    baseUrl: BASE_URL,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("token");
       if (token) headers.set("Authorization", `Bearer ${token}`);

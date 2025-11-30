@@ -4,7 +4,8 @@ import type { ListResponseModel } from "../models/listResponseModel";
 import type { CustomerAccountTransaction } from "../models/customerAccountTransaction";
 import type { SingleResponseModel } from "../models/singleResponseModel";
 
-const BASE_URL = "https://localhost:44381/api";
+//const BASE_URL = "https://localhost:44381/api";
+const BASE_URL = "https://eruh.runasp.net/api";
 
 export const customerService = createApi({
   reducerPath: "customerService",

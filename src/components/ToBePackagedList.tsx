@@ -56,7 +56,7 @@ function ToBePackagedList() {
     }
     try {
       const newProduct: ProductModel = {
-        id: select.id!,
+        id: 0,
         productId: select.productType, // Bu (DB, DLK)
         name: select.productName,
         amount: select.amount,
@@ -93,6 +93,7 @@ function ToBePackagedList() {
             data={excelData} 
             columns={columns} 
             fileName="Paketlenecek-Ürünler"
+            title="Paketlenecek Ürünler"
             disabled={isLoading} 
           />
         </div>

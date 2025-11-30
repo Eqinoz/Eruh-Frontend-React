@@ -25,6 +25,7 @@ import ContractorAdd from "./components/ContractorAdd";
 import ContractorList from "./components/ContractorList";
 import ContractorDetailsPage from "./components/ContractorDetailsPage";
 import ContractorProductList from "./components/ContractorProductList";
+import StockMovementList from "./components/StockMovementList";
 
 function App() {
   const dispatch = useDispatch();
@@ -72,6 +73,7 @@ function App() {
           <Route path="contractor-add" element={<ContractorAdd />} />
           <Route path="contractor-detail/:id" element={<ContractorDetailsPage />} />
           <Route path="contractor-products" element={<ContractorProductList />} />
+          <Route path="stock-movement-list" element={<StockMovementList />} />
 
           {/* Eşleşen başka bir yol yoksa anasayfaya yönlendir */}
           <Route path="*" element={<Navigate to="/" replace />} />

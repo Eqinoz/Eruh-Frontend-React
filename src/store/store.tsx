@@ -1,4 +1,4 @@
-import { applyMiddleware, configureStore, createSlice } from "@reduxjs/toolkit";
+import { configureStore, createSlice } from "@reduxjs/toolkit";
 import { authService } from "../services/authService";
 import { productService } from "../services/productService";
 import { customerService } from "../services/customerService";
@@ -10,6 +10,7 @@ import { toPackagedService } from "../services/toPackagedService";
 import { orderService } from "../services/orderService";
 import { contractorService } from "../services/contractorService";
 import { contractorProductService } from "../services/contractorProductService";
+import { stockMovementService } from "../services/stockMovementService";
 
 const authSlice = createSlice({
   name: "auth",
@@ -46,6 +47,7 @@ export const store = configureStore({
     [orderService.reducerPath]: orderService.reducer,
     [contractorService.reducerPath]: contractorService.reducer,
     [contractorProductService.reducerPath]: contractorProductService.reducer,
+    [stockMovementService.reducerPath]: stockMovementService.reducer,
   },
   middleware: (getDefault) =>
     getDefault().concat(
@@ -60,6 +62,7 @@ export const store = configureStore({
       orderService.middleware,
       contractorService.middleware,
       contractorProductService.middleware,
+      stockMovementService.middleware,
     ),
 });
 
