@@ -4,7 +4,7 @@ import type { ListResponseModel } from "../models/listResponseModel";
 import type { CustomerAccountTransaction } from "../models/customerAccountTransaction";
 import type { SingleResponseModel } from "../models/singleResponseModel";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL || "https://eruh.runasp.net/api";
 //const BASE_URL = "https://eruh.runasp.net/api";
 
 export const customerService = createApi({

@@ -3,7 +3,7 @@ import type { ListResponseModel } from "../models/listResponseModel";
 import type { ContractorProductModel } from "../models/contractorProductModel";
 import type { ContractorProductDtoModel } from "../models/contractorProductDtoModel";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL || "https://eruh.runasp.net/api";
 //const BASE_URL = "https://eruh.runasp.net/api";
 
 export const contractorProductService=createApi({
