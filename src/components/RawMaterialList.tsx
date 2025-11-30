@@ -87,7 +87,6 @@ function RawMaterialList() {
   const totalNeighborhoodStock = rawmaterials ? rawmaterials.data.reduce((total, item) => total + getNeighborhoodStock(item), 0) : 0;
 
   return (
-    <div className="container-fluid px-4 mt-4">
       <div className="card shadow-sm">
         <div className="card-header card-header-fistik text-white d-flex justify-content-between ">
           <h5 className="mb-0">
@@ -102,6 +101,7 @@ function RawMaterialList() {
           />
         </div>
         <div className="card-body">
+          <div className="table-responsive">
           <table className="table table-striped table-hover text-center align-middle">
             <thead className="thead-fistik align-items-center">
               <tr>

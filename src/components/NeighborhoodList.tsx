@@ -47,7 +47,6 @@ function NeighborhoodList() {
 
   return (
     // 🎨 2. Layout'u 'container-fluid' olarak güncelledim
-    <div className="container-fluid px-4 mt-4">
       <div className="card shadow-sm">
         {/* 🎨 3. Kart başlığını temamıza uygun hale getirdim ve ikon ekledim */}
         <div className="card-header card-header-fistik text-white d-flex justify-content-between ">
@@ -63,6 +62,7 @@ function NeighborhoodList() {
           />
         </div>
         <div className="card-body">
+          <div className="table-responsive">
           <table className="table table-striped table-hover text-center align-middle">
             {/* 🎨 4. Tablo başlığını temamıza uygun hale getirdim */}
             <thead className="thead-fistik align-items-center">
@@ -126,6 +126,7 @@ function NeighborhoodList() {
               </tr>
             </tfoot>
           </table>
+          </div>
           {/* Process modal */}
           <NeighborhoodProcessModal
             show={showProcessModal}
@@ -137,7 +138,6 @@ function NeighborhoodList() {
           />
         </div>
       </div>
-    </div>
   );
 }
 

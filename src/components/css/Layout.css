@@ -22,3 +22,25 @@
   overflow-y: auto; /* 👈 SADECE İÇERİK BURADA KAYACAK */
   background-color: #f4f7f6; /* Hafif kirli beyaz arka plan */
 }
+
+@media (max-width: 768px) {
+  
+  /* Sidebar'ı varsayılan olarak gizle veya daralt */
+  .sidebar-fistik {
+    position: fixed; /* Üstte yüzsün */
+    z-index: 1050;
+    height: 100%;
+    left: -280px; /* Ekran dışına it */
+    transition: left 0.3s ease;
+  }
+
+  /* Eğer "collapsed" sınıfı kalkarsa (menü açılırsa) içeri girsin */
+  .sidebar-fistik.show-mobile {
+    left: 0;
+  }
+  
+  /* İçeriğin paddingini sıfırla */
+  .main-content {
+    padding: 10px !important;
+  }
+}

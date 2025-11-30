@@ -82,7 +82,7 @@ export default function StockList() {
   ];
 
   return (
-    <div className="container-fluid px-4 mt-4">
+    <>
       {/* Genel Toplam Kartı */}
       <div className="row mb-4">
         <div className="col-12">
@@ -142,6 +142,7 @@ export default function StockList() {
               </h5>
             </div>
             <div className="card-body">
+              <div className="table-responsive">
               <table className="table table-hover table-striped align-middle">
                 <thead className="thead-fistik">
                   <tr>
@@ -200,10 +201,11 @@ export default function StockList() {
                   </tr>
                 </tfoot>
               </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

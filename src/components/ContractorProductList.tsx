@@ -29,7 +29,7 @@ function ContractorProductList() {
   const items = listResponse?.data || [];
 
   return (
-    <div className="container-fluid px-4 mt-4">
+    <>
       <div className="card shadow-lg border-0">
         <div className="card-header card-header-fistik text-white d-flex justify-content-between">
           <h5 className="mb-0">
@@ -71,7 +71,7 @@ function ContractorProductList() {
           </table>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

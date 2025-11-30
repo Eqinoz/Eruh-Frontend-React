@@ -66,7 +66,6 @@ function PaymentListPage() {
   })) ?? [];
 
   return (
-    <div className="container-fluid px-4 mt-4">
       <div className="card shadow-lg border-0">
         <div className="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
           <h5 className="mb-0">
@@ -85,6 +84,7 @@ function PaymentListPage() {
         </div>
 
         <div className="card-body p-0">
+          <div className="table-responsive">
           <table className="table table-hover align-middle mb-0">
             <thead className="table-light text-warning">
               <tr>

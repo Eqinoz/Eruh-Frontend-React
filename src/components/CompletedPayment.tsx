@@ -50,7 +50,7 @@ function CompletedPaymentList() {
   })) ?? [];
 
   return (
-    <div className="container-fluid px-4 mt-4">
+
       <div className="card shadow-lg border-0">
         {/* HEADER: KASA DURUMU */}
         <div className="card-header bg-success text-white d-flex justify-content-between align-items-center">
@@ -71,6 +71,7 @@ function CompletedPaymentList() {
         </div>
 
         <div className="card-body p-0">
+          <div className="table-responsive">
           <table className="table table-hover align-middle mb-0">
             <thead className="table-light text-success">
               <tr>
@@ -308,9 +309,9 @@ function CompletedPaymentList() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
-    </div>
   );
 }
 

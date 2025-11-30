@@ -57,7 +57,6 @@ function RawMaterialAdd() {
 
   return (
     // 🎨 7. Layout'u 'container-fluid' olarak güncelledim
-    <div className="container-fluid px-4 mt-4">
       <div className="row justify-content-center">
         <div className="col-md-8">
           <div className="card shadow-sm">
@@ -144,7 +143,6 @@ function RawMaterialAdd() {
           </div>
         </div>
       </div>
-    </div>
   );
 }
 

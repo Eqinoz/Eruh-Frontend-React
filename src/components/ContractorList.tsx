@@ -67,7 +67,7 @@ function ContractorList() {
   const contractors: ContractorModel[] = contractorsResponse?.data || [];
 
   return (
-    <div className="container-fluid px-4 mt-4">
+    <>
       <div className="card shadow-lg border-0">
         
         {/* 🎨 Kart Başlığı */}
@@ -78,6 +78,7 @@ function ContractorList() {
         </div>
 
         <div className="card-body p-0">
+          <div className="table-responsive">
           <table className="table table-striped table-hover align-middle mb-0">
             <thead className="thead-fistik">
               <tr>
@@ -144,6 +145,7 @@ function ContractorList() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
 
@@ -177,7 +179,7 @@ function ContractorList() {
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+    </>
   );
 }
 

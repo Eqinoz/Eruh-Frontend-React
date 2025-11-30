@@ -66,7 +66,7 @@ function CustomerList() {
 
   return (
     // 🎨 7. Layout 'container-fluid' yapıldı
-    <div className="container-fluid px-4 mt-4">
+    <>
       <div className="card shadow-lg border-0">
         {/* 🎨 8. Tema: Kart başlığı ve ikonu güncellendi */}
         <div className="card-header card-header-fistik text-white d-flex justify-content-between align-items-center">
@@ -75,6 +75,7 @@ function CustomerList() {
           </h5>
         </div>
         <div className="card-body">
+          <div className="table-responsive">
           <table className="table table-striped table-hover align-middle">
             {/* 🎨 9. Tema: Tablo başlığı güncellendi */}
             <thead className="thead-fistik">
@@ -142,6 +143,7 @@ function CustomerList() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
 
@@ -182,7 +184,7 @@ function CustomerList() {
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+    </>
   );
 }
 

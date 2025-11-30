@@ -91,7 +91,6 @@ export default function ProcessingList() {
   const totalAmount = items.reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div className="container-fluid px-4 mt-4">
       <div className="card shadow-sm">
         <div className="card-header card-header-fistik text-white d-flex justify-content-between ">
           <h5 className="mb-0"><i className="bi bi-list-ul me-2"></i>İşleme Alınan Ürünler</h5>
@@ -107,6 +106,7 @@ export default function ProcessingList() {
           {items.length === 0 ? (
             <div className="alert alert-info text-center">Şu anda işleme alınmış ürün bulunmuyor.</div>
           ) : (
+            <div className="table-responsive">
             <table className="table table-striped table-hover text-center align-middle">
               <thead className="thead-fistik align-items-center">
                 <tr>
@@ -140,9 +140,9 @@ export default function ProcessingList() {
                 </tr>
               </tfoot>
             </table>
+            </div>
           )}
         </div>
-      </div>
 
       {/* 🎨 GÜNCELLENMİŞ MODAL */}
       <Modal show={showConfirmModal} onHide={handleCloseConfirmModal} centered>
@@ -191,6 +191,6 @@ export default function ProcessingList() {
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+      </div>
   );
 }

@@ -16,7 +16,9 @@ function Layout() {
       <div className="content-body-wrapper">
         <SideBar />
         <main className="main-content">
+          <div className="container-fluid px-2 px-md-4 mt-3 mt-md-4">
           <Outlet />
+          </div>
         </main>
       </div>
       <ToastContainer

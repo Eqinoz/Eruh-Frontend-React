@@ -65,7 +65,6 @@ function Home() {
 
   return (
     <div className="home-container">
-      <div className="container-fluid px-4">
         {/* --- KPI KARTLARI --- */}
         <div className="row g-4 mb-5">
           {/* Kart 1: Toplam Stok */}
@@ -322,7 +321,6 @@ function Home() {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 }

@@ -42,7 +42,7 @@ function ProductListPage() {
   }
 
   return (
-    <div className="container-fluid px-4 mt-4">
+    <>
       <div className="card shadow-sm">
         <div className="card-header card-header-fistik text-white d-flex justify-content-between align-items-center">
           <h5 className="mb-0">
@@ -58,6 +58,7 @@ function ProductListPage() {
           />
         </div>
         <div className="card-body">
+          <div className="table-responsive">
           <table className="table table-striped table-hover text-center align-middle">
             <thead className="thead-fistik">
               <tr>
@@ -105,6 +106,7 @@ function ProductListPage() {
               </tr>
             </tfoot>
           </table>
+          </div>
         </div>
       </div>
       <SendToContractorModal 
@@ -113,7 +115,7 @@ function ProductListPage() {
     product={selectedProduct} 
     sourceType="Komisyoncu" // Veya "Komisyoncu"
 />
-    </div>
+    </>
   );
   
 }

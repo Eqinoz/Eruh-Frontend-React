@@ -59,7 +59,6 @@ function StockMovementList() {
   };
 
   return (
-    <div className="container-fluid px-4 mt-4">
       <div className="card shadow-lg border-0">
         
         {/* HEADER & TABS */}
@@ -117,6 +116,7 @@ function StockMovementList() {
         {/* BODY */}
         <div className="card-body p-0">
           <div className="table-responsive" style={{ maxHeight: '600px', overflowY: 'auto' }}>
+            <div className="table-responsive">
             <table className="table table-hover align-middle mb-0">
               <thead className="thead-fistik sticky-top" style={{ zIndex: 1 }}>
                 <tr>

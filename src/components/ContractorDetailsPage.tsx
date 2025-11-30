@@ -32,12 +32,7 @@ function ContractorDetailsPage() {
   const totalAmount = contractorProducts.reduce((sum: number, p: any) => sum + p.amount, 0);
 
   return (
-    <div className="container-fluid px-4 mt-4">
-      
-      {/* BAŞLIK KARTI 
-          🎨 DÜZELTME: 'bg-fistik-primary' yerine style ile rengi zorladım. 
-          Böylece CSS yüklenmese bile yeşil olur ve yazılar okunur.
-      */}
+<>
       <div 
         className="card shadow-lg border-0 mb-4 text-white"
         style={{ backgroundColor: '#6B8E23' /* Fıstık Yeşili */, borderRadius: '12px' }}
@@ -72,6 +67,7 @@ function ContractorDetailsPage() {
             </h5>
         </div>
         <div className="card-body p-0">
+          <div className="table-responsive">
           <table className="table table-hover align-middle mb-0">
             <thead className="table-light">
               <tr>
@@ -106,6 +102,7 @@ function ContractorDetailsPage() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
       
@@ -114,7 +111,7 @@ function ContractorDetailsPage() {
             <i className="bi bi-arrow-left me-2"></i>Müstahsil Listesine Dön
         </button>
       </div>
-    </div>
+      </>
   );
 }
 

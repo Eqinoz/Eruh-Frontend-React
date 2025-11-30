@@ -68,7 +68,7 @@ function CustomerAccountPage() {
   );
 
   return (
-    <div className="container-fluid px-4 mt-4">
+    <>
       {/* --- ÜST BİLGİ KARTI (MÜŞTERİ PROFİLİ) --- */}
       <Card className="shadow-lg border-0 mb-4">
         <Card.Body className="p-4 bg-white rounded-3">
@@ -308,7 +308,7 @@ function CustomerAccountPage() {
           <i className="bi bi-arrow-left me-2"></i>Müşteri Listesine Dön
         </button>
       </div>
-    </div>
+    </>
   );
 }
 

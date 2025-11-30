@@ -52,7 +52,6 @@ function ProductAddPage() {
 
   return (
     // 🎨 8. Layout'u standart temaya uygun hale getirdim
-    <div className="container-fluid px-4 mt-4">
       <div className="row justify-content-center">
         <div className="col-md-8">
           <div className="card shadow-sm">
@@ -151,7 +150,6 @@ function ProductAddPage() {
           </div>
         </div>
       </div>
-    </div>
   );
 }
 
