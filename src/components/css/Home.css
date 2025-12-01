@@ -1,10 +1,10 @@
 /* src/components/css/Home.css */
 
 :root {
-  --home-primary: #2e8b57; /* SeaGreen - Ana renk */
-  --home-secondary: #3cb371; /* MediumSeaGreen - İkincil */
-  --home-accent: #ffd700; /* Gold - Vurgu */
-  --home-bg: #f4f7f6; /* Açık gri/yeşilimsi arka plan */
+  --home-primary: #2e8b57;
+  --home-secondary: #3cb371;
+  --home-accent: #ffd700;
+  --home-bg: #f4f7f6;
   --home-card-bg: #ffffff;
   --home-text-dark: #2c3e50;
   --home-text-muted: #7f8c8d;
@@ -16,8 +16,6 @@
   padding-bottom: 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
-
 
 .home-title {
   font-weight: 700;
@@ -195,3 +193,102 @@
 .delay-2 { animation-delay: 0.2s; }
 .delay-3 { animation-delay: 0.3s; }
 .delay-4 { animation-delay: 0.4s; }
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 767px) {
+  .home-container {
+    padding-bottom: 1rem;
+  }
+  
+  .kpi-card {
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  
+  .kpi-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .kpi-value {
+    font-size: 1.5rem;
+  }
+  
+  .kpi-label {
+    font-size: 0.8rem;
+  }
+  
+  .content-card-header {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .content-card-title {
+    font-size: 1rem;
+  }
+  
+  .table-responsive {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+  }
+  
+  .table-custom th,
+  .table-custom td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+  }
+  
+  .table-custom th {
+    font-size: 0.75rem;
+  }
+  
+  .table-custom .hide-mobile {
+    display: none;
+  }
+  
+  .list-item-custom {
+    padding: 0.75rem 1rem;
+  }
+  
+  .btn-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.65rem;
+  }
+  
+  .progress-custom {
+    height: 6px;
+  }
+  
+  .delay-1, .delay-2, .delay-3, .delay-4 {
+    animation-delay: 0s;
+  }
+}
+
+@media (max-width: 400px) {
+  .kpi-card {
+    padding: 1rem;
+  }
+  
+  .kpi-value {
+    font-size: 1.35rem;
+  }
+  
+  .content-card-header {
+    padding: 0.75rem;
+  }
+  
+  .table-custom th,
+  .table-custom td {
+    padding: 0.5rem 0.35rem;
+    font-size: 0.8rem;
+  }
+}

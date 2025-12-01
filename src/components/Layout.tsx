@@ -1,23 +1,44 @@
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import SideBar from "./SideBar";
-import Header from "./Header"; //
-import "./css/Layout.css"; // Bu CSS'i de güncelleyeceğiz
+import Header from "./Header";
+import "./css/Layout.css";
+import "./css/responsive-utilities.css"; // Yeni responsive utilities
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function Layout() {
-  return (
-    // 1. Ana sarmalayıcı artık DİKEY (column)
-    <div className="layout-wrapper">
-      {/* 2. Header artık en tepede ve %100 genişlikte */}
-      <Header />
+  // Mobil sidebar state yönetimi
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
-      {/* 3. Header'ın ALTINDA kalan tüm alanı kaplayan yeni div */}
+  const toggleMobileSidebar = () => {
+    setIsMobileSidebarOpen(!isMobileSidebarOpen);
+  };
+
+  const closeMobileSidebar = () => {
+    setIsMobileSidebarOpen(false);
+  };
+
+  return (
+    <div className="layout-wrapper">
+      {/* Header'a hamburger menu toggle fonksiyonu gönder */}
+      <Header onToggleMobileSidebar={toggleMobileSidebar} />
+
+      {/* Mobil backdrop overlay */}
+      <div
+        className={`mobile-backdrop ${isMobileSidebarOpen ? "show" : ""}`}
+        onClick={closeMobileSidebar}
+      />
+
       <div className="content-body-wrapper">
-        <SideBar />
+        {/* SideBar'a mobil state gönder */}
+        <SideBar
+          isMobileOpen={isMobileSidebarOpen}
+          onCloseMobile={closeMobileSidebar}
+        />
         <main className="main-content">
           <div className="container-fluid px-2 px-md-4 mt-3 mt-md-4">
-          <Outlet />
+            <Outlet />
           </div>
         </main>
       </div>

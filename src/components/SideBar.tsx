@@ -2,24 +2,33 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import "./css/SideBar.css"; // 👈 Bu CSS'i de birazdan oluşturacağız
+import "./css/SideBar.css";
 
-function SideBar() {
+interface SideBarProps {
+  isMobileOpen: boolean;
+  onCloseMobile: () => void;
+}
+
+function SideBar({ isMobileOpen, onCloseMobile }: SideBarProps) {
   const [collapsed, setCollapsed] = useState(false);
-  // ⭐️ Hata Düzeltme: 'any' yerine 'string | null' kullandım
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   const toggleMenu = (menu: string) => {
     setOpenMenu(openMenu === menu ? null : menu);
   };
 
+  // Mobilde link tıklandığında sidebar'ı kapat
+  const handleLinkClick = () => {
+    if (window.innerWidth < 768) {
+      onCloseMobile();
+    }
+  };
+
   return (
-    // 🎨 Mimari Düzeltme: Dış 'd-flex' div'i kaldırıldı.
-    // 🎨 Tema: 'bg-dark' yerine 'sidebar-fistik' temamızı kullandım.
     <div
       className={`sidebar-fistik text-white p-2 d-flex flex-column ${
         collapsed ? "collapsed" : ""
-      }`}
+      } ${isMobileOpen ? "show-mobile" : ""}`}
     >
       <div className="sidebar-header d-flex align-items-center justify-content-between px-2 mb-3">
         {/* 🎨 Tema: Başlığa altın rengi verdim */}
@@ -43,6 +52,7 @@ function SideBar() {
           <Link
             to="/"
             className="nav-link text-white d-flex align-items-center"
+            onClick={handleLinkClick}
           >
             <i className="bi bi-house-door-fill me-2"></i>
             {!collapsed && <span>Anasayfa</span>}
@@ -77,7 +87,7 @@ function SideBar() {
             <ul className="submenu list-unstyled ps-4">
               {/* 🐞 Hata Düzeltme: Geçersiz 'Link > li' yapısını 'li > Link' olarak düzelttim */}
               <li>
-                <Link to="/stock-list" className="nav-link text-white py-1">
+                <Link to="/stock-list" className="nav-link text-white py-1" onClick={handleLinkClick}>
                   <i className="bi bi-eye me-2"></i> Hazır Stok Görüntüle
                 </Link>
               </li>
@@ -89,6 +99,7 @@ function SideBar() {
                 <Link
                   to="/rawmaterial-add"
                   className="nav-link text-white py-1"
+                  onClick={handleLinkClick}
                 >
                   <i className="bi bi-plus-circle me-2"></i> Ham Madde Ekle
                 </Link>
@@ -97,6 +108,7 @@ function SideBar() {
                 <Link
                   to="/rawmaterial-list"
                   className="nav-link text-white py-1"
+                  onClick={handleLinkClick}
                 >
                   <i className="bi bi-eye me-2"></i> Ham Maddeleri Görüntüle
                 </Link>
@@ -108,6 +120,7 @@ function SideBar() {
                 <Link
                   to="/productToProcessed"
                   className="nav-link text-white py-1"
+                  onClick={handleLinkClick}
                 >
                   <i className="bi bi-list-ul me-2"></i> İşlemde Olan Ürünler
                 </Link>
@@ -116,13 +129,14 @@ function SideBar() {
                 <Link
                   to="/processedproduct"
                   className="nav-link text-white py-1"
+                  onClick={handleLinkClick}
                 >
                   <i className="bi bi-list-ul me-2"></i> İşlenmiş Ürünler
                 </Link>
               </li>
               <hr className="submenu-divider" />
               <li>
-                <Link to="/to-be-packaged" className="nav-link text-white py-1">
+                <Link to="/to-be-packaged" className="nav-link text-white py-1" onClick={handleLinkClick}>
                   <i className="bi bi-box2-fill me-2"></i> Paketlenme
                 </Link>
               </li>
@@ -160,6 +174,7 @@ function SideBar() {
                 <Link
                   to="/neighborhood-list"
                   className="nav-link text-white py-1"
+                  onClick={handleLinkClick}
                 >
                   <i className="bi bi-list-ul me-2"></i> Mahalledeki Ürünler
                 </Link>
@@ -197,6 +212,7 @@ function SideBar() {
                 <Link
                   to="/contractor-add"
                   className="nav-link text-white py-1"
+                  onClick={handleLinkClick}
                 >
                   <i className="bi bi-plus-circle me-2"></i> Fasoncu Ve Komisyoncu Ekle
                 </Link>
@@ -205,6 +221,7 @@ function SideBar() {
                 <Link
                   to="/contractor-list"
                   className="nav-link text-white py-1"
+                  onClick={handleLinkClick}
                 >
                   <i className="bi bi-list-ul me-2"></i> Fasoncu Ve Komisyoncu Listesi
                 </Link>
@@ -214,6 +231,7 @@ function SideBar() {
                 <Link
                   to="/contractor-products"
                   className="nav-link text-white py-1"
+                  onClick={handleLinkClick}
                 >
                   <i className="bi bi-list-ul me-2"></i> Fasoncu Ve Komisyoncudaki Ürünler
                 </Link>
@@ -249,12 +267,12 @@ function SideBar() {
             <ul className="submenu list-unstyled ps-4">
               {/* 🐞 Hata Düzeltme: 'Link > li' yapısını 'li > Link' olarak düzelttim */}
               <li>
-                <Link to="/product-add" className="nav-link text-white py-1">
+                <Link to="/product-add" className="nav-link text-white py-1" onClick={handleLinkClick}>
                   <i className="bi bi-plus-circle me-2"></i> Ürün Ekle
                 </Link>
               </li>
               <li>
-                <Link to="/product-list" className="nav-link text-white py-1">
+                <Link to="/product-list" className="nav-link text-white py-1" onClick={handleLinkClick}>
                   <i className="bi bi-eye me-2"></i> Ürünleri Görüntüle
                 </Link>
               </li>
@@ -288,12 +306,12 @@ function SideBar() {
           {!collapsed && openMenu === "musteri" && (
             <ul className="submenu list-unstyled ps-4">
               <li>
-                <Link to="/customer-add" className="nav-link text-white py-1">
+                <Link to="/customer-add" className="nav-link text-white py-1" onClick={handleLinkClick}>
                   <i className="bi bi-plus-circle me-2"></i> Müşteri Ekle
                 </Link>
               </li>
               <li>
-                <Link to="/customer-list" className="nav-link text-white py-1">
+                <Link to="/customer-list" className="nav-link text-white py-1" onClick={handleLinkClick}>
                   <i className="bi bi-list-ul me-2"></i> Müşteri Listesi
                 </Link>
               </li>
@@ -327,12 +345,12 @@ function SideBar() {
           {!collapsed && openMenu === "siparis" && (
             <ul className="submenu list-unstyled ps-4">
               <li>
-                <Link to="/order-add" className="nav-link text-white py-1">
+                <Link to="/order-add" className="nav-link text-white py-1" onClick={handleLinkClick}>
                   <i className="bi bi-plus-circle me-2"></i> Sipariş Ekle
                 </Link>
               </li>
               <li>
-                <Link to="order-list" className="nav-link text-white py-1">
+                <Link to="order-list" className="nav-link text-white py-1" onClick={handleLinkClick}>
                   <i className="bi bi-list-ul me-2"></i> Sipariş Listesi
                 </Link>
               </li>
@@ -365,7 +383,7 @@ function SideBar() {
           {!collapsed && openMenu === "odeme" && (
             <ul className="submenu list-unstyled ps-4">
               <li>
-                <Link to="/payment-list" className="nav-link text-white py-1">
+                <Link to="/payment-list" className="nav-link text-white py-1" onClick={handleLinkClick}>
                   <i className="bi bi-list-ul me-2"></i> Ödemeler
                 </Link>
               </li>
@@ -373,6 +391,7 @@ function SideBar() {
                 <Link
                   to="/completed-payment"
                   className="nav-link text-white py-1"
+                  onClick={handleLinkClick}
                 >
                   <i className="bi bi-check2-circle me-2"></i> Tamamlanmış
                   Ödemeler
@@ -412,6 +431,7 @@ function SideBar() {
                 <Link
                   to="/stock-movement-list"
                   className="nav-link text-white py-1"
+                  onClick={handleLinkClick}
                 >
                   <i className="bi bi-list-ul me-2"></i> Stok Hareketleri
                 </Link>

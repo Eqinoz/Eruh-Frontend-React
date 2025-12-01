@@ -2,32 +2,35 @@
 
 import { useDispatch } from "react-redux";
 import { getUserNameFromToken } from "../utilities/tokenHelper";
-import { clearToken } from "../store/store"; // 👈 1. REDUX LOGOUT EYLEMİNİ İMPORT ET
-import "./css/Header.css"; // 👈 2. YENİ CSS DOSYAMIZI İMPORT ET
+import { clearToken } from "../store/store";
+import "./css/Header.css";
 
-function Header() {
-  // 🐞 3. HATA DÜZELTME: 'useNavigate' değil, 'useDispatch' lazım.
+interface HeaderProps {
+  onToggleMobileSidebar: () => void;
+}
+
+function Header({ onToggleMobileSidebar }: HeaderProps) {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
-    // ⭐️ 4. PROFESYONEL LOGOUT:
-    // Sayfayı yenilemek yerine, Redux store'daki token'ı sil.
-    // App.tsx'teki <Routes> mantığı değişikliği yakalayıp
-    // otomatik olarak LoginPage'e yönlendirecek.
     dispatch(clearToken());
   };
 
   return (
-    // 🐞 5. HATA DÜZELTME: Gereksiz '<>' (Fragment) kaldırıldı.
     <header>
-      {/* 🎨 6. TEMA: 'bg-dark' yerine 'navbar-fistik' temamızı uyguladım */}
-      <nav className="navbar navbar-fistik px-4 d-flex justify-content-between align-items-center">
-        {/* Sol kısım - Logo + İsim */}
-        <div className="d-flex align-items-center">
-          {/* Logo */}
-          {/* <img ... /> */}
+      <nav className="navbar navbar-fistik px-3 px-md-4 d-flex justify-content-between align-items-center">
+        {/* Sol kısım - Hamburger + Logo */}
+        <div className="d-flex align-items-center gap-3">
+          {/* Hamburger Menu - Sadece mobilde görünür */}
+          <button
+            className="btn btn-link text-white p-0 d-md-none"
+            onClick={onToggleMobileSidebar}
+            aria-label="Menüyü Aç/Kapat"
+          >
+            <i className="bi bi-list fs-2"></i>
+          </button>
 
-          {/* 🎨 7. TEMA: Proje adına altın rengi için özel sınıf ekledim */}
+          {/* Logo/Başlık */}
           <span className="playwrite-hu-headertitle fistik-logo-title">
             Eruh Fıstık Pazarı
           </span>
