@@ -26,6 +26,9 @@ import ContractorList from "./components/ContractorList";
 import ContractorDetailsPage from "./components/ContractorDetailsPage";
 import ContractorProductList from "./components/ContractorProductList";
 import StockMovementList from "./components/StockMovementList";
+import RequireAuth from "./common/RequireAuth";
+import UserAddPage from "./components/UserAddPage";
+import UserList from "./components/UserList";
 
 function App() {
   const dispatch = useDispatch();
@@ -41,9 +44,6 @@ function App() {
       {!token ? (
         <Route path="*" element={<LoginPage />} />
       ) : (
-        // ⭐️ İŞTE PROFESYONEL YAPI (LAYOUT ROUTE)
-        // Token varsa, TÜM rotaları 'Layout' component'i ile sarmala.
-        // Layout component'i Sidebar'ı ve <Outlet />'i render eder.
         <Route path="/" element={<Layout />}>
           {/* React Router, 'Layout' içindeki <Outlet />'in olduğu yere 
             aşağıdaki component'lerden hangisi eşleşiyorsa onu yerleştirir.
@@ -53,29 +53,40 @@ function App() {
           <Route index element={<Home />} />
 
           {/* Diğer Tüm Sayfalar */}
-          <Route path="product-add" element={<ProductAdd />} />
-          <Route path="product-list" element={<ProductListPage />} />
-          <Route path="customer-add" element={<CustomerAdd />} />
-          <Route path="customer-list" element={<CustomerList />} />
-          <Route path="order-add" element={<OrderAddPage />} />
-          <Route path="rawmaterial-add" element={<RawMaterialAdd />} />
           <Route path="rawmaterial-list" element={<RawMaterialList />} />
           <Route path="neighborhood-list" element={<NeighborhoodList />} />
+
+
+          <Route element={<RequireAuth allowedRoles={["Admin", "Çalışan","Yönetici","Kavurmacı"]} />}>
           <Route path="processedproduct" element={<ProcessedProductList />} />
           <Route path="productToProcessed" element={<ProcessingList />} />
           <Route path="to-be-packaged" element={<ToBePackagedList />} />
-          <Route path="order-list" element={<OrderDetailsList />} />
-          <Route path="payment-list" element={<PaymentList />} />
+          </Route>
+
           <Route path="completed-payment" element={<CompletedPayment />} />
           <Route path="customer-detail/:id" element={<CustomerAccountPage />} />
           <Route path="stock-list" element={<StockList />} />
-          <Route path="contractor-list" element={<ContractorList />} />
-          <Route path="contractor-add" element={<ContractorAdd />} />
-          <Route path="contractor-detail/:id" element={<ContractorDetailsPage />} />
-          <Route path="contractor-products" element={<ContractorProductList />} />
-          <Route path="stock-movement-list" element={<StockMovementList />} />
 
-          {/* Eşleşen başka bir yol yoksa anasayfaya yönlendir */}
+
+          <Route element={<RequireAuth allowedRoles={["Admin", "Yönetici"]} />}>
+            <Route path="stock-movement-list" element={<StockMovementList />} />
+            <Route path="rawmaterial-add" element={<RawMaterialAdd />} />
+            <Route path="order-add" element={<OrderAddPage />} />
+            <Route path="neighborhood-list" element={<NeighborhoodList />} />
+            <Route path="customer-add" element={<CustomerAdd />} />
+            <Route path="customer-list" element={<CustomerList />} />
+            <Route path="contractor-list" element={<ContractorList />} />
+            <Route path="contractor-add" element={<ContractorAdd />} />
+            <Route path="contractor-detail/:id" element={<ContractorDetailsPage />} />
+            <Route path="contractor-products" element={<ContractorProductList />} />
+            <Route path="order-list" element={<OrderDetailsList />} />
+            <Route path="payment-list" element={<PaymentList />} />
+            <Route path="product-add" element={<ProductAdd />} />
+            <Route path="product-list" element={<ProductListPage />} />
+            <Route path="user-add" element={<UserAddPage />} />
+            <Route path="user-list" element={<UserList />} />
+          </Route>
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       )}

@@ -1,4 +1,4 @@
-import { configureStore, createSlice } from "@reduxjs/toolkit";
+import { configureStore, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { authService } from "../services/authService";
 import { productService } from "../services/productService";
 import { customerService } from "../services/customerService";
@@ -11,23 +11,50 @@ import { orderService } from "../services/orderService";
 import { contractorService } from "../services/contractorService";
 import { contractorProductService } from "../services/contractorProductService";
 import { stockMovementService } from "../services/stockMovementService";
+import { getUserNameFromToken, getUserRoleFromToken } from "../utilities/tokenHelper";
+import { userService } from "../services/userService";
+
+interface AuthState {
+  token: string | null;
+  userRole: string | string[] | null;
+  userName: string | null;
+}
 
 const authSlice = createSlice({
   name: "auth",
-  initialState: { token: null },
+  initialState: {
+    // Başlangıçta localStorage'daki token'a bakarak verileri dolduruyoruz
+    token: localStorage.getItem("token"),
+    userRole: getUserRoleFromToken(), // 👈 Helper kullanıldı
+    userName: getUserNameFromToken(), // 👈 Helper kullanıldı
+  } as AuthState,
   reducers: {
-    setToken: (state, action) => {
-      state.token = action.payload;
-      localStorage.setItem("token", action.payload);
+    setToken: (state, action: PayloadAction<string>) => {
+      const token = action.payload;
+      state.token = token;
+      localStorage.setItem("token", token); // Önce kaydet
+
+      // 👇 HELPER'LARI KULLANARAK STATE'İ GÜNCELLE
+      // Token'ı parametre olarak veriyoruz ki en güncel halini çözsün
+      state.userRole = getUserRoleFromToken(token);
+      state.userName = getUserNameFromToken(token);
     },
     clearToken: (state) => {
       state.token = null;
+      state.userRole = null;
+      state.userName = null;
       localStorage.removeItem("token");
     },
-    loadToken: (state: any) => {
-      const savedToken = localStorage.getItem("token");
-      if (savedToken) state.token = savedToken;
-    },
+    loadToken: (state) => {
+       // Bu metoda aslında gerek kalmadı çünkü initialState zaten yüklüyor
+       // ama yine de dursun istersen.
+       const token = localStorage.getItem("token");
+       if(token) {
+           state.token = token;
+           state.userRole = getUserRoleFromToken(token);
+           state.userName = getUserNameFromToken(token);
+       }
+    }
   },
 });
 
@@ -48,6 +75,7 @@ export const store = configureStore({
     [contractorService.reducerPath]: contractorService.reducer,
     [contractorProductService.reducerPath]: contractorProductService.reducer,
     [stockMovementService.reducerPath]: stockMovementService.reducer,
+    [userService.reducerPath]: userService.reducer,
   },
   middleware: (getDefault) =>
     getDefault().concat(
@@ -63,6 +91,7 @@ export const store = configureStore({
       contractorService.middleware,
       contractorProductService.middleware,
       stockMovementService.middleware,
+      userService.middleware,
     ),
 });
 
