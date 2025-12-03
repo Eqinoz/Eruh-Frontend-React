@@ -14,9 +14,9 @@ function ProductAddPage() {
   const initialState: ProductModel = {
     id: 0,
     productId: "",
-    name: "",
+    name: "".toLocaleUpperCase(),
     amount: 0,
-    packagingType: "",
+    packagingType: "".toLocaleUpperCase(),
   };
 
   const [product, setProduct] = useState<ProductModel>(initialState);
@@ -27,10 +27,19 @@ function ProductAddPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
+    let processedValue: string | number = value;
+    if(name ==="name" ){
+      processedValue = value.toLocaleUpperCase("tr-TR");
+    }else if(name === "productId"){
+      processedValue = value.toLocaleUpperCase("tr-TR");
+    }
+    else if(name === "amount"){
+      processedValue = parseInt(value, 10) || 0;
+    }
     setProduct((prevState) => ({
       ...prevState,
       // 🐞 5. 'amount' alanını sayı olarak kaydetmek için düzeltme
-      [name]: name === "amount" ? parseFloat(value) || 0 : value,
+      [name]: processedValue,
     }));
   };
 
@@ -76,6 +85,7 @@ function ProductAddPage() {
                     value={product.productId}
                     onChange={handleChange}
                     required
+                    autoFocus
                   />
                 </div>
                 <div className="mb-3">

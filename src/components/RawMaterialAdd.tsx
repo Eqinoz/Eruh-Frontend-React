@@ -24,9 +24,17 @@ function RawMaterialAdd() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
+
+    let processedValue: string | number = value;
+    if(name ==="name"){
+      processedValue = value.toLocaleUpperCase("tr-TR");
+    }
+    else if(name === "incomingAmount"){
+      processedValue = parseInt(value, 10) || 0;
+    }
     setFormData((prevState) => ({
       ...prevState,
-      [name]: name === "incomingAmount" ? parseInt(value, 10) || 0 : value,
+      [name]: processedValue
     }));
   };
 
@@ -81,6 +89,7 @@ function RawMaterialAdd() {
                     value={formData.name}
                     onChange={handleChange}
                     required
+                    autoFocus
                   />
                 </div>
 

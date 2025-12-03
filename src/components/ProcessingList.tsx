@@ -166,6 +166,16 @@ export default function ProcessingList() {
                   autoFocus
                 />
               </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-bold">Fire Oranı</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={4}
+                  onChange={(e) => setNewProductAmount(Number(e.target.value))}
+                  placeholder="0"
+                  min="0"
+                />
+              </Form.Group>
 
               <Form.Group className="mb-3">
                 <Form.Label className="fw-bold">Çıkan Net Miktar (kg)</Form.Label>
