@@ -70,9 +70,9 @@ function UserList() {
                     </td>
                   </tr>
                 ) : (
-                  users.map((user) => (
+                  users.map((user, index) => (
                     <tr key={user.id}>
-                      <td className="fw-bold text-muted">#{user.id}</td>
+                      <td className="fw-bold text-muted">#{index + 1}</td>
                       
                       <td>
                         <div className="d-flex align-items-center">

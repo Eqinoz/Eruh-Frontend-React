@@ -77,16 +77,11 @@ function SideBar({ isMobileOpen, onCloseMobile }: SideBarProps) {
                 
                 {/* 1. Hazır Stok: Sadece Yönetim ve Satış Görsün (Kavurmacı Görmesin) */}
                 {canAccess(["Satışçı"]) && (
-                    <li><Link to="/stock-list" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-eye me-2"></i> Hazır Stok</Link></li>
+                    <li><Link to="/stock-list" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-eye me-2"></i> Detaylı Stok Listesi</Link></li>
                 )}
 
                 {/* 2. Ham Madde Ekle: Sadece Yönetim (Kavurmacı Görmesin) */}
-                {canAccess([]) && ( /* Sadece Admin/Yönetici (Helper fonksiyon default izin veriyor) */
-                    <>
-                        <li className="submenu-divider" />
-                        <li><Link to="/rawmaterial-add" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-plus-circle me-2"></i> Ham Madde Ekle</Link></li>
-                    </>
-                )}
+                <li className="submenu-divider" />
 
                 {/* 3. Ham Maddeler Listesi: Kavurmacı Görsün (İşlem yapacak) */}
                 <li><Link to="/rawmaterial-list" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-list-ul me-2"></i> Ham Maddeler</Link></li>
@@ -225,17 +220,30 @@ function SideBar({ isMobileOpen, onCloseMobile }: SideBarProps) {
                 {!collapsed && "YÖNETİM"}
             </li>
             <li className="nav-item">
-                <Link to="/user-add" className="nav-link text-white" onClick={handleLinkClick}>
-                <i className="bi bi-person-plus-fill me-2"></i>{!collapsed && "Personel Ekle"}
-                </Link>
-            </li>
-            <li className="nav-item">
-                <Link to="/user-list" className="nav-link text-white" onClick={handleLinkClick}>
-                <i className="bi bi-people-fill me-2"></i>{!collapsed && "Personel Listesi"}
-                </Link>
-            </li>
-            </>
+            <a href="#" className="nav-link text-white d-flex align-items-center justify-content-between" onClick={(e) => { e.preventDefault(); toggleMenu("personel"); }} role="button">
+              <div className="d-flex align-items-center">
+                <i className="bi bi-person-workspace me-2"></i>
+                {!collapsed && <span>Personel İşlemleri</span>}</div>
+              {!collapsed && <i className={`bi bi-chevron-${openMenu === "personel" ? "up" : "down"}`}></i>}
+            </a>
+            {!collapsed && openMenu === "personel" && (
+              <ul className="submenu list-unstyled ps-4">
+                <li><Link to="/user-add" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-person-plus-fill me-2"></i> Personel Ekle</Link></li>
+                <li><Link to="/user-list" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-people-fill me-2"></i> Personel Listesi</Link></li>
+              </ul>
+            )}
+          </li>
+          
+            
+                        
+               <li><Link to="/rawmaterial-add" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-plus-circle me-2"></i> Ham Madde Ekle</Link></li>
+                    
+
+          
+          </>
         )}
+
+        
 
       </ul>
     </div>

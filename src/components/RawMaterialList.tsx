@@ -3,14 +3,13 @@ import { useGetRawMaterialsQuery, useDeleteRawMaterialMutation } from "../servic
 import type { RawMaterial } from "../models/rawMaterialModel";
 import { formatNumber } from "../utilities/formatters";
 import { toast } from "react-toastify";
-
-// 🎨 MODALLARI IMPORT ET
+import { exportToExcel, type ExcelColumn } from "../utilities/excelHelper";
+import ExcelButton from "../common/ExcelButton";
+// MODALLAR
 import NeighborhoodSendModal from "./modals/NeighborhoodModal";
 import RawMaterialToProcessedModal from "./modals/RawMaterialToProcessedModal";
-import SendToContractorModal from "./modals/SendToContractorModal"; // 👈 YENİ EKLENDİ
-
+import AddStockModal from "./modals/AddRawMaterialStockModal"; // 👈 1. YENİ MODALI IMPORT ET
 import "./css/RawMaterialList.css"; 
-import ExcelButton from "../common/ExcelButton";
 
 function RawMaterialList() {
   const { data: rawmaterials, isLoading, isError } = useGetRawMaterialsQuery();
@@ -19,29 +18,26 @@ function RawMaterialList() {
   // --- MODAL STATE'LERİ ---
   const [showNeighborhoodModal, setShowNeighborhoodModal] = useState(false);
   const [showProcessedModal, setShowProcessedModal] = useState(false);
-  const [showContractorModal, setShowContractorModal] = useState(false); // 👈 YENİ
+  const [showAddStockModal, setShowAddStockModal] = useState(false); // 👈 2. YENİ STATE
 
   const [selectedProduct, setSelectedProduct] = useState<RawMaterial | null>(null);
 
-  // --- EXCEL İŞLEMİ ---
-
-    
-    const columns = [
+  // --- EXCEL İŞLEMİ (Aynı Kalıyor) ---
+  const columns:ExcelColumn[] = [
       {header: "ID", key: 'id', width:15},
       {header: "Adı", key: 'name', width:20},
       {header: "Siirt'ten Gelen Stok", key: 'incomingAmount', width:30},
       {header: "Mahalleden Gelen Stok", key: 'neighborhoodInComingAmount', width:30},
       {header: "Açıklama", key: 'description', width:20},
-    ];
+  ];
 
-    const excelData = rawmaterials?.data.map((item)=> ({
+  const excelData = rawmaterials?.data.map((item)=> ({
       id: item.id,
       name: item.name,
-      incomingAmount: formatNumber(item.incomingAmount),
-      neighborhoodInComingAmount: formatNumber(item.neighborhoodInComingAmount),
+      incomingAmount: item.incomingAmount, // Excel için ham sayı daha iyidir, formatNumber string yapar
+      neighborhoodInComingAmount: (item as any).neighborhoodIncomingAmount ?? (item as any).neighborhoodInComingAmount ?? 0,
       description: item.description,
-    }))??[];
-
+  })) ?? [];
 
 
   // --- YARDIMCI FONKSİYONLAR ---
@@ -56,7 +52,6 @@ function RawMaterialList() {
         await deleteRawMaterial(id).unwrap();
         toast.success("Ham madde başarıyla silindi.");
       } catch (err) {
-        console.error("Delete error:", err);
         toast.error("Silme işlemi başarısız oldu.");
       }
     }
@@ -73,12 +68,10 @@ function RawMaterialList() {
       setShowProcessedModal(true);
   };
 
-  // 👈 YENİ FONKSİYON: Fasoncuya Gönder Modalı
-  const handleOpenContractorModal = (p: RawMaterial) => {
+  const handleOpenAddStockModal = (p: RawMaterial) => {
       setSelectedProduct(p);
-      setShowContractorModal(true);
+      setShowAddStockModal(true);
   };
-
 
   if (isLoading) return <div className="text-center mt-5">Yükleniyor...</div>;
   if (isError) return <div className="text-danger text-center mt-5">Veri alınamadı!</div>;
@@ -87,6 +80,7 @@ function RawMaterialList() {
   const totalNeighborhoodStock = rawmaterials ? rawmaterials.data.reduce((total, item) => total + getNeighborhoodStock(item), 0) : 0;
 
   return (
+    <div className="container-fluid px-4 mt-4">
       <div className="card shadow-sm">
         <div className="card-header card-header-fistik text-white d-flex justify-content-between ">
           <h5 className="mb-0">
@@ -96,7 +90,7 @@ function RawMaterialList() {
             data={excelData}
             columns={columns}
             fileName="HamMaddeListesi"
-            title="Ham Madde Listesi"
+            title="ERUH FISTIK PAZARI - HAM MADDE STOK LİSTESİ"
             disabled={isLoading}
           />
         </div>
@@ -121,29 +115,29 @@ function RawMaterialList() {
                     <tr key={p.id}>
                       <td>{p.id}</td>
                       <td>{p.name}</td>
-                      <td>{formatNumber(p.incomingAmount)}</td>
+                      <td>
+                          {/* Siirt Stoğu */}
+                          <span className="fw-bold text-dark">{formatNumber(p.incomingAmount)}</span>
+                      </td>
                       <td>{formatNumber(neighborhoodStock)}</td>
                       <td>{p.description}</td>
                       <td>
                         <div className="btn-group" role="group">
-                            {/* 1. MAHALLEYE GÖNDER */}
+                            
+                            
+                            <button className="btn btn-sm btn-success" onClick={() => handleOpenAddStockModal(p)} title="Hızlı Stok Ekle">
+                                <i className="bi bi-plus-lg"></i>
+                            </button>
+
+                            
                             {p.incomingAmount > 0 && (
                                 <button className="btn btn-sm btn-warning" onClick={() => handleOpenNeighborhoodModal(p)} title="Mahalleye Gönder">
                                     <i className="bi bi-truck"></i>
                                 </button>
                             )}
-
-                            {/* 2. İŞLEMEYE GÖNDER */}
                             <button className="btn btn-sm btn-primary" onClick={() => handleOpenProcessedModal(p)} title="İşlemeye Gönder">
                                 <i className="bi bi-gear-fill"></i>
                             </button>
-
-                            {/* 3. FASONCUYA GÖNDER (YENİ) */}
-                            <button className="btn btn-sm btn-info text-white" onClick={() => handleOpenContractorModal(p)} title="Fasoncuya Gönder">
-                                <i className="bi bi-box-arrow-right"></i>
-                            </button>
-
-                            {/* 4. SİL */}
                             <button className="btn btn-sm btn-danger" onClick={() => handleDelete(p.id)} disabled={isDeleting} title="Sil">
                                 <i className="bi bi-trash"></i>
                             </button>
@@ -186,14 +180,14 @@ function RawMaterialList() {
             handleClose={() => setShowProcessedModal(false)}
             product={selectedProduct}
           />
-          {/* 👇 YENİ MODAL EKLENDİ */}
-          <SendToContractorModal 
-            show={showContractorModal}
-            handleClose={() => setShowContractorModal(false)}
+          
+          <AddStockModal 
+            show={showAddStockModal}
+            handleClose={() => setShowAddStockModal(false)}
             product={selectedProduct}
-            sourceType="Fasoncu" // Ham madde genelde fasoncuya gider
           />
 
+          </div>
         </div>
       </div>
     </div>
