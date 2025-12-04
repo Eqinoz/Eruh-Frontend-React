@@ -1,23 +1,24 @@
 import { useState } from "react";
-import { useGetRawMaterialsQuery, useDeleteRawMaterialMutation } from "../services/rawMaterialService";
+import { useGetRawMaterialsQuery } from "../services/rawMaterialService";
 import type { RawMaterial } from "../models/rawMaterialModel";
 import { formatNumber } from "../utilities/formatters";
-import { toast } from "react-toastify";
+
 import ExcelButton from "../common/ExcelButton";
 // MODALLAR
 import NeighborhoodSendModal from "./modals/NeighborhoodModal";
 import RawMaterialToProcessedModal from "./modals/RawMaterialToProcessedModal";
 import AddStockModal from "./modals/AddRawMaterialStockModal"; // 👈 1. YENİ MODALI IMPORT ET
 import "./css/RawMaterialList.css"; 
+import DeleteStockModal from "./modals/DeleteRawMaterialStockModal";
 
 function RawMaterialList() {
   const { data: rawmaterials, isLoading, isError } = useGetRawMaterialsQuery();
-  const [deleteRawMaterial, { isLoading: isDeleting }] = useDeleteRawMaterialMutation();
 
   // --- MODAL STATE'LERİ ---
   const [showNeighborhoodModal, setShowNeighborhoodModal] = useState(false);
   const [showProcessedModal, setShowProcessedModal] = useState(false);
-  const [showAddStockModal, setShowAddStockModal] = useState(false); // 👈 2. YENİ STATE
+  const [showAddStockModal, setShowAddStockModal] = useState(false); 
+  const [showDeleteStockModal, setShowDeleteStockModal] = useState(false); 
 
   const [selectedProduct, setSelectedProduct] = useState<RawMaterial | null>(null);
 
@@ -45,21 +46,17 @@ function RawMaterialList() {
     return p.neighborhoodIncomingAmount ?? p.neighborhoodInComingAmount ?? 0;
   };
 
-  const handleDelete = async (id: number) => {
-    if (window.confirm("Bu ham maddeyi silmek istediğinize emin misiniz?")) {
-      try {
-        await deleteRawMaterial(id).unwrap();
-        toast.success("Ham madde başarıyla silindi.");
-      } catch (err) {
-        toast.error("Silme işlemi başarısız oldu.");
-      }
-    }
-  };
+  
 
   // --- MODAL AÇMA FONKSİYONLARI ---
   const handleOpenNeighborhoodModal = (p: RawMaterial) => {
       setSelectedProduct(p);
       setShowNeighborhoodModal(true);
+  };
+
+  const handleOpenDeleteStockModal = (p: RawMaterial) => {
+      setSelectedProduct(p);
+      setShowDeleteStockModal(true);
   };
 
   const handleOpenProcessedModal = (p: RawMaterial) => {
@@ -137,8 +134,8 @@ function RawMaterialList() {
                             <button className="btn btn-sm btn-primary" onClick={() => handleOpenProcessedModal(p)} title="İşlemeye Gönder">
                                 <i className="bi bi-gear-fill"></i>
                             </button>
-                            <button className="btn btn-sm btn-danger" onClick={() => handleDelete(p.id)} disabled={isDeleting} title="Sil">
-                                <i className="bi bi-trash"></i>
+                            <button className="btn btn-sm btn-danger" onClick={() => handleOpenDeleteStockModal(p)} title="Stok Çıkar">
+                                <i className="bi bi-dash-lg"></i>
                             </button>
                         </div>
                       </td>
@@ -183,6 +180,11 @@ function RawMaterialList() {
           <AddStockModal 
             show={showAddStockModal}
             handleClose={() => setShowAddStockModal(false)}
+            product={selectedProduct}
+          />
+          <DeleteStockModal 
+            show={showDeleteStockModal}
+            handleClose={() => setShowDeleteStockModal(false)}
             product={selectedProduct}
           />
 

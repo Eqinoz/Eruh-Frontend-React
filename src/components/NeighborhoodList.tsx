@@ -80,9 +80,9 @@ function NeighborhoodList() {
               {neighborhoods &&
               neighborhoods.data &&
               neighborhoods.data.length > 0 ? (
-                neighborhoods.data.map((n: Neighborhood) => (
+                neighborhoods.data.map((n: Neighborhood, index: number) => (
                   <tr key={n.id}>
-                    <td>{n.id}</td>
+                    <td>{index + 1}</td>
                     <td>{n.productType}</td>
                     <td>{n.productName}</td>
                     <td>{n.productDescription}</td>

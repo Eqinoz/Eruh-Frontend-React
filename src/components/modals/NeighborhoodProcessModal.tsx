@@ -50,7 +50,7 @@ function NeighborhoodProcessModal({ show, handleClose, neighborhood }: Props) {
 
       const updatedRawMaterial: RawMaterial = {
         id: rawMaterialResponse.data.id,
-        name: name,
+        name: name.toLocaleUpperCase("tr-TR"),
         description: description,
         incomingAmount: rawMaterialResponse.data.incomingAmount, //
         neighborhoodInComingAmount:

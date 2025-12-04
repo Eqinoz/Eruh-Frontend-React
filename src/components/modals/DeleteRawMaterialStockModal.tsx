@@ -7,13 +7,13 @@ import { formatNumber } from "../../utilities/formatters";
 import "../css/Forms.css";
 import "../css/Modal.css";
 
-interface AddStockModalProps {
+interface DeleteStockModalProps {
   show: boolean;
   handleClose: () => void;
   product: RawMaterial | null;
 }
 
-function AddStockModal({ show, handleClose, product }: AddStockModalProps) {
+function DeleteStockModal({ show, handleClose, product }: DeleteStockModalProps) {
   const [amountToAdd, setAmountToAdd] = useState<number>(0);
   const [updateRawMaterial, { isLoading }] = useUpdateRawMaterialMutation();
 
@@ -32,8 +32,8 @@ function AddStockModal({ show, handleClose, product }: AddStockModalProps) {
     }
 
     try {
-      // 🧠 MANTIK: Mevcut stok + Yeni eklenen miktar
-      const newIncomingAmount = product.incomingAmount + amountToAdd;
+      // 🧠 MANTIK: Mevcut stok - Yeni eklenen miktar
+      const newIncomingAmount = product.incomingAmount - amountToAdd;
 
       // Güncellenecek obje (Diğer alanları koru, sadece incomingAmount'u değiştir)
       const updatedProduct: RawMaterial = {
@@ -43,10 +43,10 @@ function AddStockModal({ show, handleClose, product }: AddStockModalProps) {
 
       await updateRawMaterial(updatedProduct).unwrap();
 
-      toast.success(`Stok başarıyla güncellendi! (+${amountToAdd} kg)`);
+      toast.success(`Stok başarıyla güncellendi! (-${amountToAdd} kg)`);
       handleClose();
     } catch (err: any) {
-      console.error("Stok ekleme hatası:", err);
+      console.error("Stok çıkarma hatası:", err);
       toast.error("Stok güncellenirken bir hata oluştu.");
     }
   };
@@ -56,7 +56,7 @@ function AddStockModal({ show, handleClose, product }: AddStockModalProps) {
       <Modal.Header closeButton className="modal-header-fistik">
         <Modal.Title>
           <i className="bi bi-plus-circle-fill me-2"></i>
-          Stok Ekle
+          Stok Çıkar
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -67,7 +67,7 @@ function AddStockModal({ show, handleClose, product }: AddStockModalProps) {
 
         <Form>
           <Form.Group className="mb-3">
-            <Form.Label className="fw-bold text-success">Eklenecek Miktar (kg)</Form.Label>
+            <Form.Label className="fw-bold text-success">Çıkarılacak Miktar (kg)</Form.Label>
             <Form.Control
               type="number"
               onChange={(e) => setAmountToAdd(Number(e.target.value))}
@@ -77,7 +77,7 @@ function AddStockModal({ show, handleClose, product }: AddStockModalProps) {
               className="border-success" // Yeşil çerçeve
             />
             <Form.Text className="text-muted">
-               * Bu miktar mevcut stoğun üzerine eklenecektir.
+               * Bu miktar mevcut stoğun üzerinden çıkarılacaktır.
             </Form.Text>
           </Form.Group>
           
@@ -85,7 +85,7 @@ function AddStockModal({ show, handleClose, product }: AddStockModalProps) {
           <div className="d-flex justify-content-between align-items-center bg-light p-2 rounded border">
               <span>Yeni Toplam Stok Olacak:</span>
               <span className="fw-bold text-success fs-5">
-                  {formatNumber((product?.incomingAmount || 0) + amountToAdd)} kg
+                  {formatNumber((product?.incomingAmount || 0) - amountToAdd)} kg
               </span>
           </div>
         </Form>
@@ -100,11 +100,11 @@ function AddStockModal({ show, handleClose, product }: AddStockModalProps) {
             onClick={handleSubmit} 
             disabled={isLoading}
         >
-          {isLoading ? "Güncelleniyor..." : "Onayla ve Ekle"}
+          {isLoading ? "Güncelleniyor..." : "Onayla ve Çıkar"}
         </Button>
       </Modal.Footer>
     </Modal>
   );
 }
 
-export default AddStockModal;
+export default DeleteStockModal;

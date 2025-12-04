@@ -123,8 +123,8 @@ function StockMovementList() {
                   <th className="text-center" style={{ width: "50px" }}>Yön</th>
                   <th>Tarih</th>
                   <th>Ürün ID</th>
-                  <th>Ürün Adı</th>
                   <th>Ürün Tipi</th>
+                  <th>Ürün Adı</th>
                   <th>Açıklama</th>
                   <th className="text-end pe-4">Miktar</th>
                 </tr>

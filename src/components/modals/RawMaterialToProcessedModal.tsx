@@ -93,6 +93,7 @@ function RawMaterialToProcessedModal({
         amount: amount,
         dateAdded: new Date().toISOString(),
       };
+      console.log(newproductToProcessed);
       await addProductToProcessed(newproductToProcessed).unwrap();
 
       toast.success(`${amount} kg ürün işleme başarıyla gönderildi!`);
