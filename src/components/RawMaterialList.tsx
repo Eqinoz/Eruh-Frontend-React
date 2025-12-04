@@ -3,7 +3,6 @@ import { useGetRawMaterialsQuery, useDeleteRawMaterialMutation } from "../servic
 import type { RawMaterial } from "../models/rawMaterialModel";
 import { formatNumber } from "../utilities/formatters";
 import { toast } from "react-toastify";
-import { exportToExcel, type ExcelColumn } from "../utilities/excelHelper";
 import ExcelButton from "../common/ExcelButton";
 // MODALLAR
 import NeighborhoodSendModal from "./modals/NeighborhoodModal";
@@ -23,7 +22,7 @@ function RawMaterialList() {
   const [selectedProduct, setSelectedProduct] = useState<RawMaterial | null>(null);
 
   // --- EXCEL İŞLEMİ (Aynı Kalıyor) ---
-  const columns:ExcelColumn[] = [
+  const columns = [
       {header: "ID", key: 'id', width:15},
       {header: "Adı", key: 'name', width:20},
       {header: "Siirt'ten Gelen Stok", key: 'incomingAmount', width:30},
