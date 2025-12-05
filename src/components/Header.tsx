@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { getUserNameFromToken } from "../utilities/tokenHelper";
 import { clearToken } from "../store/store";
 import "./css/Header.css";
+import { Link } from "react-router-dom";
 
 interface HeaderProps {
   onToggleMobileSidebar: () => void;
@@ -31,9 +32,11 @@ function Header({ onToggleMobileSidebar }: HeaderProps) {
           </button>
 
           {/* Logo/Başlık */}
+          <Link to={"/"}>
           <span className="playwrite-hu-headertitle fistik-logo-title">
             Eruh Fıstık Pazarı
           </span>
+          </Link>
         </div>
 
         {/* Sağ kısım - Kullanıcı adı */}
