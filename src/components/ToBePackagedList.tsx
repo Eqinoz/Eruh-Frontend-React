@@ -4,8 +4,9 @@ import {
   useDeleteToPackagedItemMutation,
   useGetToPackagedItemsQuery,
 } from "../services/toPackagedService";
+import { useGetPackagingTypesQuery } from "../services/packagingTypeService";
 import type { ToPackagedItem } from "../models/toPackagedModal";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Button, Form, Modal, Spinner } from "react-bootstrap";
 import { useState } from "react";
 import "./css/Modal.css"; //
 import type { ProductModel } from "../models/productModel";
@@ -15,12 +16,15 @@ import ExcelButton from "../common/ExcelButton";
 
 function ToBePackagedList() {
   const { data: processed, isLoading, isError } = useGetToPackagedItemsQuery();
+  const { data: packagingTypesResponse, isLoading: isLoadingPackagingTypes } = useGetPackagingTypesQuery();
   const [addProduct, { isLoading: isAdding }] = useAddProductMutation();
   const [deleteToPackagedItem, { isLoading: isDeleting }] =
     useDeleteToPackagedItemMutation();
   const [showModal, setShowModal] = useState(false);
   const [select, setSelect] = useState<ToPackagedItem | null>(null);
   const [packagingType, setPackagingType] = useState<string>("");
+
+  const packagingTypes = packagingTypesResponse?.data || [];
 
   const handleClose = () => {
     setShowModal(false);
@@ -62,6 +66,7 @@ function ToBePackagedList() {
         amount: select.amount,
         packagingType: packagingType,
       };
+      console.log(newProduct);
       await addProduct(newProduct).unwrap();
       await deleteToPackagedItem(select.id!).unwrap();
 
@@ -170,16 +175,34 @@ function ToBePackagedList() {
           <Form>
             <Form.Group className="mb-3">
               <Form.Label className="fw-bold">
-                Paketleme Şeklini Giriniz:
+                <i className="bi bi-box me-2"></i>Paketleme Tipini Seçiniz:
               </Form.Label>
-              <Form.Control
-                type="text"
-                className="mt-2"
-                placeholder="Örn: 500g Vakumlu, 1kg Kutu, 25kg Çuval"
-                value={packagingType}
-                onChange={(e) => setPackagingType(e.target.value)}
-                autoFocus
-              />
+              {isLoadingPackagingTypes ? (
+                <div className="text-center py-3">
+                  <Spinner animation="border" size="sm" className="me-2" />
+                  <span>Paketleme tipleri yükleniyor...</span>
+                </div>
+              ) : (
+                <Form.Select
+                  className="mt-2"
+                  value={packagingType}
+                  onChange={(e) => setPackagingType(e.target.value)}
+                  autoFocus
+                >
+                  <option value="">-- Paketleme Tipi Seçin --</option>
+                  {packagingTypes.map((pt) => (
+                    <option key={pt.id} value={pt.packagingTypeName}>
+                      {pt.packagingTypeName}({pt.amount}KG)
+                    </option>
+                  ))}
+                </Form.Select>
+              )}
+              {packagingTypes.length === 0 && !isLoadingPackagingTypes && (
+                <div className="alert alert-warning mt-2 small">
+                  <i className="bi bi-exclamation-triangle me-2"></i>
+                  Henüz paketleme tipi tanımlanmamış. Lütfen Yönetim menüsünden ekleyin.
+                </div>
+              )}
             </Form.Group>
           </Form>
         </Modal.Body>

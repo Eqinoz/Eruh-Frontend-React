@@ -13,6 +13,7 @@ import { contractorProductService } from "../services/contractorProductService";
 import { stockMovementService } from "../services/stockMovementService";
 import { getUserNameFromToken, getUserRoleFromToken } from "../utilities/tokenHelper";
 import { userService } from "../services/userService";
+import { packagingTypeService } from "../services/packagingTypeService";
 
 interface AuthState {
   token: string | null;
@@ -76,6 +77,7 @@ export const store = configureStore({
     [contractorProductService.reducerPath]: contractorProductService.reducer,
     [stockMovementService.reducerPath]: stockMovementService.reducer,
     [userService.reducerPath]: userService.reducer,
+    [packagingTypeService.reducerPath]: packagingTypeService.reducer,
   },
   middleware: (getDefault) =>
     getDefault().concat(
@@ -92,6 +94,7 @@ export const store = configureStore({
       contractorProductService.middleware,
       stockMovementService.middleware,
       userService.middleware,
+      packagingTypeService.middleware,
     ),
 });
 

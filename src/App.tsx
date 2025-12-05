@@ -30,6 +30,7 @@ import StockMovementList from "./components/StockMovementList";
 import RequireAuth from "./common/RequireAuth";
 import UserAddPage from "./components/UserAddPage";
 import UserList from "./components/UserList";
+import PackagingTypeList from "./components/PackagingTypeList";
 
 function App() {
   const dispatch = useDispatch();
@@ -87,6 +88,7 @@ function App() {
             <Route path="product-list" element={<ProductListPage />} />
             <Route path="user-add" element={<UserAddPage />} />
             <Route path="user-list" element={<UserList />} />
+            <Route path="packaging-types" element={<PackagingTypeList />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -43,17 +43,17 @@ function generateProductType(code: string): string {
     const char = upperCode[i];
     switch (char) {
       case "D":
-        result.push("Double");
+        result.push("DOUBLE");
         break;
       case "B":
-        result.push("Beyaz");
+        result.push("BEYAZ");
         break;
       case "K":
-        result.push("Kırmızı");
+        result.push("KIRMIZI");
         break;
       case "İ":
       case "I":
-        result.push("İtal");
+        result.push("İTHAL");
         break;
       default:
         // Bilinmeyen karakter varsa olduğu gibi ekle
@@ -123,13 +123,19 @@ function ProcessedProductList() {
 
     // Eğer değişen input "productType" (Ürün Türü) ise...
     if (name === "productType") {
-      const newProductName = generateProductType(value); // Kısaltmayı hesapla
+      const upperValue = value.toLocaleUpperCase("tr-TR");
+      const newProductName = generateProductType(upperValue); // Kısaltmayı hesapla
       setSelectedItem((prev) => ({
         ...prev!,
         productName: newProductName, // Ürün adını güncelle
-        productType: value, // Ürün türünü de OTOMATİK güncelle
+        productType: upperValue, // Ürün türünü de OTOMATİK güncelle
       }));
-    } 
+    } else if(name === "productName"){
+      setSelectedItem((prev) => ({
+        ...prev!,
+        productName: value.toLocaleUpperCase("tr-TR"),
+      }));
+    }
     // Eğer değişen input "amount" (Miktar) ise...
     else if (name === "amount") {
       setSelectedItem((prev) => ({

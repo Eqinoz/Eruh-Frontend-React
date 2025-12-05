@@ -237,6 +237,13 @@ function SideBar({ isMobileOpen, onCloseMobile }: SideBarProps) {
             )}
           </li>
           
+          {/* Paketleme Tipleri */}
+          <li className="nav-item">
+            <Link to="/packaging-types" className="nav-link text-white d-flex align-items-center" onClick={handleLinkClick}>
+              <i className="bi bi-box me-2"></i>
+              {!collapsed && <span>Paketleme Tipleri</span>}
+            </Link>
+          </li>
             
                         
                <li><Link to="/rawmaterial-add" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-plus-circle me-2"></i> Ham Madde Ekle</Link></li>
