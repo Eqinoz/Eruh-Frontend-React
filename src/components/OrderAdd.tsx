@@ -294,8 +294,8 @@ function OrderAddPage() {
                       type="number"
                       className="form-control"
                       name="quantity"
-                      value={formData.quantity}
                       onChange={handleChange}
+                      placeholder="00"
                       min="1"
                       required
                     />

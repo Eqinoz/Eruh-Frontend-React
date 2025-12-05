@@ -32,3 +32,9 @@ export function getUserRoleFromToken(token?: string | null): string | string[] |
     return null;
   }
 }
+
+export function isTokenExpired(token: string): boolean {
+  const decoded: any = jwtDecode(token);
+  const expirationTime = decoded.exp * 1000; // JWT saniye cinsinden, JS milisaniye cinsinden
+  return expirationTime < Date.now();
+}
