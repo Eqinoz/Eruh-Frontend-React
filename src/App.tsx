@@ -17,6 +17,7 @@ import ProcessedProductList from "./components/ProcessedProductList";
 import ProcessingList from "./components/ProcessingList";
 import ToBePackagedList from "./components/ToBePackagedList";
 import OrderDetailsList from "./components/OrderDetailsList";
+import PastOrdersList from "./components/PastOrdersList";
 import CompletedPayment from "./components/CompletedPayment";
 import PaymentList from "./components/PaymentList";
 import CustomerAccountPage from "./components/CustomerAccountPage";
@@ -80,6 +81,7 @@ function App() {
             <Route path="contractor-detail/:id" element={<ContractorDetailsPage />} />
             <Route path="contractor-products" element={<ContractorProductList />} />
             <Route path="order-list" element={<OrderDetailsList />} />
+            <Route path="past-orders" element={<PastOrdersList />} />
             <Route path="payment-list" element={<PaymentList />} />
             <Route path="product-add" element={<ProductAdd />} />
             <Route path="product-list" element={<ProductListPage />} />

@@ -2,14 +2,14 @@
 
 .sidebar-fistik {
   background-color: var(--fistik-dark-green, #2e8b57);
-  width: 280px;
+  width: 240px;
   transition: width 0.3s ease-in-out;
   overflow-y: auto;
   overflow-x: hidden;
 }
 
 .sidebar-fistik.collapsed {
-  width: 70px;
+  width: 60px;
 }
 
 /* Başlık Rengi */

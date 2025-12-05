@@ -178,7 +178,10 @@ function SideBar({ isMobileOpen, onCloseMobile }: SideBarProps) {
               {!collapsed && openMenu === "siparis" && (
                 <ul className="submenu list-unstyled ps-4">
                   <li><Link to="/order-add" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-plus-circle me-2"></i> Sipariş Ekle</Link></li>
+                  <hr className="submenu-divider" />
                   <li><Link to="/order-list" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-list-ul me-2"></i> Sipariş Listesi</Link></li>
+                  <hr className="submenu-divider" />
+                  <li><Link to="/past-orders" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-clock-history me-2"></i> Geçmiş Siparişler</Link></li>
                 </ul>
               )}
             </li>
