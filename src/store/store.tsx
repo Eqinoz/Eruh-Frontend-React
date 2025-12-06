@@ -11,7 +11,7 @@ import { orderService } from "../services/orderService";
 import { contractorService } from "../services/contractorService";
 import { contractorProductService } from "../services/contractorProductService";
 import { stockMovementService } from "../services/stockMovementService";
-import { getUserNameFromToken, getUserRoleFromToken, isTokenExpired } from "../utilities/tokenHelper";
+import { getUserNameFromToken, getUserRoleFromToken } from "../utilities/tokenHelper";
 import { userService } from "../services/userService";
 import { packagingTypeService } from "../services/packagingTypeService";
 
@@ -33,11 +33,9 @@ const authSlice = createSlice({
     setToken: (state, action: PayloadAction<string>) => {
       const token = action.payload;
       state.token = token;
-      if (isTokenExpired(token)) {
-        clearToken();
-      }else{
-        localStorage.setItem("token", token); // Önce kaydet
-      }
+      
+      localStorage.setItem("token", token); // Önce kaydet
+      
 
       // 👇 HELPER'LARI KULLANARAK STATE'İ GÜNCELLE
       // Token'ı parametre olarak veriyoruz ki en güncel halini çözsün
