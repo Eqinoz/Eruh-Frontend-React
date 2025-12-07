@@ -1,15 +1,13 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import type { StockMovementDto } from "../models/stockMovementDtoModel";
 import type { ListResponseModel } from "../models/listResponseModel";
+import { baseQuery } from "./baseQuery";
 
-const BASEURL = import.meta.env.VITE_BASE_URL || "https://eruh.runasp.net/api";
-//const BASEURL = "https://eruh.runasp.net/api/";
-
+    
 export const stockMovementService = createApi({
     reducerPath: "stockMovementApi",
-    baseQuery: fetchBaseQuery({
-        baseUrl: BASEURL,
-    }),
+    baseQuery: baseQuery,
+    tagTypes: ["StockMovement"],
     endpoints: (builder) => ({
         getStockMovements: builder.query<ListResponseModel<StockMovementDto>, void>({
             query: () => "StockMovement/details",

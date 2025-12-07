@@ -187,6 +187,7 @@ function OrderAddPage() {
     };
 
     try {
+      console.log(orderPayload);
       await addOrder(orderPayload).unwrap();
       toast.success("Sipariş başarıyla oluşturuldu!");
       setFormData({ customerId: 0, productId: "", quantity: 1, unitPrice: 0 });

@@ -1,22 +1,12 @@
-import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 import type { ListResponseModel } from "../models/listResponseModel";
 import type { Neighborhood } from "../models/neigborhoodModel";
 import type { RawMaterial } from "../models/rawMaterialModel";
 import { createApi } from "@reduxjs/toolkit/query/react";
-
-const BASE_URL = import.meta.env.VITE_BASE_URL || "https://eruh.runasp.net/api";
-//const BASE_URL = "https://eruh.runasp.net/api";
+import { baseQuery } from "./baseQuery";
 
 export const neighborhoodService = createApi({
   reducerPath: "neighborhoodService",
-  baseQuery: fetchBaseQuery({
-    baseUrl: BASE_URL,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem("token");
-      if (token) headers.set("Authorization", `Bearer ${token}`);
-      return headers;
-    },
-  }),
+  baseQuery: baseQuery,
   tagTypes: ["Neighborhood", "RawMaterial"],
   endpoints: (builder) => ({
     getNeighborhoods: builder.query<ListResponseModel<Neighborhood>, void>({

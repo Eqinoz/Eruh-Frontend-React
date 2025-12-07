@@ -1,22 +1,13 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import type { ProductModel } from "../models/productModel";
 import type { ListResponseModel } from "../models/listResponseModel";
 import type { InventoryStatusModel } from "../models/inventoryStatusModel";
 import type { SingleResponseModel } from "../models/singleResponseModel";
-
-const BASE_URL = import.meta.env.VITE_BASE_URL || "https://eruh.runasp.net/api";
-//const BASE_URL = "https://eruh.runasp.net/api";
+import { baseQuery } from "./baseQuery";
 
 export const productService = createApi({
   reducerPath: "productService",
-  baseQuery: fetchBaseQuery({
-    baseUrl: BASE_URL,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem("token");
-      if (token) headers.set("Authorization", `Bearer ${token}`);
-      return headers;
-    },
-  }),
+  baseQuery: baseQuery,
   tagTypes: ["Product"],
   endpoints: (builder) => ({
     getProducts: builder.query<ListResponseModel<ProductModel>, void>({

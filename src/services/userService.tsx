@@ -1,21 +1,12 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import type { UserModel } from "../models/userModel";
 import type { ListResponseModel } from "../models/listResponseModel"; // Senin genel list modelin
+import { baseQuery } from "./baseQuery";
 
-// Base URL ayarı
-const BASE_URL = import.meta.env.VITE_API_URL || "https://localhost:44381/api";
 
 export const userService = createApi({
   reducerPath: "userApi",
-  baseQuery: fetchBaseQuery({ 
-    baseUrl: BASE_URL,
-    // Token göndermeyi unutmayalım (Authorize için)
-    prepareHeaders: (headers) => {
-        const token = localStorage.getItem("token");
-        if (token) headers.set("Authorization", `Bearer ${token}`);
-        return headers;
-    },
-  }),
+  baseQuery: baseQuery,
   tagTypes: ["Users"],
   endpoints: (builder) => ({
     // Kullanıcıları Listele

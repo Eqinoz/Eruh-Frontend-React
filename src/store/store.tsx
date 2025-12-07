@@ -33,7 +33,6 @@ const authSlice = createSlice({
     setToken: (state, action: PayloadAction<string>) => {
       const token = action.payload;
       state.token = token;
-      
       localStorage.setItem("token", token); // Önce kaydet
       
 

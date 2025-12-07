@@ -1,14 +1,11 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import type { ListResponseModel } from "../models/listResponseModel";
 import type { PackagingTypeModel } from "../models/packagingTypeModel";
-
-const BASE_URL = import.meta.env.VITE_API_URL || "https://eruh.runasp.net/api";
+import { baseQuery } from "./baseQuery";
 
 export const packagingTypeService = createApi({
     reducerPath: "packagingTypeApi",
-    baseQuery: fetchBaseQuery({
-        baseUrl: BASE_URL,
-    }),
+    baseQuery: baseQuery,
     tagTypes: ["PackagingType"],
     endpoints: (builder) => ({
         getPackagingTypes: builder.query<ListResponseModel<PackagingTypeModel>, void>({

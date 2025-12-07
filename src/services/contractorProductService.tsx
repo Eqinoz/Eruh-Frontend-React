@@ -1,15 +1,13 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import type { ListResponseModel } from "../models/listResponseModel";
 import type { ContractorProductModel } from "../models/contractorProductModel";
 import type { ContractorProductDtoModel } from "../models/contractorProductDtoModel";
+import { baseQuery } from "./baseQuery";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL || "https://eruh.runasp.net/api";
-//const BASE_URL = "https://eruh.runasp.net/api";
 
 export const contractorProductService=createApi({
-    baseQuery: fetchBaseQuery({
-        baseUrl: BASE_URL,
-    }),
+    reducerPath:"contractorProductApi",
+    baseQuery: baseQuery,
     tagTypes:["ContractorProducts"],
     endpoints: (builder) => ({
         getContractorProducts: builder.query<ListResponseModel<ContractorProductModel>, void>({

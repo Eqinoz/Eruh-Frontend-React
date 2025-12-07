@@ -1,22 +1,12 @@
-import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import type { ListResponseModel } from "../models/listResponseModel";
 import type { ToPackagedItem } from "../models/toPackagedModal";
+import { baseQuery } from "./baseQuery";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL || "https://eruh.runasp.net/api";
-//const BASE_URL = "https://eruh.runasp.net/api";
 
 export const toPackagedService = createApi({
   reducerPath: "toPackagedService",
-  baseQuery: fetchBaseQuery({
-    baseUrl: BASE_URL,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem("token");
-      if (token) headers.set("Authorization", `Bearer ${token}`);
-      return headers;
-    },
-  }),
-
+  baseQuery: baseQuery,
   tagTypes: ["ToPackaged"],
   endpoints: (builder) => ({
     getToPackagedItems: builder.query<ListResponseModel<ToPackagedItem>, void>({

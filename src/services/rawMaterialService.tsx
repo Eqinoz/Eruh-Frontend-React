@@ -1,21 +1,12 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import type { RawMaterial } from "../models/rawMaterialModel";
 import type { ListResponseModel } from "../models/listResponseModel";
 import type { SingleResponseModel } from "../models/singleResponseModel";
-
-const BASE_URL = import.meta.env.VITE_BASE_URL || "https://eruh.runasp.net/api";
-//const BASE_URL = "https://eruh.runasp.net/api";
+import { baseQuery } from "./baseQuery";
 
 export const rawMaterialService = createApi({
   reducerPath: "rawMaterialService",
-  baseQuery: fetchBaseQuery({
-    baseUrl: BASE_URL,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem("token");
-      if (token) headers.set("Authorization", `Bearer ${token}`);
-      return headers;
-    },
-  }),
+  baseQuery: baseQuery,
   tagTypes: ["RawMaterial"],
   endpoints: (builder) => ({
     getRawMaterials: builder.query<ListResponseModel<RawMaterial>, void>({
