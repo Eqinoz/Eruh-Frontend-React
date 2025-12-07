@@ -40,8 +40,9 @@ function AddStockModal({ show, handleClose, product }: AddStockModalProps) {
         ...product,
         incomingAmount: newIncomingAmount,
       };
+      console.log(updatedProduct);
 
-      await updateRawMaterial(updatedProduct).unwrap();
+       await updateRawMaterial(updatedProduct).unwrap();
 
       toast.success(`Stok başarıyla güncellendi! (+${amountToAdd} kg)`);
       handleClose();

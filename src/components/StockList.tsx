@@ -106,7 +106,7 @@ export default function StockList() {
       {/* Kategori Kartları */}
       <div className="row g-4">
         {stockCategories.map((category, index) => (
-          <div key={index} className="col-lg-4 col-md-6">
+          <div key={index} className="col-lg-4 col-md-6" onClick={() => navigate(category.route)}>
             <div className="card shadow-sm border-0 h-100 stock-category-card">
               <div
                 className={`card-header category-${category.cssClass} text-white d-flex align-items-center justify-content-between py-3`}

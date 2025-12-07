@@ -115,9 +115,9 @@ function ToBePackagedList() {
             </thead>
             <tbody>
               {processed && processed.data && processed.data.length > 0 ? (
-                processed.data.map((p: ToPackagedItem) => (
+                processed.data.map((p: ToPackagedItem, index: number) => (
                   <tr key={p.id}>
-                    <td>{p.id}</td>
+                    <td>{index + 1}</td>
                     <td>{p.productType}</td>
                     <td>{p.productName}</td>
                     <td>{formatNumber(p.amount)}</td>

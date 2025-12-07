@@ -107,7 +107,7 @@ function PastOrdersList() {
                             }`}
                           ></i>
                         </td>
-                        <td className="fw-bold">#{index + 1}</td>
+                        <td className="fw-bold">#{order.id}</td>
                         <td className="fw-bold text-primary">
                           {order.customerName}
                         </td>
