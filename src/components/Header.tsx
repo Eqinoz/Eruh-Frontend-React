@@ -1,10 +1,9 @@
-// src/components/Header.tsx
-
 import { useDispatch } from "react-redux";
 import { getUserNameFromToken } from "../utilities/tokenHelper";
 import { clearToken } from "../store/store";
 import "./css/Header.css";
 import { Link } from "react-router-dom";
+import appLogo from "../assets/eruh_logo.jpg"
 
 interface HeaderProps {
   onToggleMobileSidebar: () => void;
@@ -33,7 +32,7 @@ function Header({ onToggleMobileSidebar }: HeaderProps) {
 
           {/* Logo/Başlık */}
           <Link to={"/"}>
-          <img src="../../public/eruh_logo.jpg" alt="Eruh Logo" className="img-fluid w-25" />
+          <img src={appLogo} alt="Eruh Logo" width={100} className="img-fluid" />
           </Link>
         </div>
 

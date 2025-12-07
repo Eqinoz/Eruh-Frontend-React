@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useLoginMutation } from "../services/authService";
-// useNavigate artık kullanılmıyor, sildim
 import type { TokenResponse } from "../models/tokenModel";
-import { useDispatch } from "react-redux"; // 👈 Redux dispatch için
-import { setToken } from "../store/store"; // 👈 setToken eylemi için
-import "./css/Login.css"; // 👈 Login sayfası için özel CSS
+import { useDispatch } from "react-redux"; 
+import { setToken } from "../store/store"; 
+import "./css/Login.css"; 
+import appLogo from "../assets/eruh_logo.jpg"
 function LoginPage() {
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [login, { isLoading, error }] = useLoginMutation();
@@ -27,7 +27,7 @@ function LoginPage() {
         onSubmit={handleSubmit}
         className="login-form p-4 border rounded bg-white shadow-lg"
       >
-        <img src="../../public/eruh_logo.jpg" alt="Eruh Logo" className="img-fluid  d-block" />
+        <img src={appLogo} alt="Eruh Logo" width={200}  className="img-fluid d-block mx-auto" />
         <span className="playwrite-hu-headertitle fistik-title mb-4 d-block text-center"></span>
         <h4 className="text-center mb-4 text-muted">Yönetim Paneli Girişi</h4>
 
