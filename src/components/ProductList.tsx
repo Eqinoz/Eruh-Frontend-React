@@ -72,7 +72,7 @@ function ProductListPage() {
             </thead>
             <tbody>
               {products && products.data.length > 0 ? (
-                products.data.map((p, index) => (
+                products.data.map((p) => (
                   <tr key={p.productId}>
                     <td>{p.id}</td> 
                     <td>{p.productId}</td>

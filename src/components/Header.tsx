@@ -33,9 +33,7 @@ function Header({ onToggleMobileSidebar }: HeaderProps) {
 
           {/* Logo/Başlık */}
           <Link to={"/"}>
-          <span className="playwrite-hu-headertitle fistik-logo-title">
-            Eruh Fıstık Pazarı
-          </span>
+          <img src="../../public/eruh_logo.jpg" alt="Eruh Logo" className="img-fluid w-25" />
           </Link>
         </div>
 

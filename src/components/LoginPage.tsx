@@ -27,9 +27,7 @@ function LoginPage() {
         onSubmit={handleSubmit}
         className="login-form p-4 border rounded bg-white shadow-lg"
       >
-        <span className="playwrite-hu-headertitle fistik-title mb-4 d-block text-center">
-          Eruh Fıstık Pazarı
-        </span>
+        <img src="../../public/eruh_logo.jpg" alt="Eruh Logo" className="img-fluid  d-block" />
         <span className="playwrite-hu-headertitle fistik-title mb-4 d-block text-center"></span>
         <h4 className="text-center mb-4 text-muted">Yönetim Paneli Girişi</h4>
 
