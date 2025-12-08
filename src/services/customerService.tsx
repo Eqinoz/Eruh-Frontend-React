@@ -3,6 +3,7 @@ import type { CustomerModel } from "../models/customerModel";
 import type { ListResponseModel } from "../models/listResponseModel";
 import type { CustomerAccountTransaction } from "../models/customerAccountTransaction";
 import type { SingleResponseModel } from "../models/singleResponseModel";
+import type { AddOpeningBalanceRequest, PayOpeningBalanceRequest, OpeningBalanceDetail } from "../models/financialTransactionModel";
 import { baseQuery } from "./baseQuery";
 
 export const customerService = createApi({
@@ -51,6 +52,32 @@ export const customerService = createApi({
       }),
       invalidatesTags: ["Customer"],
     }),
+
+    // 🔹 Devir borç (açılış bakiyesi) ekle
+    addOpeningBalance: builder.mutation<any, AddOpeningBalanceRequest>({
+      query: (data) => ({
+        url: `/CustomerTransactions/add-opening-balance`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Customer"],
+    }),
+
+    // 🔹 Devir borçtan ödeme yap
+    payOpeningBalance: builder.mutation<any, PayOpeningBalanceRequest>({
+      query: (data) => ({
+        url: `/CustomerTransactions/pay-opening-balance`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Customer"],
+    }),
+
+    // 🔹 Devir borç detaylarını getir
+    getOpeningBalanceDetails: builder.query<ListResponseModel<OpeningBalanceDetail>, void>({
+      query: () => "/CustomerTransactions/getdetails",
+      providesTags: ["Customer"],
+    }),
   }),
 });
 
@@ -60,4 +87,10 @@ export const {
   useDeleteCustomerMutation,
   useUpdateCustomerMutation,
   useGetCustomerAccountQuery,
+  useAddOpeningBalanceMutation,
+  usePayOpeningBalanceMutation,
+  useGetOpeningBalanceDetailsQuery,
 } = customerService;
+
+
+

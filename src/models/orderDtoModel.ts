@@ -17,5 +17,16 @@ export interface OrderDtoModel {
     euroRate: number;
     taxTotalPrice: number;
   };
+  totalOrderAmount: number;  // Sipariş toplam tutarı
+  paidAmount: number;        // Yapılan ödeme tutarı
+  remainingAmount: number;   // Kalan borç tutarı
   isPayment: boolean;
+}
+
+// Kısmi ödeme için request modeli
+export interface PartialPaymentRequest {
+  orderId: number;
+  amount: number;
+  description: string;
+  isDebt: boolean;
 }

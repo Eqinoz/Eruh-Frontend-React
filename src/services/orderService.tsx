@@ -1,7 +1,7 @@
 import { createApi, } from "@reduxjs/toolkit/query/react";
 import type { ListResponseModel } from "../models/listResponseModel";
 import type { OrderModel } from "../models/orderModel";
-import type { OrderDtoModel } from "../models/orderDtoModel";
+import type { OrderDtoModel, PartialPaymentRequest } from "../models/orderDtoModel";
 import { baseQuery } from "./baseQuery";
 
 export const orderService = createApi({
@@ -36,11 +36,12 @@ export const orderService = createApi({
       }),
       invalidatesTags: ["Order"],
     }),
-    completePayment: builder.mutation<void, number>({
-      query: (id) => ({
-        url: `/Orders/PaymentCompletion?id=${id}`,
+    // Sipariş için kısmi veya tam ödeme yapma
+    completePayment: builder.mutation<void, PartialPaymentRequest>({
+      query: (data) => ({
+        url: `/CustomerTransactions/pay-order`,
         method: "POST",
-        body: id,
+        body: data,
       }),
       invalidatesTags: ["Order"],
     }),
@@ -53,3 +54,4 @@ export const {
   useCompleteOrderMutation,
   useCompletePaymentMutation,
 } = orderService;
+

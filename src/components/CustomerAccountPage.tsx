@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Spinner, Badge, Card } from "react-bootstrap";
+import { Spinner, Badge, Card, Table } from "react-bootstrap";
 import { useGetCustomerAccountQuery } from "../services/customerService";
 import { formatDate, formatNumber } from "../utilities/formatters";
 import { useState } from "react";
@@ -66,6 +66,13 @@ function CustomerAccountPage() {
     (sum, order) => sum + order.lines.taxTotalPrice,
     0
   );
+
+  // Cari hesap bilgileri
+  const openingBalance = customerData.openingBalance ?? 0;
+  const totalOrderAmount = customerData.totalOrderAmount ?? totalVolume;
+  const totalPaymentAmount = customerData.totalPaymentAmount ?? 0;
+  const currentBalance = customerData.currentBalance ?? (openingBalance + totalOrderAmount - totalPaymentAmount);
+  const financialTransactions = customerData.financialTransactions ?? [];
 
   return (
     <>
@@ -135,6 +142,129 @@ function CustomerAccountPage() {
           </div>
         </Card.Body>
       </Card>
+
+      {/* --- CARİ HESAP ÖZETİ --- */}
+      <Card className="shadow-lg border-0 mb-4">
+        <div className="card-header card-header-fistik text-white">
+          <h5 className="mb-0">
+            <i className="bi bi-wallet2 me-2"></i>Cari Hesap Özeti
+          </h5>
+        </div>
+        <Card.Body className="p-4">
+          <div className="row g-3">
+            {/* Açılış Bakiyesi */}
+            <div className="col-md-3">
+              <div className="border rounded-3 p-3 text-center h-100 bg-info bg-opacity-10">
+                <div className="d-flex align-items-center justify-content-center mb-2">
+                  <div 
+                    className="rounded-circle d-flex align-items-center justify-content-center"
+                    style={{ width: 45, height: 45, background: 'linear-gradient(135deg, #0dcaf0 0%, #5bc0de 100%)' }}
+                  >
+                    <i className="bi bi-arrow-right-circle text-white"></i>
+                  </div>
+                </div>
+                <div className="small text-muted text-uppercase" style={{ fontSize: '0.7rem' }}>Devir Bakiye</div>
+                <div className="fw-bold text-info fs-4">{formatNumber(openingBalance)} <span className="small">₺</span></div>
+              </div>
+            </div>
+            {/* Toplam Sipariş Tutarı */}
+            <div className="col-md-3">
+              <div className="border rounded-3 p-3 text-center h-100 bg-warning bg-opacity-10">
+                <div className="d-flex align-items-center justify-content-center mb-2">
+                  <div 
+                    className="rounded-circle d-flex align-items-center justify-content-center"
+                    style={{ width: 45, height: 45, background: 'linear-gradient(135deg, #ffc107 0%, #ffda6a 100%)' }}
+                  >
+                    <i className="bi bi-cart-plus text-dark"></i>
+                  </div>
+                </div>
+                <div className="small text-muted text-uppercase" style={{ fontSize: '0.7rem' }}>Toplam Sipariş</div>
+                <div className="fw-bold text-warning fs-4">{formatNumber(totalOrderAmount)} <span className="small">₺</span></div>
+              </div>
+            </div>
+            {/* Toplam Tahsilat */}
+            <div className="col-md-3">
+              <div className="border rounded-3 p-3 text-center h-100 bg-success bg-opacity-10">
+                <div className="d-flex align-items-center justify-content-center mb-2">
+                  <div 
+                    className="rounded-circle d-flex align-items-center justify-content-center"
+                    style={{ width: 45, height: 45, background: 'linear-gradient(135deg, #198754 0%, #28a745 100%)' }}
+                  >
+                    <i className="bi bi-cash-coin text-white"></i>
+                  </div>
+                </div>
+                <div className="small text-muted text-uppercase" style={{ fontSize: '0.7rem' }}>Toplam Tahsilat</div>
+                <div className="fw-bold text-success fs-4">{formatNumber(totalPaymentAmount)} <span className="small">₺</span></div>
+              </div>
+            </div>
+            {/* Güncel Bakiye */}
+            <div className="col-md-3">
+              <div className={`border rounded-3 p-3 text-center h-100 ${currentBalance > 0 ? 'bg-danger bg-opacity-10 border-danger' : 'bg-success bg-opacity-10 border-success'}`}>
+                <div className="d-flex align-items-center justify-content-center mb-2">
+                  <div 
+                    className="rounded-circle d-flex align-items-center justify-content-center"
+                    style={{ width: 45, height: 45, background: currentBalance > 0 ? 'linear-gradient(135deg, #dc3545 0%, #e35d6a 100%)' : 'linear-gradient(135deg, #198754 0%, #28a745 100%)' }}
+                  >
+                    <i className={`bi ${currentBalance > 0 ? 'bi-exclamation-triangle' : 'bi-check-circle'} text-white`}></i>
+                  </div>
+                </div>
+                <div className="small text-muted text-uppercase" style={{ fontSize: '0.7rem' }}>Güncel Bakiye</div>
+                <div className={`fw-bold fs-4 ${currentBalance > 0 ? 'text-danger' : 'text-success'}`}>
+                  {formatNumber(currentBalance)} <span className="small">₺</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card.Body>
+      </Card>
+
+      {/* --- FİNANSAL İŞLEMLER (DEVİR BORÇLAR) --- */}
+      {financialTransactions.length > 0 && (
+        <Card className="shadow-lg border-0 mb-4">
+          <div className="card-header bg-info text-white d-flex justify-content-between align-items-center">
+            <h5 className="mb-0">
+              <i className="bi bi-journal-text me-2"></i>Finansal İşlemler
+            </h5>
+            <Badge bg="light" text="dark">{financialTransactions.length} İşlem</Badge>
+          </div>
+          <Card.Body className="p-0">
+            <div className="table-responsive">
+              <Table hover className="align-middle mb-0">
+                <thead className="table-light">
+                  <tr>
+                    <th>Tarih</th>
+                    <th>Açıklama</th>
+                    <th className="text-center">Tür</th>
+                    <th className="text-end">Tutar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {financialTransactions.map((transaction) => (
+                    <tr key={transaction.id}>
+                      <td className="text-muted">{formatDate(transaction.date)}</td>
+                      <td className="fw-semibold">{transaction.description}</td>
+                      <td className="text-center">
+                        {transaction.isDebt ? (
+                          <Badge bg="danger">
+                            <i className="bi bi-arrow-down-circle me-1"></i>Borç
+                          </Badge>
+                        ) : (
+                          <Badge bg="success">
+                            <i className="bi bi-arrow-up-circle me-1"></i>Ödeme
+                          </Badge>
+                        )}
+                      </td>
+                      <td className={`text-end fw-bold ${transaction.isDebt ? 'text-danger' : 'text-success'}`}>
+                        {transaction.isDebt ? '+' : '-'}{formatNumber(transaction.amount)} ₺
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
+          </Card.Body>
+        </Card>
+      )}
 
       {/* --- SİPARİŞ GEÇMİŞİ TABLOSU --- */}
       <Card className="shadow-lg border-0">

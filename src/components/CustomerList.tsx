@@ -10,7 +10,9 @@ import { Modal, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 import type { CustomerModel } from "../models/customerModel";
 import CustomerEditModal from "./modals/CustomerEditModal";
+import AddDebtModal from "./modals/AddDebtModal";
 import { Link } from "react-router-dom";
+
 
 function CustomerList() {
   const [showModal, setShowModal] = useState(false);
@@ -30,6 +32,10 @@ function CustomerList() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedCustomer, setSelectedCustomer] =
     useState<CustomerModel | null>(null);
+
+  // 🔹 Devir borç modal state'i
+  const [showDebtModal, setShowDebtModal] = useState(false);
+  const [debtCustomer, setDebtCustomer] = useState<CustomerModel | null>(null);
 
   const handleCloseDeleteModal = () => {
     setShowDeleteModal(false);
@@ -130,10 +136,20 @@ function CustomerList() {
                         <i className="bi bi-pencil-fill"></i>
                       </button>
                       <button
+                        className="btn btn-sm btn-outline-success me-2"
+                        title="Devir Borç Ekle"
+                        onClick={() => {
+                          setDebtCustomer(customer);
+                          setShowDebtModal(true);
+                        }}
+                      >
+                        <i className="bi bi-cash-stack"></i>
+                      </button>
+                      <button
                         className="btn btn-sm btn-outline-danger"
                         title="Sil"
-                        onClick={() => handleShowDeleteModal(customer)} // 👈 Modal'ı açar
-                        disabled={isDeleting} // 👈 Silme sırasında kendini kilitler
+                        onClick={() => handleShowDeleteModal(customer)}
+                        disabled={isDeleting}
                       >
                         <i className="bi bi-trash-fill"></i>
                       </button>
@@ -151,6 +167,13 @@ function CustomerList() {
         show={showModal}
         handleClose={() => setShowModal(false)}
         customer={selectedCustomer}
+      />
+
+      {/* 🔹 Devir Borç Modal */}
+      <AddDebtModal
+        show={showDebtModal}
+        handleClose={() => setShowDebtModal(false)}
+        customer={debtCustomer}
       />
 
       {/* 🎨 12. "Sil" Onay Modalı */}
