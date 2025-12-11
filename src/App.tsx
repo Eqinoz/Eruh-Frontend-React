@@ -12,10 +12,16 @@ import CustomerList from "./components/CustomerList";
 import OrderAddPage from "./components/OrderAdd";
 import NeighborhoodList from "./components/NeighborhoodList";
 import RawMaterialAdd from "./components/RawMaterialAdd";
+import RawMaterialEdit from "./components/RawMaterialEdit";
 import RawMaterialList from "./components/RawMaterialList";
 import ProcessedProductList from "./components/ProcessedProductList";
 import ProcessingList from "./components/ProcessingList";
 import ToBePackagedList from "./components/ToBePackagedList";
+import ProcessingEdit from "./components/ProcessingEdit";
+import ProcessedProductEdit from "./components/ProcessedProductEdit";
+import ToPackagedEdit from "./components/ToPackagedEdit";
+import ProductEdit from "./components/ProductEdit";
+import NeighborhoodEdit from "./components/NeighborhoodEdit";
 import OrderDetailsList from "./components/OrderDetailsList";
 import PastOrdersList from "./components/PastOrdersList";
 import CompletedPayment from "./components/CompletedPayment";
@@ -73,6 +79,7 @@ function App() {
           <Route element={<RequireAuth allowedRoles={["Admin", "Yönetici"]} />}>
             <Route path="stock-movement-list" element={<StockMovementList />} />
             <Route path="rawmaterial-add" element={<RawMaterialAdd />} />
+            <Route path="rawmaterial-edit" element={<RawMaterialEdit />} />
             <Route path="order-add" element={<OrderAddPage />} />
             <Route path="neighborhood-list" element={<NeighborhoodList />} />
             <Route path="customer-add" element={<CustomerAdd />} />
@@ -86,6 +93,11 @@ function App() {
             <Route path="payment-list" element={<PaymentList />} />
             <Route path="product-add" element={<ProductAdd />} />
             <Route path="product-list" element={<ProductListPage />} />
+            <Route path="processing-edit" element={<ProcessingEdit />} />
+            <Route path="processed-product-edit" element={<ProcessedProductEdit />} />
+            <Route path="to-packaged-edit" element={<ToPackagedEdit />} />
+            <Route path="product-edit" element={<ProductEdit />} />
+            <Route path="neighborhood-edit" element={<NeighborhoodEdit />} />
             <Route path="user-add" element={<UserAddPage />} />
             <Route path="user-list" element={<UserList />} />
             <Route path="packaging-types" element={<PackagingTypeList />} />

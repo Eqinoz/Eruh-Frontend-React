@@ -3,7 +3,7 @@ import type { CustomerModel } from "../models/customerModel";
 import type { ListResponseModel } from "../models/listResponseModel";
 import type { CustomerAccountTransaction } from "../models/customerAccountTransaction";
 import type { SingleResponseModel } from "../models/singleResponseModel";
-import type { AddOpeningBalanceRequest, PayOpeningBalanceRequest, OpeningBalanceDetail } from "../models/financialTransactionModel";
+import type { AddOpeningBalanceRequest, UpdateOpeningBalanceRequest, PayOpeningBalanceRequest, OpeningBalanceDetail } from "../models/financialTransactionModel";
 import { baseQuery } from "./baseQuery";
 
 export const customerService = createApi({
@@ -78,6 +78,25 @@ export const customerService = createApi({
       query: () => "/CustomerTransactions/getdetails",
       providesTags: ["Customer"],
     }),
+
+    // 🔹 Finansal işlem güncelle
+    updateOpeningBalance: builder.mutation<any, UpdateOpeningBalanceRequest>({
+      query: (data) => ({
+        url: `/CustomerTransactions/`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["Customer"],
+    }),
+
+    // 🔹 Finansal işlem sil
+    deleteOpeningBalance: builder.mutation<any, number>({
+      query: (id) => ({
+        url: `/CustomerTransactions/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Customer"],
+    }),
   }),
 });
 
@@ -90,6 +109,8 @@ export const {
   useAddOpeningBalanceMutation,
   usePayOpeningBalanceMutation,
   useGetOpeningBalanceDetailsQuery,
+  useUpdateOpeningBalanceMutation,
+  useDeleteOpeningBalanceMutation,
 } = customerService;
 
 

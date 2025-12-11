@@ -125,7 +125,7 @@ export default function ProcessingList() {
                     <td>{formatNumber(it.amount)}</td>
                     <td>{formatDate(it.dateAdded)}</td>
                     <td>
-                      <button className="btn btn-sm btn-success" onClick={() => handleShowConfirmModal(it)}>
+                      <button className="btn btn-sm btn-success me-1" onClick={() => handleShowConfirmModal(it)}>
                         <i className="bi bi-check-lg me-1"></i>İşlemi Tamamla
                       </button>
                     </td>

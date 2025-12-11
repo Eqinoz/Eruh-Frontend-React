@@ -244,12 +244,28 @@ function SideBar({ isMobileOpen, onCloseMobile }: SideBarProps) {
               {!collapsed && <span>Paketleme Tipleri</span>}
             </Link>
           </li>
-            
-                        
-               <li><Link to="/rawmaterial-add" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-plus-circle me-2"></i> Ham Madde Ekle</Link></li>
-                    
-
-          
+          {/* Üretim & Stok Ayarları */}
+          <li className="nav-item">
+            <a href="#" className="nav-link text-white d-flex align-items-center justify-content-between" onClick={(e) => { e.preventDefault(); toggleMenu("uretimayar"); }} role="button">
+              <div className="d-flex align-items-center">
+                <i className="bi bi-gear-fill me-2"></i>
+                {!collapsed && <span>Üretim & Stok Ayarları</span>}
+              </div>
+              {!collapsed && <i className={`bi bi-chevron-${openMenu === "uretimayar" ? "up" : "down"}`}></i>}
+            </a>
+            {!collapsed && openMenu === "uretimayar" && (
+              <ul className="submenu list-unstyled ps-4">
+                <li><Link to="/rawmaterial-add" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-plus-circle me-2"></i>Ham Madde Ekle</Link></li>
+                <hr className="submenu-divider my-1" />
+                <li><Link to="/rawmaterial-edit" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-pencil-square me-2"></i>Ham Maddeler</Link></li>
+                <li><Link to="/processing-edit" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-pencil-square me-2"></i>İşlemdeki Ürünler</Link></li>
+                <li><Link to="/processed-product-edit" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-pencil-square me-2"></i>İşlenmiş Ürünler</Link></li>
+                <li><Link to="/to-packaged-edit" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-pencil-square me-2"></i>Paketlenecek Ürünler</Link></li>
+                <li><Link to="/product-edit" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-pencil-square me-2"></i>Satışa Hazır Ürünler</Link></li>
+                <li><Link to="/neighborhood-edit" className="nav-link text-white py-1" onClick={handleLinkClick}><i className="bi bi-pencil-square me-2"></i>Mahalledeki Ürünler</Link></li>
+              </ul>
+            )}
+          </li>
           </>
         )}
 

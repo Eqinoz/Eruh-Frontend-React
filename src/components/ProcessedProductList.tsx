@@ -10,11 +10,11 @@ import { useAddToPackagedItemMutation } from "../services/toPackagedService";
 import { useState } from "react";
 import type { ToPackagedItem } from "../models/toPackagedModal";
 import { toast } from "react-toastify";
-import "./css/Modal.css"; // Modal stillerini de import ettim
+import "./css/Modal.css";
 import SendToContractorModal from "./modals/SendToContractorModal";
 import ExcelButton from "../common/ExcelButton";
 
-// 🎨 1. Kod çözme fonksiyonu - Kısaltmayı tam açıklamaya çevirir
+//  1. Kod çözme fonksiyonu - Kısaltmayı tam açıklamaya çevirir
 /**
  * Verilen kodu (örn: "DLXB") alır ve tam açıklamasına çevirir.
  * Örn: "DLXB" -> "Double Lüks Beyaz"
@@ -29,13 +29,26 @@ function generateProductType(code: string): string {
   let i = 0;
   
   while (i < upperCode.length) {
-    // İki karakterli kombinasyonları kontrol et (LX)
+    // İki karakterli kombinasyonları önce kontrol et
     if (i < upperCode.length - 1) {
       const twoChar = upperCode.substring(i, i + 2);
-      if (twoChar === "LX") {
-        result.push("Lüks");
-        i += 2;
-        continue;
+      switch (twoChar) {
+        case "LX":
+          result.push("LÜKS");
+          i += 2;
+          continue;
+        case "NT":
+          result.push("NATUREL");
+          i += 2;
+          continue;
+        case "LK":
+          result.push("LEKELİ");
+          i += 2;
+          continue;
+        case "AÇ":
+          result.push("ANA ÇITLAK");
+          i += 2;
+          continue;
       }
     }
     
@@ -43,7 +56,7 @@ function generateProductType(code: string): string {
     const char = upperCode[i];
     switch (char) {
       case "D":
-        result.push("DOUBLE");
+        result.push("DUBLE");
         break;
       case "B":
         result.push("BEYAZ");
@@ -55,6 +68,16 @@ function generateProductType(code: string): string {
       case "I":
         result.push("İTHAL");
         break;
+      case "Ö":
+      case "O":
+        result.push("ÖZEL");
+        break;
+      case "Z":
+        result.push("ZAYIF");
+        break;
+      case " ":
+        // Boşluk karakterini atla
+        break;
       default:
         // Bilinmeyen karakter varsa olduğu gibi ekle
         result.push(char);
@@ -64,7 +87,6 @@ function generateProductType(code: string): string {
   
   return result.join(" ");
 }
-
 function ProcessedProductList() {
   const {
     data: processed,
@@ -330,7 +352,7 @@ function ProcessedProductList() {
     show={showSendModal} 
     handleClose={() => setShowSendModal(false)} 
     product={selectedProduct} 
-    sourceType="Fasoncu" // Veya "Komisyoncu"
+    sourceType="Fasoncu"
 />
     </div>
   );

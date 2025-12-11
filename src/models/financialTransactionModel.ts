@@ -1,6 +1,8 @@
 export interface FinancialTransaction {
   id: number;
   customerId: number;
+  orderId?: number | null;
+  transactionType?: number; // 1 = Devir Borç, 2 = Sipariş Ödemesi, vb.
   date: string;
   amount: number;
   description: string;
@@ -10,6 +12,20 @@ export interface FinancialTransaction {
 export interface AddOpeningBalanceRequest {
   id?: number;
   customerId: number;
+  orderId?: number | null;
+  transactionType?: number;
+  date: string;
+  amount: number;
+  description: string;
+  isDebt: boolean;
+}
+
+// Finansal işlem güncelleme için request modeli
+export interface UpdateOpeningBalanceRequest {
+  id: number;
+  customerId: number;
+  orderId?: number | null;
+  transactionType?: number;
   date: string;
   amount: number;
   description: string;

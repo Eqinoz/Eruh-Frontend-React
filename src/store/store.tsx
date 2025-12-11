@@ -1,4 +1,4 @@
-import { configureStore, createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { configureStore, createSlice, isRejectedWithValue, type Middleware, type PayloadAction } from "@reduxjs/toolkit";
 import { authService } from "../services/authService";
 import { productService } from "../services/productService";
 import { customerService } from "../services/customerService";
@@ -14,6 +14,8 @@ import { stockMovementService } from "../services/stockMovementService";
 import { getUserNameFromToken, getUserRoleFromToken } from "../utilities/tokenHelper";
 import { userService } from "../services/userService";
 import { packagingTypeService } from "../services/packagingTypeService";
+import { jwtDecode } from "jwt-decode";
+import { toast } from "react-toastify";
 
 interface AuthState {
   token: string | null;
@@ -48,19 +50,48 @@ const authSlice = createSlice({
       localStorage.removeItem("token");
     },
     loadToken: (state) => {
-       // Bu metoda aslında gerek kalmadı çünkü initialState zaten yüklüyor
-       // ama yine de dursun istersen.
        const token = localStorage.getItem("token");
+
        if(token) {
-           state.token = token;
-           state.userRole = getUserRoleFromToken(token);
-           state.userName = getUserNameFromToken(token);
+           try{
+            const decoded: any = jwtDecode(token);
+            const currentTime = Date.now() / 1000;
+
+            if(decoded.exp && decoded.exp < currentTime){
+              console.warn("Token Süresi Dolmuş, Temizleniyor")
+              localStorage.removeItem("token");
+              state.token = null;
+              state.userRole = null;
+              state.userName = null;
+              return; // Explicit void return for Redux Toolkit type safety
+              
+            }
+            state.token = token;
+            state.userRole = getUserRoleFromToken(token);
+            state.userName = getUserNameFromToken(token);
+           }catch(error){
+            localStorage.removeItem("token");
+            state.token = null;
+           }
        }
     }
   },
 });
 
 export const { setToken, clearToken, loadToken } = authSlice.actions;
+
+const rtkQueryErrorLogger: Middleware = (api) => (next) => (action) => {
+  if(isRejectedWithValue(action)){
+    const payload = action.payload as { status?: number };
+    if(payload?.status === 401){
+
+      toast.error("Oturum Süresi Dolmuştur, Lütfen Tekrar Giriş Yapınız.")
+      api.dispatch(clearToken());
+      
+    }
+  }
+  return next(action);
+}
 
 export const store = configureStore({
   reducer: {
@@ -96,6 +127,7 @@ export const store = configureStore({
       stockMovementService.middleware,
       userService.middleware,
       packagingTypeService.middleware,
+      rtkQueryErrorLogger,
     ),
 });
 

@@ -30,6 +30,7 @@ function AddDebtModal({ show, handleClose, customer }: AddDebtModalProps) {
       await addOpeningBalance({
         id: 0,
         customerId: customer.id,
+        transactionType: 1,
         date: new Date().toISOString(),
         amount: numericAmount,
         description: description || "Devreden Borç",

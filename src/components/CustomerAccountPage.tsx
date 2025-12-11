@@ -1,14 +1,17 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Spinner, Badge, Card, Table } from "react-bootstrap";
+import { Spinner, Badge, Card, Table, Button } from "react-bootstrap";
 import { useGetCustomerAccountQuery } from "../services/customerService";
 import { formatDate, formatNumber } from "../utilities/formatters";
 import { useState } from "react";
+import type { FinancialTransaction } from "../models/financialTransactionModel";
+import FinancialTransactionEditModal from "./modals/FinancialTransactionEditModal";
+import FinancialTransactionDeleteModal from "./modals/FinancialTransactionDeleteModal";
 import "./css/RawMaterialList.css"; // Tema stilleri
 
 function CustomerAccountPage() {
   const navigate = useNavigate();
   // URL'den ID'yi al
-  const { id } = useParams<{ id: string }>();
+  const { id }= useParams<{ id: string }>();
   // ID undefined ise '0' veya boş string göndererek hatayı önle
   const customerId = id ?? "";
 
@@ -23,8 +26,23 @@ function CustomerAccountPage() {
 
   const [expandedRowIndex, setExpandedRowIndex] = useState<number | null>(null);
 
+  // Modal states for financial transactions
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<FinancialTransaction | null>(null);
+
   const toggleRow = (index: number) => {
     setExpandedRowIndex(expandedRowIndex === index ? null : index);
+  };
+
+  const handleOpenEditModal = (transaction: FinancialTransaction) => {
+    setSelectedTransaction(transaction);
+    setShowEditModal(true);
+  };
+
+  const handleOpenDeleteModal = (transaction: FinancialTransaction) => {
+    setSelectedTransaction(transaction);
+    setShowDeleteModal(true);
   };
 
   if (isLoading) {
@@ -236,6 +254,7 @@ function CustomerAccountPage() {
                     <th>Açıklama</th>
                     <th className="text-center">Tür</th>
                     <th className="text-end">Tutar</th>
+                    <th className="text-center" style={{ width: "120px" }}>İşlemler</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -256,6 +275,25 @@ function CustomerAccountPage() {
                       </td>
                       <td className={`text-end fw-bold ${transaction.isDebt ? 'text-danger' : 'text-success'}`}>
                         {transaction.isDebt ? '+' : '-'}{formatNumber(transaction.amount)} ₺
+                      </td>
+                      <td className="text-center">
+                        <Button
+                          variant="outline-primary"
+                          size="sm"
+                          className="me-1"
+                          onClick={() => handleOpenEditModal(transaction)}
+                          title="Düzenle"
+                        >
+                          <i className="bi bi-pencil"></i>
+                        </Button>
+                        <Button
+                          variant="outline-danger"
+                          size="sm"
+                          onClick={() => handleOpenDeleteModal(transaction)}
+                          title="Sil"
+                        >
+                          <i className="bi bi-trash"></i>
+                        </Button>
                       </td>
                     </tr>
                   ))}
@@ -609,6 +647,19 @@ function CustomerAccountPage() {
           <i className="bi bi-arrow-left me-2"></i>Müşteri Listesine Dön
         </button>
       </div>
+
+      {/* --- MODALS --- */}
+      <FinancialTransactionEditModal
+        show={showEditModal}
+        handleClose={() => setShowEditModal(false)}
+        transaction={selectedTransaction}
+        customerId={parseInt(customerId) || 0}
+      />
+      <FinancialTransactionDeleteModal
+        show={showDeleteModal}
+        handleClose={() => setShowDeleteModal(false)}
+        transaction={selectedTransaction}
+      />
     </>
   );
 }

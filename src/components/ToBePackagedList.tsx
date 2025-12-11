@@ -8,7 +8,7 @@ import { useGetPackagingTypesQuery } from "../services/packagingTypeService";
 import type { ToPackagedItem } from "../models/toPackagedModal";
 import { Button, Form, Modal, Spinner } from "react-bootstrap";
 import { useState } from "react";
-import "./css/Modal.css"; //
+import "./css/Modal.css";
 import type { ProductModel } from "../models/productModel";
 import { toast } from "react-toastify";
 import { useAddProductMutation } from "../services/productService";
@@ -122,9 +122,8 @@ function ToBePackagedList() {
                     <td>{p.productName}</td>
                     <td>{formatNumber(p.amount)}</td>
                     <td>
-                      {/* 🐞 2. HATA DÜZELTME: onClick'e arrow function eklendi */}
                       <button
-                        className="btn btn-sm btn-primary"
+                        className="btn btn-sm btn-primary me-1"
                         onClick={() => handleShow(p)}
                       >
                         <i className="bi bi-box-seam me-1"></i>

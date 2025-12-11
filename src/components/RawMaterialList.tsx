@@ -2,14 +2,13 @@ import { useState } from "react";
 import { useGetRawMaterialsQuery } from "../services/rawMaterialService";
 import type { RawMaterial } from "../models/rawMaterialModel";
 import { formatNumber } from "../utilities/formatters";
-
 import ExcelButton from "../common/ExcelButton";
 // MODALLAR
 import NeighborhoodSendModal from "./modals/NeighborhoodModal";
 import RawMaterialToProcessedModal from "./modals/RawMaterialToProcessedModal";
-import AddStockModal from "./modals/AddRawMaterialStockModal"; // 👈 1. YENİ MODALI IMPORT ET
-import "./css/RawMaterialList.css"; 
+import AddStockModal from "./modals/AddRawMaterialStockModal";
 import DeleteStockModal from "./modals/DeleteRawMaterialStockModal";
+import "./css/RawMaterialList.css";
 
 function RawMaterialList() {
   const { data: rawmaterials, isLoading, isError } = useGetRawMaterialsQuery();
@@ -18,7 +17,7 @@ function RawMaterialList() {
   const [showNeighborhoodModal, setShowNeighborhoodModal] = useState(false);
   const [showProcessedModal, setShowProcessedModal] = useState(false);
   const [showAddStockModal, setShowAddStockModal] = useState(false); 
-  const [showDeleteStockModal, setShowDeleteStockModal] = useState(false); 
+  const [showDeleteStockModal, setShowDeleteStockModal] = useState(false);
 
   const [selectedProduct, setSelectedProduct] = useState<RawMaterial | null>(null);
 

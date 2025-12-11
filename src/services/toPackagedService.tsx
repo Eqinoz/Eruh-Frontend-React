@@ -45,5 +45,6 @@ export const toPackagedService = createApi({
 export const {
   useGetToPackagedItemsQuery,
   useAddToPackagedItemMutation,
+  useUpdateToPackagedItemMutation,
   useDeleteToPackagedItemMutation,
 } = toPackagedService;

@@ -15,9 +15,29 @@ export const userService = createApi({
       providesTags: ["Users"],
     }),
     
-    // (İleride lazım olursa) Kullanıcı Sil
-    // deleteUser: builder.mutation<void, number>({ ... }) 
+    // Kullanıcı Güncelle
+    updateUser: builder.mutation<any, UserModel>({
+      query: (user) => ({
+        url: `/Users`,
+        method: "PUT",
+        body: user,
+      }),
+      invalidatesTags: ["Users"],
+    }),
+
+    // Kullanıcı Sil (query param formatı: /user/?id=id)
+    deleteUser: builder.mutation<any, number>({
+      query: (id) => ({
+        url: `/user/?id=${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Users"],
+    }),
   }),
 });
 
-export const { useGetUsersQuery } = userService;
+export const { 
+  useGetUsersQuery, 
+  useUpdateUserMutation, 
+  useDeleteUserMutation 
+} = userService;
